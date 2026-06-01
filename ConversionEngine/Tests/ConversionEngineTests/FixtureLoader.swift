@@ -82,6 +82,9 @@ enum FixtureLoader {
             if !ops.isEmpty, !ops.contains(op) {
                 fatalError("\(name).txt line \(lineNumber): unknown op '\(op)' (expected one of \(ops.sorted()))")
             }
+            if expected.isEmpty {
+                fatalError("\(name).txt line \(lineNumber): empty expected value in '\(line)'")
+            }
 
             var args: [String: String] = [:]
             if !argString.isEmpty {
@@ -93,10 +96,19 @@ enum FixtureLoader {
                     }
                     let key = String(pair[pair.startIndex..<eq])
                     let value = String(pair[pair.index(after: eq)...])
+                    if args[key] != nil {
+                        fatalError("\(name).txt line \(lineNumber): duplicate arg key '\(key)' in '\(line)'")
+                    }
                     args[key] = value
                 }
             }
             rows.append(FixtureRow(op: op, args: args, expected: expected))
+        }
+
+        // a fixture that parses to no data rows (empty or all comments) would create
+        // a silently-passing empty suite; fail loud so corruption can't hide.
+        if rows.isEmpty {
+            fatalError("\(name).txt parsed to zero data rows (empty or all comments)")
         }
         return rows
     }

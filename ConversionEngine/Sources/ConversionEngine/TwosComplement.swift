@@ -74,12 +74,13 @@ enum TwosComplement {
         if !enabled { return Int(n) }
         let width = bits.count
         if bits.first == "1" {
-            if width >= UInt.bitWidth {
-                // full-width negative: value = n - 2^width is exactly the signed
-                // reinterpretation of the bit pattern.
-                return Int(bitPattern: n)
-            }
-            return Int(n) - (1 << width)
+            // negative field: sign-extend by setting every bit above the field,
+            // then reinterpret the pattern as signed. this is `n - 2^width`
+            // without ever forming `2^width` (which traps for width 63 and is
+            // unrepresentable for width >= 64); for width >= 64 the shift
+            // overshifts to a zero mask, leaving the full-width pattern intact.
+            let mask: UInt = width >= UInt.bitWidth ? 0 : (~UInt(0) << UInt(width))
+            return Int(bitPattern: n | mask)
         }
         return Int(n)
     }

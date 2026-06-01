@@ -242,6 +242,133 @@ import Testing
         #expect(ConversionEngine.isValid("1", base: base) == false)
         #expect(ConversionEngine.isValid("", base: base) == false)
     }
+}
+
+// MARK: - Two's-complement decode edge contracts
+
+/// edge contracts for `twosComplementDecode` that the boundary suite does not
+/// reach: the full-width identity, over-width truncation, and malformed input.
+/// every expected value is derived from the field-width contract by hand:
+/// decode treats the bit count as the signed field width, and `n` is accumulated
+/// in a 64-bit unsigned register, so a string longer than 64 bits keeps only its
+/// low 64 bits.
+@Suite struct TwosComplementDecodeEdgeTests {
+    private func encode(_ value: Int) -> String {
+        ConversionEngine.twosComplementEncode(value, enabled: true)
+    }
+
+    private func decode(_ bits: String) -> Result<Int, ConversionError> {
+        ConversionEngine.twosComplementDecode(bits, enabled: true)
+    }
+
+    /// `encode(Int.max)` is 63 ones; as a 63-bit signed field that is exactly
+    /// `2^63 - 1 - 2^63 = -1`. (this case previously TRAPPED with an arithmetic
+    /// overflow while forming `2^63`; it must now decode cleanly to -1.)
+    @Test func decodeEncodeIntMaxIsNegativeOne() {
+        #expect(encode(Int.max) == String(repeating: "1", count: 63))
+        #expect(decode(encode(Int.max)) == .success(-1))
+        // the 63-bit and 64-bit all-ones fields both denote -1 (all bits set).
+        #expect(decode(String(repeating: "1", count: 63)) == .success(-1))
+        #expect(decode(String(repeating: "1", count: 64)) == .success(-1))
+    }
+
+    /// a string wider than 64 bits keeps only its low 64 bits (the unsigned
+    /// accumulator overshifts the rest away). `1` followed by 64 zeros is 65 bits;
+    /// its low 64 bits are all zero, so it decodes to 0. 65 ones keeps 64 ones -> -1.
+    @Test func overWidthFieldsTruncateToLow64Bits() {
+        let bit65High = "1" + String(repeating: "0", count: 64) // 65 bits, low 64 = 0
+        #expect(decode(bit65High) == .success(0))
+        #expect(decode(String(repeating: "1", count: 65)) == .success(-1))
+    }
+
+    /// any non-binary character makes the whole string malformed -> typed
+    /// `invalidCharacter`; an empty string is the documented zero.
+    @Test func malformedDecodeIsTypedError() {
+        #expect(decode("10201") == .failure(.invalidCharacter))
+        #expect(decode("1.0") == .failure(.invalidCharacter))   // the '.' is illegal
+        #expect(decode("abc") == .failure(.invalidCharacter))
+        #expect(decode(" 1") == .failure(.invalidCharacter))    // whitespace is illegal
+        #expect(decode("") == .success(0))                      // empty -> 0
+    }
+}
+
+// MARK: - Negative fraction rounding thresholds
+
+/// the renderer rounds the magnitude HALF-UP at the 12th fraction digit and then
+/// re-applies the sign, so negative inputs round symmetrically to their positive
+/// mirror (these mirror `FractionRoundingThresholdTests`). every expected string
+/// is the negation of the independently reasoned positive result.
+@Suite struct NegativeFractionRoundingThresholdTests {
+    private func convert(_ number: String, _ from: Int, _ to: Int) -> String {
+        ConversionEngine.convert(number, fromBase: from, toBase: to).fixtureValue
+    }
+
+    /// base 10: 13th digit 4 / 5 / 6 -> round down / half-up / up, sign preserved.
+    @Test func base10MidRangeThreshold() {
+        #expect(convert("-0.1111111111114", 10, 10) == "-0.111111111111")
+        #expect(convert("-0.1111111111115", 10, 10) == "-0.111111111112")
+        #expect(convert("-0.1111111111116", 10, 10) == "-0.111111111112")
+    }
+
+    /// base 10 all-nines: the half-up carry ripples through every nine and past the
+    /// radix point, giving `-1` (no `-0`).
+    @Test func base10AllNinesCarryToInteger() {
+        #expect(convert("-0.9999999999994", 10, 10) == "-0.999999999999")
+        #expect(convert("-0.9999999999995", 10, 10) == "-1")
+        #expect(convert("-0.9999999999996", 10, 10) == "-1")
+    }
+
+    /// base 2 / base 16 carries inside the fraction, sign preserved.
+    @Test func base2AndBase16Thresholds() {
+        // -(1/2^12 + 1/2^13): dropped 1/2^13 is exactly half the 12th-bit unit.
+        #expect(convert("-0.0000000000011", 2, 2) == "-0.00000000001")
+        // hex 8 in the 13th place is exactly half a unit -> F carries to 10.
+        #expect(convert("-0.00000000000F8", 16, 16) == "-0.00000000001")
+    }
+}
+
+// MARK: - Arithmetic rounding thresholds
+
+/// arithmetic results route through the same renderer, so a quotient whose exact
+/// value needs half-up at the 12th digit must round there. each expected string is
+/// derived from the exact rational quotient, not from running the engine.
+@Suite struct ArithmeticRoundingThresholdTests {
+    private func divide(_ a: String, _ b: String, base: Int) -> String {
+        ConversionEngine.calculate(.divide, a, base: 10, b, base: 10, resultBase: base).fixtureValue
+    }
+
+    /// 2/3 = 0.6666...; the 13th digit is 6 (>= 5) so the 12th digit rounds 6 -> 7.
+    @Test func twoThirdsRoundsUpAtTwelfthDigit() {
+        #expect(divide("2", "3", base: 10) == "0.666666666667")
+        // 1/6 = 0.16666...; same half-up at the 12th digit.
+        #expect(divide("1", "6", base: 10) == "0.166666666667")
+        // negative mirrors: -2/3 -> -0.666666666667.
+        #expect(divide("-2", "3", base: 10) == "-0.666666666667")
+    }
+
+    /// 1/7 = 0.142857142857142857...; the 12-digit prefix is 142857142857 and the
+    /// 13th digit is 1 (< 5), so it rounds DOWN (no change) — a control case.
+    @Test func oneSeventhRoundsDown() {
+        #expect(divide("1", "7", base: 10) == "0.142857142857")
+    }
+}
+
+// MARK: - Calculate base-range contract
+
+/// `calculate` rejects an out-of-range `resultBase` with the typed
+/// `baseOutOfRange` error (the operand validation is unrelated).
+@Suite struct CalculateBaseRangeTests {
+    @Test(arguments: [-1, 0, 1, 37, 100])
+    func resultBaseOutOfRangeIsTyped(_ base: Int) {
+        let result = ConversionEngine.calculate(.add, "1", base: 10, "1", base: 10, resultBase: base)
+        #expect(result == .failure(.baseOutOfRange))
+    }
+
+    /// in-range result bases at the boundaries (2 and 36) succeed.
+    @Test func resultBaseBoundariesSucceed() {
+        #expect(ConversionEngine.calculate(.add, "1", base: 10, "1", base: 10, resultBase: 2).fixtureValue == "10")
+        #expect(ConversionEngine.calculate(.add, "35", base: 10, "1", base: 10, resultBase: 36).fixtureValue == "10")
+    }
 
     /// convert surfaces the typed errors that correspond to these invalid inputs.
     @Test func convertMapsInvalidInputsToTypedErrors() {

@@ -160,9 +160,12 @@ import Testing
     }
 
     @Test func mixedCaseHexParsesIdentically() {
+        // FF.A (base 16) = 255 + 10/16 = 255.625 exactly; both cases must reach it.
         let lower = ConversionEngine.convert("ff.a", fromBase: 16, toBase: 10).fixtureValue
         let upper = ConversionEngine.convert("FF.A", fromBase: 16, toBase: 10).fixtureValue
         #expect(lower == upper)
+        #expect(lower == "255.625")
+        #expect(upper == "255.625")
     }
 
     @Test func commaConvertsToDot() {
