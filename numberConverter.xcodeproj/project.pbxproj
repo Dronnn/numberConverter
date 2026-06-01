@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CE0000000000000000000003 /* ConversionEngine in Frameworks */ = {isa = PBXBuildFile; productRef = CE0000000000000000000002 /* ConversionEngine */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		1873D14A2FCD6A94008BDE18 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE0000000000000000000003 /* ConversionEngine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +118,7 @@
 			);
 			name = numberConverter;
 			packageProductDependencies = (
+				CE0000000000000000000002 /* ConversionEngine */,
 			);
 			productName = numberConverter;
 			productReference = 1873D13A2FCD6A93008BDE18 /* numberConverter.app */;
@@ -166,28 +172,6 @@
 		};
 /* End PBXNativeTarget section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		1873D1F02FCD6A93008BDE18 /* Lint & Format */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Lint & Format";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# run swiftformat then swiftlint; skip cleanly if tools are missing\nif command -v swiftformat >/dev/null 2>&1; then\n  swiftformat \"$SRCROOT\" --config \"$SRCROOT/.swiftformat\"\nelse\n  echo \"warning: swiftformat not installed (brew install swiftformat)\"\nfi\n\nif command -v swiftlint >/dev/null 2>&1; then\n  swiftlint --config \"$SRCROOT/.swiftlint.yml\"\nelse\n  echo \"warning: swiftlint not installed (brew install swiftlint)\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXProject section */
 		1873D1322FCD6A93008BDE18 /* Project object */ = {
 			isa = PBXProject;
@@ -218,6 +202,9 @@
 			);
 			mainGroup = 1873D1312FCD6A93008BDE18;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CE0000000000000000000001 /* XCLocalSwiftPackageReference "ConversionEngine" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1873D13B2FCD6A93008BDE18 /* Products */;
 			projectDirPath = "";
@@ -253,6 +240,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1873D1F02FCD6A93008BDE18 /* Lint & Format */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Lint & Format";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# run swiftformat then swiftlint; skip cleanly if tools are missing\nif command -v swiftformat >/dev/null 2>&1; then\n  swiftformat \"$SRCROOT\" --config \"$SRCROOT/.swiftformat\"\nelse\n  echo \"warning: swiftformat not installed (brew install swiftformat)\"\nfi\n\nif command -v swiftlint >/dev/null 2>&1; then\n  swiftlint --config \"$SRCROOT/.swiftlint.yml\"\nelse\n  echo \"warning: swiftlint not installed (brew install swiftlint)\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1873D1362FCD6A93008BDE18 /* Sources */ = {
@@ -414,7 +423,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 79;
 				DEVELOPMENT_TEAM = FP287HDXWV;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -430,24 +439,24 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = numberConverter.mrmaier.com.numberConverter;
+				MARKETING_VERSION = 1.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrmaier.NumberConverter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
 			name = Debug;
@@ -458,7 +467,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 79;
 				DEVELOPMENT_TEAM = FP287HDXWV;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -474,24 +483,24 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = numberConverter.mrmaier.com.numberConverter;
+				MARKETING_VERSION = 1.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrmaier.NumberConverter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
 			name = Release;
@@ -501,22 +510,22 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 79;
 				DEVELOPMENT_TEAM = FP287HDXWV;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = numberConverter.mrmaier.com.numberConverterTests;
+				MARKETING_VERSION = 1.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrmaier.NumberConverterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/numberConverter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/numberConverter";
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
@@ -527,22 +536,22 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 79;
 				DEVELOPMENT_TEAM = FP287HDXWV;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = numberConverter.mrmaier.com.numberConverterTests;
+				MARKETING_VERSION = 1.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrmaier.NumberConverterTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/numberConverter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/numberConverter";
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
@@ -552,22 +561,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 79;
 				DEVELOPMENT_TEAM = FP287HDXWV;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = numberConverter.mrmaier.com.numberConverterUITests;
+				MARKETING_VERSION = 1.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrmaier.NumberConverterUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = numberConverter;
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
@@ -577,22 +586,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 79;
 				DEVELOPMENT_TEAM = FP287HDXWV;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = numberConverter.mrmaier.com.numberConverterUITests;
+				MARKETING_VERSION = 1.6;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mrmaier.NumberConverterUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = numberConverter;
 				XROS_DEPLOYMENT_TARGET = 26.5;
 			};
@@ -638,6 +647,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		CE0000000000000000000001 /* XCLocalSwiftPackageReference "ConversionEngine" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ConversionEngine;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CE0000000000000000000002 /* ConversionEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ConversionEngine;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1873D1322FCD6A93008BDE18 /* Project object */;
 }

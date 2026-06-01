@@ -30,5 +30,6 @@
 # disabled
 --disable trailingCommas
 
-# excluded folders
---exclude Pods,Carthage,.build,DerivedData
+# excluded folders (ConversionEngine is a separate spm package with its own manifest;
+# the app header template must not touch its Package.swift swift-tools-version line)
+--exclude Pods,Carthage,.build,DerivedData,ConversionEngine

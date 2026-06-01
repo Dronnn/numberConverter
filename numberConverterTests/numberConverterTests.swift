@@ -8,11 +8,6 @@
 
 import Testing
 
-struct NumberConverterTests {
-    @Test
-    func example() {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
-        // Swift Testing Documentation
-        // https://developer.apple.com/documentation/testing
-    }
-}
+/// view-model unit tests land here in phase 4 (spec §9.2);
+/// the pure engine is tested in the conversionengine package.
+struct NumberConverterTests {}

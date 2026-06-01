@@ -6,28 +6,21 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
-import SwiftData
+import OSLog
 import SwiftUI
 
 @main
 struct NumberConverterApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+    private let metricKitManager = MetricKitManager()
 
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    init() {
+        AppLogger.lifecycle.info("app launched")
+        metricKitManager.startMonitoring()
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(sharedModelContainer)
     }
 }

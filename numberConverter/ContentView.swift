@@ -2,79 +2,28 @@
 //  ContentView.swift
 //  numberConverter
 //
-//  Created by andreas maier on 6/1/26.
+//  Created by Andreas Maier.
+//  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import ConversionEngine
 import SwiftUI
-import SwiftData
 
+/// phase-0 placeholder root; the real 5-tab shell is built in phase 3.
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
     var body: some View {
-        NavigationViewWrapper {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-#endif
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
+        VStack {
+            Image(systemName: "number")
+                .font(.largeTitle)
+            Text(verbatim: "NumberConverter")
+            Text(
+                verbatim: "bases \(ConversionEngine.supportedBaseRange.lowerBound)-\(ConversionEngine.supportedBaseRange.upperBound)"
+            )
+            .foregroundStyle(.secondary)
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
-    }
-}
-
-fileprivate struct NavigationViewWrapper<Content: View>: View {
-    let content: () -> Content
-
-    var body: some View {
-#if os(macOS)
-        NavigationSplitView {
-            content()
-        } detail: {
-            Text("Select an item")
-        }
-#else
-        content()
-#endif
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
