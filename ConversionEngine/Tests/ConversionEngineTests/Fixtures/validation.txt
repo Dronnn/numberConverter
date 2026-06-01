@@ -1,0 +1,52 @@
+# Fixture file for ConversionEngine tests.
+# Format: op|args|expected   (args are comma-separated k=v; expected is the engine output).
+# Correct expected values for the conversion engine (independently verified); do not hand-edit.
+# Do NOT hand-edit expected values. Error tokens: ERR:invalidCharacter / ERR:baseOutOfRange / ERR:divisionByZero.
+# op isValid|num=<str>,base=<int>|YES|NO
+# corrected validation contract: multi-dot=>NO; ''/-/. =>YES(->0); comma=>'.'; case-insensitive hex; base must be 2..36.
+
+isValid|num=101,base=2|YES
+isValid|num=123,base=2|NO
+isValid|num=FF,base=2|NO
+isValid|num=Z,base=2|NO
+isValid|num=-101,base=2|YES
+isValid|num=0,base=2|YES
+isValid|num=10.1,base=2|YES
+isValid|num=,base=2|YES
+isValid|num=G,base=2|NO
+isValid|num=-,base=2|YES
+isValid|num=.,base=2|YES
+isValid|num=1.2.3,base=2|NO
+isValid|num=abc,base=2|NO
+isValid|num=ZZ,base=2|NO
+isValid|num=123,base=8|YES
+isValid|num=789,base=8|NO
+isValid|num=1.2.3,base=8|NO
+isValid|num=789,base=10|YES
+isValid|num=FF,base=10|NO
+isValid|num=1.2.3,base=10|NO
+isValid|num=FF,base=16|YES
+isValid|num=abc,base=16|YES
+isValid|num=ABC,base=16|YES
+isValid|num=1.2.3,base=16|NO
+isValid|num=ZZ,base=16|NO
+isValid|num=Z,base=36|YES
+isValid|num=1.2.3,base=36|NO
+isValid|num=ZZ,base=36|YES
+isValid|num=101,base=1|NO
+isValid|num=101,base=37|NO
+isValid|num=101,base=0|NO
+isValid|num=1,5,base=10|YES
+isValid|num=-0.5,base=10|YES
+isValid|num=-.,base=10|YES
+isValid|num=..,base=10|NO
+isValid|num=.5.5,base=10|NO
+isValid|num=-1-1,base=10|NO
+isValid|num=1-1,base=10|NO
+isValid|num=FF.A,base=16|YES
+isValid|num=ff.a,base=16|YES
+isValid|num=1.,base=10|YES
+isValid|num=.1,base=10|YES
+isValid|num=-FF,base=16|YES
+isValid|num=0.0,base=2|YES
+isValid|num=11111111,base=2|YES

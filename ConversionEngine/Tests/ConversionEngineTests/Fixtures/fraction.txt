@@ -1,0 +1,47 @@
+# Fixture file for ConversionEngine tests.
+# Format: op|args|expected   (args are comma-separated k=v; expected is the engine output).
+# Correct expected values for the conversion engine (independently verified); do not hand-edit.
+# Do NOT hand-edit expected values. Error tokens: ERR:invalidCharacter / ERR:baseOutOfRange / ERR:divisionByZero.
+# op convert|num=<str>,from=<base>,to=<base>|<expected>
+# CORRECT fraction conversions both directions, 12 frac digits, base-aware rounding.
+# includes letter fractional digits (legacy bug area) and the 0.1->hex repeating anchor.
+
+convert|num=0.5,from=10,to=2|0.1
+convert|num=0.25,from=10,to=2|0.01
+convert|num=0.75,from=10,to=2|0.11
+convert|num=0.1,from=10,to=2|0.00011001101
+convert|num=0.101,from=10,to=2|0.00011001111
+convert|num=0.1,from=10,to=16|0.19999999999A
+convert|num=0.5,from=10,to=16|0.8
+convert|num=10.5,from=10,to=16|A.8
+convert|num=0.625,from=10,to=16|0.A
+convert|num=0.333333333333,from=10,to=10|0.333333333333
+convert|num=0.5,from=10,to=3|0.111111111112
+convert|num=0.5,from=10,to=8|0.4
+convert|num=0.5,from=10,to=36|0.I
+convert|num=-0.5,from=10,to=2|-0.1
+convert|num=-3.14,from=10,to=16|-3.23D70A3D70A4
+convert|num=-0.625,from=10,to=16|-0.A
+convert|num=10.5,from=10,to=2|1010.1
+convert|num=10.5,from=10,to=8|12.4
+convert|num=0.1,from=10,to=16|0.19999999999A
+convert|num=0.1,from=2,to=10|0.5
+convert|num=0.11,from=2,to=10|0.75
+convert|num=0.101,from=2,to=10|0.625
+convert|num=10.1,from=2,to=10|2.5
+convert|num=-10.1,from=2,to=10|-2.5
+convert|num=0.4,from=8,to=10|0.5
+convert|num=0.8,from=16,to=10|0.5
+convert|num=A.8,from=16,to=10|10.5
+convert|num=0.A,from=16,to=10|0.625
+convert|num=0.F,from=16,to=10|0.9375
+convert|num=0.1A,from=16,to=10|0.1015625
+convert|num=FF.8,from=16,to=10|255.5
+convert|num=0.G,from=36,to=10|0.444444444444
+convert|num=Z.Z,from=36,to=10|35.972222222222
+convert|num=0.101,from=2,to=16|0.A
+convert|num=A.8,from=16,to=2|1010.1
+convert|num=0.A,from=16,to=10|0.625
+convert|num=0.5,from=10,to=2|0.1
+convert|num=0.25,from=10,to=8|0.2
+convert|num=3.14,from=10,to=16|3.23D70A3D70A4

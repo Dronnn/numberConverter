@@ -16,7 +16,8 @@ let package = Package(
         .target(name: "ConversionEngine"),
         .testTarget(
             name: "ConversionEngineTests",
-            dependencies: ["ConversionEngine"]
+            dependencies: ["ConversionEngine"],
+            resources: [.copy("Fixtures")]
         )
     ]
 )

@@ -1,0 +1,43 @@
+# Fixture file for ConversionEngine tests.
+# Format: op|args|expected   (args are comma-separated k=v; expected is the engine output).
+# Correct expected values for the conversion engine (independently verified); do not hand-edit.
+# Do NOT hand-edit expected values. Error tokens: ERR:invalidCharacter / ERR:baseOutOfRange / ERR:divisionByZero.
+# op add|sub|mul|div|a=<str>,sa=<base>,b=<str>,sb=<base>,sr=<resultBase>|<expected>
+# CORRECT exact arithmetic, mixed operand bases, 12 frac digits; div0/invalid -> tokens.
+
+add|a=101,sa=2,b=11,sb=2,sr=2|1000
+add|a=FF,sa=16,b=1,sb=10,sr=16|100
+add|a=10,sa=10,b=10,sb=10,sr=2|10100
+add|a=7,sa=8,b=7,sb=8,sr=8|16
+add|a=Z,sa=36,b=1,sb=10,sr=36|10
+add|a=0.5,sa=10,b=0.5,sb=10,sr=10|1
+add|a=-5,sa=10,b=3,sb=10,sr=10|-2
+add|a=100,sa=10,b=0,sb=10,sr=16|64
+add|a=1010,sa=2,b=A,sb=16,sr=10|20
+add|a=0.1,sa=10,b=0.2,sb=10,sr=10|0.3
+sub|a=10,sa=10,b=3,sb=10,sr=10|7
+sub|a=3,sa=10,b=10,sb=10,sr=10|-7
+sub|a=FF,sa=16,b=F,sb=16,sr=16|F0
+sub|a=101,sa=2,b=1,sb=2,sr=2|100
+sub|a=3,sa=10,b=10,sb=10,sr=2|-111
+sub|a=0.75,sa=10,b=0.25,sb=10,sr=10|0.5
+sub|a=1,sa=10,b=0.5,sb=10,sr=2|0.1
+mul|a=7,sa=10,b=8,sb=10,sr=10|56
+mul|a=101,sa=2,b=11,sb=2,sr=2|1111
+mul|a=F,sa=16,b=F,sb=16,sr=16|E1
+mul|a=0,sa=10,b=100,sb=10,sr=16|0
+mul|a=0.5,sa=10,b=0.5,sb=10,sr=10|0.25
+mul|a=-3,sa=10,b=3,sb=10,sr=10|-9
+mul|a=0.1,sa=10,b=0.1,sb=10,sr=16|0.028F5C28F5C3
+div|a=100,sa=10,b=4,sb=10,sr=10|25
+div|a=10,sa=10,b=3,sb=10,sr=10|3.333333333333
+div|a=FF,sa=16,b=F,sb=16,sr=16|11
+div|a=1,sa=10,b=3,sb=10,sr=2|0.010101010101
+div|a=101,sa=2,b=10,sb=2,sr=2|10.1
+div|a=-10,sa=10,b=3,sb=10,sr=10|-3.333333333333
+div|a=1,sa=10,b=8,sb=10,sr=16|0.2
+div|a=22,sa=10,b=7,sb=10,sr=16|3.249249249249
+div|a=100,sa=10,b=0,sb=10,sr=10|ERR:divisionByZero
+div|a=1,sa=10,b=0,sb=10,sr=2|ERR:divisionByZero
+add|a=G,sa=10,b=1,sb=10,sr=10|ERR:invalidCharacter
+add|a=FF,sa=2,b=1,sb=2,sr=2|ERR:invalidCharacter

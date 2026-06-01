@@ -1,0 +1,51 @@
+# Fixture file for ConversionEngine tests.
+# Format: op|args|expected   (args are comma-separated k=v; expected is the engine output).
+# Correct expected values for the conversion engine (independently verified); do not hand-edit.
+# Do NOT hand-edit expected values. Error tokens: ERR:invalidCharacter / ERR:baseOutOfRange / ERR:divisionByZero.
+# op tcEncode|value=<int>,tc=ON|OFF|<bits>   (decimal int -> binary string)
+# op tcDecode|bits=<binary>,tc=ON|OFF|<int>   (binary string -> decimal int)
+# CORRECT two's complement: -128->8bit 10000000; 01111111->127; 00000001->1.
+
+tcEncode|value=255,tc=ON|11111111
+tcEncode|value=1,tc=ON|1
+tcEncode|value=7,tc=ON|111
+tcEncode|value=100,tc=ON|1100100
+tcEncode|value=0,tc=ON|0
+tcEncode|value=-1,tc=ON|11111111
+tcEncode|value=-2,tc=ON|11111110
+tcEncode|value=-7,tc=ON|11111001
+tcEncode|value=-8,tc=ON|11111000
+tcEncode|value=-100,tc=ON|10011100
+tcEncode|value=-127,tc=ON|10000001
+tcEncode|value=-128,tc=ON|10000000
+tcEncode|value=-129,tc=ON|1111111101111111
+tcEncode|value=-200,tc=ON|1111111100111000
+tcEncode|value=-255,tc=ON|1111111100000001
+tcEncode|value=-256,tc=ON|1111111100000000
+tcEncode|value=-257,tc=ON|1111111011111111
+tcEncode|value=255,tc=OFF|11111111
+tcEncode|value=1,tc=OFF|1
+tcEncode|value=0,tc=OFF|0
+tcEncode|value=-1,tc=OFF|-1
+tcEncode|value=-8,tc=OFF|-1000
+tcEncode|value=-100,tc=OFF|-1100100
+tcEncode|value=-128,tc=OFF|-10000000
+tcEncode|value=-255,tc=OFF|-11111111
+tcDecode|bits=11111111,tc=ON|-1
+tcDecode|bits=10000000,tc=ON|-128
+tcDecode|bits=01111111,tc=ON|127
+tcDecode|bits=00000001,tc=ON|1
+tcDecode|bits=10011100,tc=ON|-100
+tcDecode|bits=11111001,tc=ON|-7
+tcDecode|bits=11111000,tc=ON|-8
+tcDecode|bits=00000000,tc=ON|0
+tcDecode|bits=0,tc=ON|0
+tcDecode|bits=1,tc=ON|-1
+tcDecode|bits=1111111100000001,tc=ON|-255
+tcDecode|bits=0111111111111111,tc=ON|32767
+tcDecode|bits=1000000000000000,tc=ON|-32768
+tcDecode|bits=11111111,tc=OFF|255
+tcDecode|bits=10000000,tc=OFF|128
+tcDecode|bits=01111111,tc=OFF|127
+tcDecode|bits=00000001,tc=OFF|1
+tcDecode|bits=10011100,tc=OFF|156
