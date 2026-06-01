@@ -1,0 +1,45 @@
+# project-local files that must never be committed
+docs/
+logs/
+CLAUDE.md
+
+# secrets / credentials
+*.pem
+*.p12
+*.cer
+*.mobileprovision
+*.key
+.env
+.env.*
+secrets/
+**/Secrets.swift
+GoogleService-Info.plist
+
+# macos
+.DS_Store
+
+# xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xcuserdatad
+xcuserdata/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# swift package manager
+.build/
+.swiftpm/
+
+# cocoapods / carthage (if ever used)
+Pods/
+Carthage/Build/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
