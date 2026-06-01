@@ -6,19 +6,64 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import MessageUI
 import SwiftUI
 
 // MARK: - HelpIndexView
 
-/// root screen of the info/help tab.
-/// placeholder for now; a later phase builds the real help index.
+/// root screen of the info/help tab: a list of the nine help topics plus a
+/// button to contact the developers via the mail composer.
 struct HelpIndexView: View {
+    @State private var isShowingMail = false
+    @State private var isShowingMailUnavailableAlert = false
+
     var body: some View {
-        ComingSoonView(
-            titleKey: AppTab.info.titleKey,
-            systemImage: AppTab.info.systemImage
-        )
+        List {
+            Section {
+                ForEach(HelpContent.topics) { topic in
+                    NavigationLink {
+                        HelpPageView(topic: topic)
+                    } label: {
+                        Text(topic.indexRowTitle)
+                    }
+                }
+            } header: {
+                Text("help.index.sectionHeader")
+            }
+
+            Section {
+                ContactDevelopersButton(action: contactDevelopers)
+            }
+        }
         .navigationTitle(Text(AppTab.info.navigationTitleKey))
+        .sheet(isPresented: $isShowingMail) {
+            MailComposeView()
+                .ignoresSafeArea()
+        }
+        .alert("help.mail.unavailable", isPresented: $isShowingMailUnavailableAlert) {
+            Button("common.ok", role: .cancel) {}
+        }
+    }
+
+    private func contactDevelopers() {
+        if MFMailComposeViewController.canSendMail() {
+            isShowingMail = true
+        } else {
+            isShowingMailUnavailableAlert = true
+        }
+    }
+}
+
+// MARK: - ContactDevelopersButton
+
+/// the accent-colored "write to the developers" row at the bottom of the index.
+private struct ContactDevelopersButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text("help.index.contactDevelopers")
+        }
     }
 }
 
@@ -26,4 +71,5 @@ struct HelpIndexView: View {
     NavigationStack {
         HelpIndexView()
     }
+    .environment(\.locale, Locale(identifier: "ru"))
 }
