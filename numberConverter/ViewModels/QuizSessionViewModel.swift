@@ -70,6 +70,8 @@ final class QuizSessionViewModel {
         feedback = nil
         didCountRight = false
         stats.recordAsked(category)
+        let name = category.rawValue
+        AppLogger.quiz.info("question generated for \(name, privacy: .public)")
     }
 
     /// checks the current answer by value and records a correct answer once.
@@ -80,8 +82,11 @@ final class QuizSessionViewModel {
                 didCountRight = true
                 stats.recordRight(category)
             }
+            // outcome only - the typed answer is never logged.
+            AppLogger.quiz.info("answer checked: correct")
         } else {
             feedback = .wrong(correctAnswer: question.expectedAnswer)
+            AppLogger.quiz.info("answer checked: incorrect")
         }
     }
 

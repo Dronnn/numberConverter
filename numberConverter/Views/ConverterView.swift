@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import OSLog
 import SwiftUI
 
 // MARK: - ConverterDestination
@@ -46,9 +47,11 @@ struct ConverterView: View {
         }
         .onChange(of: settings.twosComplement) { _, newValue in
             viewModel.twosComplement = newValue
+            AppLogger.converter.info("twos-complement toggled \(newValue, privacy: .public)")
         }
         .onAppear {
             viewModel.twosComplement = settings.twosComplement
+            AppLogger.converter.screen("converter")
         }
     }
 }

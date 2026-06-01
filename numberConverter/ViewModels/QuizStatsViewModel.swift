@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import OSLog
 
 // MARK: - QuizStatsRow
 
@@ -62,5 +63,6 @@ final class QuizStatsViewModel {
     func reset() {
         stats.reset()
         version += 1
+        AppLogger.quiz.info("stats reset")
     }
 }

@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import OSLog
 import SwiftUI
 
 // MARK: - QuizStatsView
@@ -39,6 +40,7 @@ struct QuizStatsView: View {
             }
         }
         .navigationTitle(Text("quiz.menu.row9"))
+        .onAppear { AppLogger.quiz.screen("quizStats") }
         .alert("quiz.stats.resetConfirmTitle", isPresented: $isConfirmingReset) {
             Button("quiz.stats.reset", role: .destructive) {
                 viewModel.reset()

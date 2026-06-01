@@ -8,6 +8,7 @@
 
 import ConversionEngine
 import Foundation
+import OSLog
 
 // MARK: - BaseField
 
@@ -80,6 +81,8 @@ final class ConverterViewModel {
             return
         }
         invalidFields.remove(field)
+        // event only - the value the user typed is never logged.
+        AppLogger.converter.info("conversion performed from base \(field.base, privacy: .public)")
 
         for other in BaseField.allCases where other != field {
             let converted = ConversionEngine.convert(

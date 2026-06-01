@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import OSLog
 import SwiftUI
 
 // MARK: - QuizDestination
@@ -36,6 +37,7 @@ struct QuizMenuView: View {
             }
         }
         .navigationTitle(Text(AppTab.quiz.navigationTitleKey))
+        .onAppear { AppLogger.quiz.screen("quizMenu") }
         .navigationDestination(for: QuizDestination.self) { destination in
             switch destination {
             case let .session(category):

@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import OSLog
 import SwiftUI
 
 // MARK: - DecimalToAllView
@@ -30,6 +31,7 @@ struct DecimalToAllView: View {
         }
         .navigationTitle(Text("nav.allSystems"))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear { AppLogger.converter.screen("decimalToAll") }
     }
 }
 

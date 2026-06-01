@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import OSLog
 import SwiftUI
 
 // MARK: - HelpPageView
@@ -28,6 +29,7 @@ struct HelpPageView: View {
         .scrollIndicators(.hidden)
         .navigationTitle(Text(topic.title))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear { AppLogger.help.info("help page opened: \(topic.id, privacy: .public)") }
     }
 }
 

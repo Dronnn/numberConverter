@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import OSLog
 import SwiftUI
 
 // MARK: - QuizSessionView
@@ -36,6 +37,7 @@ struct QuizSessionView: View {
         }
         .navigationTitle(Text("quiz.session.title"))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear { AppLogger.quiz.screen("quizSession") }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("quiz.session.finish") { dismiss() }

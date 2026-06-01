@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import OSLog
 import SwiftUI
 
 // MARK: - AllSystemsView
@@ -60,6 +61,7 @@ struct AllSystemsView: View {
             }
         }
         .navigationTitle(Text("nav.allSystems"))
+        .onAppear { AppLogger.allSystems.screen("allSystems") }
     }
 }
 

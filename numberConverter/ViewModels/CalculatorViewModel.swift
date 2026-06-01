@@ -8,6 +8,7 @@
 
 import ConversionEngine
 import Foundation
+import OSLog
 
 // MARK: - CalculatorViewModel
 
@@ -73,13 +74,21 @@ final class CalculatorViewModel {
             base: baseB,
             resultBase: resultBase
         )
+        let hasOperands = !operandA.isEmpty && !operandB.isEmpty
         switch outcome {
         case let .success(value):
             result = value
             error = nil
+            if hasOperands {
+                // event only - operands are never logged.
+                AppLogger.calculator.info("operation performed")
+            }
         case let .failure(conversionError):
             result = ""
             error = conversionError
+            if hasOperands {
+                AppLogger.calculator.error("operation error: \(String(describing: conversionError), privacy: .public)")
+            }
         }
     }
 }

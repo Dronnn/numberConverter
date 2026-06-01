@@ -7,6 +7,7 @@
 //
 
 import MessageUI
+import OSLog
 import SwiftUI
 
 // MARK: - HelpIndexView
@@ -36,6 +37,7 @@ struct HelpIndexView: View {
             }
         }
         .navigationTitle(Text(AppTab.info.navigationTitleKey))
+        .onAppear { AppLogger.help.screen("helpIndex") }
         .sheet(isPresented: $isShowingMail) {
             MailComposeView()
                 .ignoresSafeArea()
@@ -48,8 +50,10 @@ struct HelpIndexView: View {
     private func contactDevelopers() {
         if MFMailComposeViewController.canSendMail() {
             isShowingMail = true
+            AppLogger.help.info("mail composer opened")
         } else {
             isShowingMailUnavailableAlert = true
+            AppLogger.help.info("mail composer unavailable")
         }
     }
 }

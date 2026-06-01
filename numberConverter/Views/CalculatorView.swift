@@ -7,6 +7,7 @@
 //
 
 import ConversionEngine
+import OSLog
 import SwiftUI
 
 // MARK: - CalculatorView
@@ -24,6 +25,7 @@ struct CalculatorView: View {
             CalculatorOperationSection(operation: $viewModel.operation)
         }
         .navigationTitle(Text("nav.calculator"))
+        .onAppear { AppLogger.calculator.screen("calculator") }
     }
 }
 

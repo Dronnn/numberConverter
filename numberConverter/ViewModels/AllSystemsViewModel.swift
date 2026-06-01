@@ -8,6 +8,7 @@
 
 import ConversionEngine
 import Foundation
+import OSLog
 
 // MARK: - AllSystemsViewModel
 
@@ -46,9 +47,18 @@ final class AllSystemsViewModel {
         case let .success(value):
             result = value
             error = nil
+            if !number.isEmpty {
+                // event only - bases are not sensitive, the typed number is omitted.
+                let from = sourceBase
+                let to = targetBase
+                AppLogger.allSystems.info("conversion \(from, privacy: .public)->\(to, privacy: .public)")
+            }
         case let .failure(conversionError):
             result = ""
             error = conversionError
+            if !number.isEmpty {
+                AppLogger.allSystems.error("conversion error: \(String(describing: conversionError), privacy: .public)")
+            }
         }
     }
 }

@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import OSLog
 import SwiftUI
 
 // MARK: - MainSystemsView
@@ -34,6 +35,7 @@ struct MainSystemsView: View {
         }
         .navigationTitle(Text("nav.mainSystems"))
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear { AppLogger.converter.screen("mainSystems") }
     }
 }
 
