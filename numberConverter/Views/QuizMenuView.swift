@@ -8,17 +8,42 @@
 
 import SwiftUI
 
+// MARK: - QuizDestination
+
+/// the screens pushed from the quiz menu: a session for a quiz, or the stats.
+enum QuizDestination: Hashable {
+    case session(QuizCategory)
+    case statistics
+}
+
 // MARK: - QuizMenuView
 
-/// root screen of the quiz tab.
-/// placeholder for now; a later phase builds the real quiz menu.
+/// root screen of the quiz tab: the eight quizzes plus the overall-statistics row.
 struct QuizMenuView: View {
     var body: some View {
-        ComingSoonView(
-            titleKey: AppTab.quiz.titleKey,
-            systemImage: AppTab.quiz.systemImage
-        )
+        List {
+            Section {
+                ForEach(QuizCategory.allCases) { category in
+                    NavigationLink(value: QuizDestination.session(category)) {
+                        Text(category.menuRowKey)
+                    }
+                }
+                NavigationLink(value: QuizDestination.statistics) {
+                    Text("quiz.menu.row9")
+                }
+            } header: {
+                Text("quiz.menu.sectionHeader")
+            }
+        }
         .navigationTitle(Text(AppTab.quiz.navigationTitleKey))
+        .navigationDestination(for: QuizDestination.self) { destination in
+            switch destination {
+            case let .session(category):
+                QuizSessionView(category: category)
+            case .statistics:
+                QuizStatsView()
+            }
+        }
     }
 }
 
@@ -26,4 +51,5 @@ struct QuizMenuView: View {
     NavigationStack {
         QuizMenuView()
     }
+    .environment(\.locale, Locale(identifier: "ru"))
 }

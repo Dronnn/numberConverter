@@ -121,6 +121,16 @@
         }
       }
     },
+    "common.cancel" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отмена"
+          }
+        }
+      }
+    },
     "common.ok" : {
       "localizations" : {
         "ru" : {
@@ -1341,6 +1351,486 @@
         }
       }
     },
+    "quiz.menu.row1" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Двоичная система счисления"
+          }
+        }
+      }
+    },
+    "quiz.menu.row2" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Восьмеричная система счисления"
+          }
+        }
+      }
+    },
+    "quiz.menu.row3" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Десятиричная система счисления"
+          }
+        }
+      }
+    },
+    "quiz.menu.row4" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шестнадцатеричная система счисления"
+          }
+        }
+      }
+    },
+    "quiz.menu.row5" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Двоичная система счисления (дробная часть)"
+          }
+        }
+      }
+    },
+    "quiz.menu.row6" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Восьмеричная система счисления (дробная часть)"
+          }
+        }
+      }
+    },
+    "quiz.menu.row7" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Десятиричная система счисления (дробная часть)"
+          }
+        }
+      }
+    },
+    "quiz.menu.row8" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шестнадцатеричная система счисления (дробная часть)"
+          }
+        }
+      }
+    },
+    "quiz.menu.row9" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Общая статистика"
+          }
+        }
+      }
+    },
+    "quiz.menu.sectionHeader" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Выберите вариант тестирования"
+          }
+        }
+      }
+    },
+    "quiz.prompt.2-8" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из двоичной системы в восьмеричную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.2-10" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из двоичной системы в десятиричную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.2-16" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из двоичной системы в шестнадцатеричную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.8-2" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из восьмеричной системы в двоичную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.8-10" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из восьмеричной системы в десятиричную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.8-16" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из восьмеричной системы в шестнадцатеричную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.10-2" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из десятиричной системы в двоичную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.10-8" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из десятиричной системы в восьмеричную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.10-16" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из десятиричной системы в шестнадцатеричную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.16-2" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из шестнадцатеричной системы в двоичную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.16-8" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из шестнадцатеричной системы в восьмеричную систему"
+          }
+        }
+      }
+    },
+    "quiz.prompt.16-10" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевести число из шестнадцатеричной системы в десятиричную систему"
+          }
+        }
+      }
+    },
+    "quiz.session.answerLabel" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ответ:"
+          }
+        }
+      }
+    },
+    "quiz.session.answerPlaceholder" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Введите ответ"
+          }
+        }
+      }
+    },
+    "quiz.session.check" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Проверить"
+          }
+        }
+      }
+    },
+    "quiz.session.correct" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваш ответ верный"
+          }
+        }
+      }
+    },
+    "quiz.session.correctAnswerIs %@" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Правильный ответ: %@"
+          }
+        }
+      }
+    },
+    "quiz.session.feedbackTitle" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ответ"
+          }
+        }
+      }
+    },
+    "quiz.session.finish" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закончить"
+          }
+        }
+      }
+    },
+    "quiz.session.header.binaryFraction" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тест по двоичной системе счисления (дробная часть; не более шести знаков)"
+          }
+        }
+      }
+    },
+    "quiz.session.header.binaryInt" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тест по двоичной системе счисления"
+          }
+        }
+      }
+    },
+    "quiz.session.header.decimalFraction" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тест по десятиричной системе счисления (дробная часть; не более шести знаков)"
+          }
+        }
+      }
+    },
+    "quiz.session.header.decimalInt" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тест по десятиричной системе счисления"
+          }
+        }
+      }
+    },
+    "quiz.session.header.hexFraction" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тест по шестнадцатеричной системе счисления (дробная часть; не более шести знаков)"
+          }
+        }
+      }
+    },
+    "quiz.session.header.hexInt" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тест по шестнадцатеричной системе счисления"
+          }
+        }
+      }
+    },
+    "quiz.session.header.octalFraction" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тест по восьмеричной системе счисления (дробная часть; не более шести знаков)"
+          }
+        }
+      }
+    },
+    "quiz.session.header.octalInt" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тест по восьмеричной системе счисления"
+          }
+        }
+      }
+    },
+    "quiz.session.nextQuestion" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ещё вопрос"
+          }
+        }
+      }
+    },
+    "quiz.session.questionLabel" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вопрос:"
+          }
+        }
+      }
+    },
+    "quiz.session.title" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Тестирование"
+          }
+        }
+      }
+    },
+    "quiz.session.wrong" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ваш ответ НЕ верный"
+          }
+        }
+      }
+    },
+    "quiz.stats.message %lld %lld" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Всего вопросов: %1$lld\nиз них правильно: %2$lld"
+          }
+        }
+      }
+    },
+    "quiz.stats.overall" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Общая статистика"
+          }
+        }
+      }
+    },
+    "quiz.stats.perQuiz" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "По тестам"
+          }
+        }
+      }
+    },
+    "quiz.stats.reset" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сбросить статистику"
+          }
+        }
+      }
+    },
+    "quiz.stats.resetConfirmMessage" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Все результаты будут удалены безвозвратно"
+          }
+        }
+      }
+    },
+    "quiz.stats.resetConfirmTitle" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сбросить статистику?"
+          }
+        }
+      }
+    },
+    "quiz.stats.title" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Статистика"
+          }
+        }
+      }
+    },
     "tab.allSystems" : {
       "localizations" : {
         "ru" : {
@@ -1392,5 +1882,5 @@
       }
     }
   },
-  "version" : "1.0"
+  "version" : "1.1"
 }
