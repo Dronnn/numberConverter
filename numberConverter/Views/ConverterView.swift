@@ -133,6 +133,7 @@ private struct SettingsSection: View {
             Toggle(isOn: $twosComplement) {
                 Text("converter.toggle.twosComplement")
             }
+            .tint(Color.accentColor)
         } header: {
             Text("converter.section.settings")
         }
