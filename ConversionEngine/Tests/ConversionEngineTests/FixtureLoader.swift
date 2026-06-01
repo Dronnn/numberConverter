@@ -12,8 +12,8 @@ import Foundation
 // MARK: - FixtureRow
 
 /// one parsed fixture line: `op|args|expected`, with `args` as comma-separated
-/// `k=v` pairs. values may legitimately contain `=` only in the key=value split
-/// (the engine values here never do), so the split is conservative.
+/// `k=v` pairs. a value may itself contain a comma (e.g. `num=1,5`); pairs are
+/// split only at a comma that precedes a `key=` token, so such values survive.
 struct FixtureRow: Sendable, CustomStringConvertible {
     let op: String
     let args: [String: String]
@@ -55,7 +55,9 @@ enum FixtureLoader {
 
             var args: [String: String] = [:]
             if !argString.isEmpty {
-                for pair in argString.components(separatedBy: ",") {
+                // split into key=value pairs only at commas that precede a `key=`
+                // token, so a comma inside a value (e.g. `num=1,5`) is preserved.
+                for pair in splitArgs(argString) {
                     guard let eq = pair.firstIndex(of: "=") else { continue }
                     let key = String(pair[pair.startIndex..<eq])
                     let value = String(pair[pair.index(after: eq)...])
@@ -65,6 +67,15 @@ enum FixtureLoader {
             rows.append(FixtureRow(op: op, args: args, expected: expected))
         }
         return rows
+    }
+
+    /// splits an argument string into `key=value` segments, breaking only at a
+    /// comma that is immediately followed by a `key=` token. this preserves a
+    /// comma that is part of a value (e.g. `num=1,5,base=10` -> `num=1,5` + `base=10`).
+    private static func splitArgs(_ argString: String) -> [String] {
+        let separator = try? Regex(",(?=[A-Za-z_][A-Za-z0-9_]*=)")
+        guard let separator else { return [argString] }
+        return argString.split(separator: separator).map(String.init)
     }
 }
 

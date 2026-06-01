@@ -13,11 +13,24 @@ import Testing
 // MARK: - QuizStatsTests
 
 @MainActor
-struct QuizStatsTests {
+final class QuizStatsTests {
+    /// suite names created by this test instance, torn down in `deinit`.
+    private var suiteNames: [String] = []
+
+    deinit {
+        for name in suiteNames {
+            UserDefaults().removePersistentDomain(forName: name)
+        }
+    }
+
     /// an isolated, empty UserDefaults suite so tests never touch real defaults.
+    /// the suite is always isolated; we never fall back to `.standard`.
     private func makeStats() -> (QuizStats, UserDefaults) {
         let suiteName = "quiz.tests.\(UUID().uuidString)"
-        let defaults = UserDefaults(suiteName: suiteName) ?? .standard
+        guard let defaults = UserDefaults(suiteName: suiteName) else {
+            fatalError("could not create isolated UserDefaults suite \(suiteName)")
+        }
+        suiteNames.append(suiteName)
         defaults.removePersistentDomain(forName: suiteName)
         return (QuizStats(defaults: defaults), defaults)
     }
