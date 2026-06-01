@@ -1,6 +1,126 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "allSystems.button.convert" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Конвертировать"
+          }
+        }
+      }
+    },
+    "allSystems.field.fromBase" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Из системы"
+          }
+        }
+      }
+    },
+    "allSystems.field.number" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Число"
+          }
+        }
+      }
+    },
+    "allSystems.field.result" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Результат"
+          }
+        }
+      }
+    },
+    "allSystems.field.toBase" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В систему"
+          }
+        }
+      }
+    },
+    "allSystems.section.title" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перевод во всех направлениях"
+          }
+        }
+      }
+    },
+    "calculator.field.base" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Система счисления"
+          }
+        }
+      }
+    },
+    "calculator.field.operandA" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Число 1"
+          }
+        }
+      }
+    },
+    "calculator.field.operandB" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Число 2"
+          }
+        }
+      }
+    },
+    "calculator.field.result" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ответ"
+          }
+        }
+      }
+    },
+    "calculator.section.data" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Данные"
+          }
+        }
+      }
+    },
+    "calculator.section.operation" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Операция"
+          }
+        }
+      }
+    },
     "common.ok" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -12,8 +132,37 @@
         }
       }
     },
+    "converter.detail.accessibility" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подробнее"
+          }
+        }
+      }
+    },
+    "converter.field.decimalInput" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Число"
+          }
+        }
+      }
+    },
+    "converter.section.allRange" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Все системы с 2 по 36"
+          }
+        }
+      }
+    },
     "converter.section.mainSystems" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -23,8 +172,37 @@
         }
       }
     },
+    "converter.section.settings" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Настройки"
+          }
+        }
+      }
+    },
+    "converter.toggle.twosComplement" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Двоичная система в дополнительном коде"
+          }
+        }
+      }
+    },
+    "decimalToAll.header" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Название"
+          }
+        }
+      }
+    },
     "error.baseOutOfRange" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -35,7 +213,6 @@
       }
     },
     "error.divisionByZero" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
@@ -46,12 +223,51 @@
       }
     },
     "error.invalidCharacter" : {
-      "extractionState" : "stale",
       "localizations" : {
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Недопустимый символ"
+          }
+        }
+      }
+    },
+    "mainSystems.header.binary" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Двоичная"
+          }
+        }
+      }
+    },
+    "mainSystems.header.decimal" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Десятеричная"
+          }
+        }
+      }
+    },
+    "mainSystems.header.hexadecimal" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шестнадцатеричная"
+          }
+        }
+      }
+    },
+    "mainSystems.header.octal" : {
+      "localizations" : {
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Восьмеричная"
           }
         }
       }
@@ -96,8 +312,7 @@
         }
       }
     },
-    "nav.masterSystem" : {
-      "extractionState" : "stale",
+    "nav.mainSystems" : {
       "localizations" : {
         "ru" : {
           "stringUnit" : {
