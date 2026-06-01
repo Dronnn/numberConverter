@@ -19,8 +19,8 @@ struct QuizSessionView: View {
     @State private var viewModel: QuizSessionViewModel
     @State private var isShowingStats = false
 
-    init(category: QuizCategory) {
-        _viewModel = State(initialValue: QuizSessionViewModel(category: category))
+    init(category: QuizCategory, viewModel: QuizSessionViewModel? = nil) {
+        _viewModel = State(initialValue: viewModel ?? QuizSessionViewModel(category: category))
     }
 
     var body: some View {

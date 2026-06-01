@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1873D68F2FCDE467008BDE18 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 1873D68E2FCDE467008BDE18 /* InlineSnapshotTesting */; };
+		1873D6912FCDE467008BDE18 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 1873D6902FCDE467008BDE18 /* SnapshotTesting */; };
+		AA00000000000000000000A1 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000000A2 /* SnapshotTesting */; };
 		CE0000000000000000000003 /* ConversionEngine in Frameworks */ = {isa = PBXBuildFile; productRef = CE0000000000000000000002 /* ConversionEngine */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA00000000000000000000A1 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +75,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1873D68F2FCDE467008BDE18 /* InlineSnapshotTesting in Frameworks */,
+				1873D6912FCDE467008BDE18 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,6 +148,7 @@
 			);
 			name = numberConverterTests;
 			packageProductDependencies = (
+				AA00000000000000000000A2 /* SnapshotTesting */,
 			);
 			productName = numberConverterTests;
 			productReference = 1873D1492FCD6A94008BDE18 /* numberConverterTests.xctest */;
@@ -165,6 +172,8 @@
 			);
 			name = numberConverterUITests;
 			packageProductDependencies = (
+				1873D68E2FCDE467008BDE18 /* InlineSnapshotTesting */,
+				1873D6902FCDE467008BDE18 /* SnapshotTesting */,
 			);
 			productName = numberConverterUITests;
 			productReference = 1873D1532FCD6A94008BDE18 /* numberConverterUITests.xctest */;
@@ -205,6 +214,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CE0000000000000000000001 /* XCLocalSwiftPackageReference "ConversionEngine" */,
+				1873D68D2FCDE467008BDE18 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1873D13B2FCD6A93008BDE18 /* Products */;
@@ -654,7 +664,33 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		1873D68D2FCDE467008BDE18 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.19.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		1873D68E2FCDE467008BDE18 /* InlineSnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1873D68D2FCDE467008BDE18 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = InlineSnapshotTesting;
+		};
+		1873D6902FCDE467008BDE18 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1873D68D2FCDE467008BDE18 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
+		AA00000000000000000000A2 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1873D68D2FCDE467008BDE18 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
 		CE0000000000000000000002 /* ConversionEngine */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ConversionEngine;

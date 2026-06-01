@@ -14,8 +14,12 @@ import SwiftUI
 /// the overall statistics screen (menu row 9): the aggregate counters, a
 /// per-quiz breakdown, and a destructive reset.
 struct QuizStatsView: View {
-    @State private var viewModel = QuizStatsViewModel()
+    @State private var viewModel: QuizStatsViewModel
     @State private var isConfirmingReset = false
+
+    init(viewModel: QuizStatsViewModel = QuizStatsViewModel()) {
+        _viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
         List {

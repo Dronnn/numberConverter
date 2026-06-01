@@ -24,9 +24,13 @@ enum ConverterDestination: Hashable {
 struct ConverterView: View {
     @Environment(AppSettings.self) private var settings
 
-    @State private var viewModel = ConverterViewModel()
+    @State private var viewModel: ConverterViewModel
     @State private var decimalInput = ""
     @State private var destination: ConverterDestination?
+
+    init(viewModel: ConverterViewModel = ConverterViewModel()) {
+        _viewModel = State(initialValue: viewModel)
+    }
 
     var body: some View {
         @Bindable var settings = settings

@@ -37,24 +37,32 @@ final class QuizSessionViewModel {
 
     private let stats: QuizStats
     private let randomValue: () -> Decimal
+    private let pickDirection: ([QuizDirection]) -> QuizDirection
 
     /// guards the per-question right-counter so re-tapping «Проверить» after a
     /// correct answer does not double-count.
     private var didCountRight = false
 
-    /// - Parameter randomValue: injectable value generator; tests pass a fixed
-    ///   value, production uses `Int.random` / a random dyadic fraction.
+    /// - Parameters:
+    ///   - randomValue: injectable value generator; tests pass a fixed value,
+    ///     production uses `Int.random` / a random dyadic fraction.
+    ///   - pickDirection: injectable direction chooser; tests pin a direction,
+    ///     production picks at random.
     init(
         category: QuizCategory,
         stats: QuizStats = QuizStats(),
-        randomValue: (() -> Decimal)? = nil
+        randomValue: (() -> Decimal)? = nil,
+        pickDirection: (([QuizDirection]) -> QuizDirection)? = nil
     ) {
         self.category = category
         self.stats = stats
         self.randomValue = randomValue ?? { Self.randomValue(fraction: category.isFraction) }
+        self.pickDirection = pickDirection ?? { directions in
+            directions.randomElement() ?? QuizDirection(source: 10, target: 2)
+        }
         question = Self.makeQuestion(
-            category: category,
-            value: self.randomValue()
+            value: self.randomValue(),
+            direction: self.pickDirection(category.directions)
         )
         stats.recordAsked(category)
         AppLogger.quiz.info("started quiz \(category.rawValue, privacy: .public)")
@@ -65,7 +73,10 @@ final class QuizSessionViewModel {
     /// generates the next question, clears the answer and feedback, and records
     /// that a new question was asked.
     func nextQuestion() {
-        question = Self.makeQuestion(category: category, value: randomValue())
+        question = Self.makeQuestion(
+            value: randomValue(),
+            direction: pickDirection(category.directions)
+        )
         answer = ""
         feedback = nil
         didCountRight = false
@@ -121,10 +132,9 @@ final class QuizSessionViewModel {
 
     // MARK: Question construction
 
-    /// builds a question for `value`: renders it in the source base (displayed)
-    /// and the target base (expected answer), picking a random direction.
-    private static func makeQuestion(category: QuizCategory, value: Decimal) -> QuizQuestion {
-        let direction = category.directions.randomElement() ?? QuizDirection(source: 10, target: 2)
+    /// builds a question for `value` in `direction`: renders it in the source
+    /// base (displayed) and the target base (expected answer).
+    private static func makeQuestion(value: Decimal, direction: QuizDirection) -> QuizQuestion {
         let displayed = ConversionEngine.fromDecimal(value, toBase: direction.source) ?? "0"
         let expected = ConversionEngine.fromDecimal(value, toBase: direction.target) ?? "0"
         return QuizQuestion(
