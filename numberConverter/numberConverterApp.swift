@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import Foundation
 import OSLog
 import SwiftUI
 
@@ -24,6 +25,8 @@ struct NumberConverterApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                // runs in russian until english strings are provided; remove to follow the device language
+                .environment(\.locale, Locale(identifier: "ru"))
                 .environment(navigation)
                 .environment(settings)
         }

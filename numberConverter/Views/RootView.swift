@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import Foundation
 import OSLog
 import SwiftUI
 
@@ -48,6 +49,7 @@ struct RootView: View {
 
 #Preview {
     RootView()
+        .environment(\.locale, Locale(identifier: "ru"))
         .environment(AppNavigationState())
         .environment(AppSettings())
 }
