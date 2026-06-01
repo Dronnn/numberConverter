@@ -12,8 +12,11 @@ import SwiftUI
 
 @main
 struct NumberConverterApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     @State private var navigation = AppNavigationState()
     @State private var settings = AppSettings()
+    @State private var quickActionRouter = QuickActionRouter.shared
 
     private let metricKitManager = MetricKitManager()
 
@@ -29,6 +32,7 @@ struct NumberConverterApp: App {
                 .environment(\.locale, Locale(identifier: "ru"))
                 .environment(navigation)
                 .environment(settings)
+                .environment(quickActionRouter)
         }
     }
 }
