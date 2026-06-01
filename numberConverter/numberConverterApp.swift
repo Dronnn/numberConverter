@@ -11,6 +11,9 @@ import SwiftUI
 
 @main
 struct NumberConverterApp: App {
+    @State private var navigation = AppNavigationState()
+    @State private var settings = AppSettings()
+
     private let metricKitManager = MetricKitManager()
 
     init() {
@@ -20,7 +23,9 @@ struct NumberConverterApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
+                .environment(navigation)
+                .environment(settings)
         }
     }
 }
