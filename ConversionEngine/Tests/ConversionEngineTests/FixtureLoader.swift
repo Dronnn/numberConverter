@@ -19,9 +19,24 @@ struct FixtureRow: Sendable, CustomStringConvertible {
     let args: [String: String]
     let expected: String
 
-    func string(_ key: String) -> String { args[key] ?? "" }
+    /// required string value for `key`; fails loud if the key is absent so a
+    /// typo or a corrupted fixture row can never silently weaken a test.
+    func string(_ key: String) -> String {
+        guard let value = args[key] else {
+            fatalError("fixture row \(self) is missing required key '\(key)'")
+        }
+        return value
+    }
 
-    func int(_ key: String) -> Int { Int(args[key] ?? "") ?? 0 }
+    /// required integer value for `key`; fails loud if the key is absent or its
+    /// value is not an `Int`.
+    func int(_ key: String) -> Int {
+        let raw = string(key)
+        guard let value = Int(raw) else {
+            fatalError("fixture row \(self) has non-integer value '\(raw)' for key '\(key)'")
+        }
+        return value
+    }
 
     var description: String {
         "\(op)|\(args)|\(expected)"
@@ -32,8 +47,13 @@ struct FixtureRow: Sendable, CustomStringConvertible {
 
 enum FixtureLoader {
     /// loads and parses a fixture file from the test bundle's `Fixtures` folder.
-    /// skips `#` comment lines and blanks; splits each row on `|`.
-    static func rows(_ name: String) -> [FixtureRow] {
+    ///
+    /// skips `#` comment lines and blanks. every remaining row MUST have exactly
+    /// three `|`-separated fields, well-formed `key=value` arg pairs, and (when
+    /// `ops` is non-empty) an op drawn from that set. anything else is a corrupted
+    /// fixture and aborts the test run with a precise message — corruption can
+    /// never silently weaken a suite.
+    static func rows(_ name: String, ops: Set<String> = []) -> [FixtureRow] {
         guard let url = Bundle.module.url(forResource: name,
                                           withExtension: "txt",
                                           subdirectory: "Fixtures"),
@@ -42,23 +62,35 @@ enum FixtureLoader {
         }
 
         var rows: [FixtureRow] = []
-        for rawLine in contents.split(separator: "\n", omittingEmptySubsequences: false) {
+        for (index, rawLine) in contents.split(separator: "\n", omittingEmptySubsequences: false).enumerated() {
+            let lineNumber = index + 1
             let line = rawLine.trimmingCharacters(in: .whitespaces)
             if line.isEmpty || line.hasPrefix("#") { continue }
 
             let parts = line.components(separatedBy: "|")
-            guard parts.count == 3 else { continue }
+            guard parts.count == 3 else {
+                fatalError("\(name).txt line \(lineNumber): expected 3 '|'-separated fields, got \(parts.count) in '\(line)'")
+            }
 
             let op = parts[0]
             let argString = parts[1]
             let expected = parts[2]
+
+            if op.isEmpty {
+                fatalError("\(name).txt line \(lineNumber): empty op in '\(line)'")
+            }
+            if !ops.isEmpty, !ops.contains(op) {
+                fatalError("\(name).txt line \(lineNumber): unknown op '\(op)' (expected one of \(ops.sorted()))")
+            }
 
             var args: [String: String] = [:]
             if !argString.isEmpty {
                 // split into key=value pairs only at commas that precede a `key=`
                 // token, so a comma inside a value (e.g. `num=1,5`) is preserved.
                 for pair in splitArgs(argString) {
-                    guard let eq = pair.firstIndex(of: "=") else { continue }
+                    guard let eq = pair.firstIndex(of: "="), eq != pair.startIndex else {
+                        fatalError("\(name).txt line \(lineNumber): malformed arg pair '\(pair)' in '\(line)'")
+                    }
                     let key = String(pair[pair.startIndex..<eq])
                     let value = String(pair[pair.index(after: eq)...])
                     args[key] = value

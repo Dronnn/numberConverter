@@ -13,14 +13,20 @@
 /// pure helpers that operate on native `Int`.
 enum TwosComplement {
     /// smallest multiple-of-8 width `W` with `-2^(W-1) <= value <= 2^(W-1)-1`.
+    ///
+    /// `W` is capped at `Int.bitWidth` (64), the widest signed range a native
+    /// `Int` can hold; `Int.min` resolves to that width without overflow.
     static func width(for value: Int) -> Int {
         var w = 8
-        while true {
-            // bound = 2^(w-1)
-            let bound = 1 << (w - 1)
-            if -bound <= value, value <= bound - 1 { return w }
+        while w < Int.bitWidth {
+            // signed range at width w is -2^(w-1) ... 2^(w-1)-1, computed without
+            // negating 2^(w-1) (which would trap for the full-width bound).
+            let upper = (1 << (w - 1)) - 1   // 2^(w-1) - 1
+            let lower = -upper - 1           // -2^(w-1)
+            if lower <= value, value <= upper { return w }
             w += 8
         }
+        return Int.bitWidth
     }
 
     /// encode a decimal integer value to a binary string.
@@ -32,12 +38,17 @@ enum TwosComplement {
     ///   binary of the magnitude.
     static func encode(_ value: Int, enabled: Bool) -> String {
         if value == 0 { return "0" }
-        if value > 0 { return plainBinary(value) }
+        if value > 0 { return plainBinary(UInt(value)) }
         // value < 0
-        if !enabled { return "-" + plainBinary(-value) }
+        if !enabled {
+            // -Int.min would overflow; take the magnitude via the unsigned domain.
+            return "-" + plainBinary(value.magnitude)
+        }
         let w = width(for: value)
-        // pattern = value + 2^W (a non-negative W-bit number).
-        let pattern = value + (1 << w)
+        // low W bits of the value's two's-complement representation; using the
+        // unsigned bit pattern keeps the full-width case (W = 64) trap-free.
+        let mask: UInt = w == UInt.bitWidth ? .max : (1 << UInt(w)) - 1
+        let pattern = UInt(bitPattern: value) & mask
         return padded(plainBinary(pattern), toWidth: w)
     }
 
@@ -50,7 +61,9 @@ enum TwosComplement {
     /// throws ``ConversionError/invalidCharacter`` when `bits` is not binary.
     static func decode(_ bits: String, enabled: Bool) throws -> Int {
         if bits.isEmpty { return 0 }
-        var n = 0
+        // accumulate the unsigned value in `UInt` so a full 64-bit pattern never
+        // overflows during shifting.
+        var n: UInt = 0
         for ch in bits {
             switch ch {
             case "0": n <<= 1
@@ -58,18 +71,23 @@ enum TwosComplement {
             default: throw ConversionError.invalidCharacter
             }
         }
-        if !enabled { return n }
+        if !enabled { return Int(n) }
         let width = bits.count
         if bits.first == "1" {
-            return n - (1 << width)
+            if width >= UInt.bitWidth {
+                // full-width negative: value = n - 2^width is exactly the signed
+                // reinterpretation of the bit pattern.
+                return Int(bitPattern: n)
+            }
+            return Int(n) - (1 << width)
         }
-        return n
+        return Int(n)
     }
 
     // MARK: Private
 
     /// plain (unsigned) binary of a non-negative value; zero renders as `"0"`.
-    private static func plainBinary(_ value: Int) -> String {
+    private static func plainBinary(_ value: UInt) -> String {
         if value == 0 { return "0" }
         var digits: [Character] = []
         var n = value
