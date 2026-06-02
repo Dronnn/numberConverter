@@ -49,4 +49,38 @@ struct MainSystemsViewModelTests {
         #expect(sut.binary == "-1")
         #expect(sut.decimal == "-1")
     }
+
+    @Test
+    func seedsFromBinarySource() {
+        // 1010 binary == 10 decimal == 12 octal == A hex.
+        let sut = MainSystemsViewModel(base: 2, number: "1010", twosComplement: false)
+
+        #expect(sut.binary == "1010")
+        #expect(sut.octal == "12")
+        #expect(sut.decimal == "10")
+        #expect(sut.hexadecimal == "A")
+    }
+
+    @Test
+    func seedsFromOctalSource() {
+        // 17 octal == 15 decimal == 1111 binary == F hex.
+        let sut = MainSystemsViewModel(base: 8, number: "17", twosComplement: false)
+
+        #expect(sut.binary == "1111")
+        #expect(sut.octal == "17")
+        #expect(sut.decimal == "15")
+        #expect(sut.hexadecimal == "F")
+    }
+
+    @Test
+    func twosComplementNegativePinsNonBinaryFields() {
+        // only the binary field uses two's complement; octal/decimal/hex stay
+        // signed. -5 == 11111011 (8-bit TC) and -5/-5/-5 elsewhere.
+        let sut = MainSystemsViewModel(base: 10, number: "-5", twosComplement: true)
+
+        #expect(sut.binary == "11111011")
+        #expect(sut.octal == "-5")
+        #expect(sut.decimal == "-5")
+        #expect(sut.hexadecimal == "-5")
+    }
 }
