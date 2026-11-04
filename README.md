@@ -50,7 +50,7 @@ The Duo outer display can be tested on the available simulator. Open and Book po
 
 ## Release preparation
 
-The engine checkpoint has 65 passing tests and 100% line/function coverage. App-wide 100% coverage and completion of the entire UI/device matrix have not been achieved; full UI validation is ongoing.
+The engine has 68 passing tests and 100% line/function coverage, including large-number round trips through every supported base. App-wide 100% coverage and completion of the entire UI/device matrix have not been achieved; full UI validation is ongoing.
 
 Release also requires a public privacy policy linked inside the app and in App Store Connect, the UserDefaults required-reason privacy manifest, production tip products and commerce setup, localized store metadata/screenshots, privacy/age-rating declarations, and a signed Release archive validated through TestFlight. A local build or StoreKit test does not establish App Review approval.
 

@@ -23,12 +23,16 @@ extension ConversionEngine {
         var fractionPart = parts.count > 1 ? parts[1] : Substring()
         while fractionPart.last == "0" { fractionPart.removeLast() }
 
-        let base = Decimal(fromBase)
-        var coefficient = Decimal.zero
-        for character in integerPart + fractionPart {
-            coefficient = try decimalOperation(.multiply, coefficient, base)
-            coefficient = try decimalOperation(.add, coefficient, Decimal(digitValue(character)))
+        // a prefix can exceed native precision even when the complete integer
+        // fits exactly: a binary representation of 10^100 passes through 5^100
+        // before its trailing zero bits. validate the complete coefficient only.
+        let coefficientText = renderPositional(String(integerPart + fractionPart), fromBase: fromBase, toBase: 10)
+        let locale = Locale(identifier: "en_US_POSIX")
+        guard var coefficient = Decimal(string: coefficientText, locale: locale), !coefficient.isNaN,
+              NSDecimalString(&coefficient, locale) == coefficientText else {
+            throw .numberOutOfRange
         }
+        let base = Decimal(fromBase)
         var divisor = Decimal(1)
         for _ in fractionPart {
             divisor = try decimalOperation(.multiply, divisor, base)
