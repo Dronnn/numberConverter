@@ -102,6 +102,7 @@ struct SupportView: View {
                     .frame(maxWidth: .infinity, minHeight: 44)
                 }
                 .accessibilityIdentifier("support.product.\(product.id)")
+                .buttonBorderShape(dynamicTypeSize.isAccessibilitySize ? .roundedRectangle(radius: 20) : .capsule)
                 .disabled(store.isPurchasing)
             }
         }
