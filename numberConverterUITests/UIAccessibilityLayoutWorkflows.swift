@@ -130,7 +130,13 @@ extension NumberConverterUITests {
         try tap("statistics.reset")
         XCTAssertTrue(app.alerts.firstMatch.waitForExistence(timeout: 5))
         capture(language, screen: "AX-statistics-reset-alert")
-        app.alerts.firstMatch.buttons[language.resetStatistics].tap()
+        app.alerts.firstMatch.buttons.matching(identifier: language.resetStatistics).firstMatch.tap()
+        let dismissed = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == false"), object: app.alerts.firstMatch
+        )
+        XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 5), .completed)
+        try reveal(element("statistics.counts.all"), upward: false, identifier: "statistics.counts.all")
+        try expectCounts("statistics.counts.all", asked: 0, correct: 0)
     }
 
     private func layoutQuizAlerts(_ language: UITestLanguage) throws {

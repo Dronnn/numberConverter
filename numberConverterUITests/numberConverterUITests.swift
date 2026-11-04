@@ -12,9 +12,17 @@ import XCTest
 final class NumberConverterUITests: XCTestCase {
     let app = XCUIApplication()
     var completedEndToEndWorkflow = false
+    var capturesIncludeNativeAudit = true
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+    }
+
+    override func setUp() async throws {
+        try await super.setUp()
+        await MainActor.run {
+            capturesIncludeNativeAudit = true
+        }
     }
 
     override func tearDown() async throws {

@@ -27,7 +27,11 @@ extension NumberConverterUITests {
     private static let tabIdentifiers = ["converter", "allSystems", "calculator", "quiz", "support"]
 
     func launch(_ language: UITestLanguage, largeText: Bool = false, tipStoreState: String = "available") {
-        let auditMode = collectsAllAuditIssues ? "diagnostic full traversal" : "strict acceptance"
+        let auditMode = capturesIncludeNativeAudit
+            ? collectsAllAuditIssues
+                ? "diagnostic full traversal"
+                : "strict native-audit acceptance"
+            : "functional screenshots; native audits run separately"
         XCTContext.runActivity(named: "UI audit mode: \(auditMode)") { _ in }
         XCUIDevice.shared.orientation = .portrait
         app.launchArguments = [
@@ -35,9 +39,10 @@ extension NumberConverterUITests {
             "-AppleLocale", language.region,
             "-ui-tip-store", tipStoreState
         ]
-        if largeText {
+        if largeText || !capturesIncludeNativeAudit {
             app.launchArguments += [
-                "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"
+                "-UIPreferredContentSizeCategoryName",
+                largeText ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"
             ]
         }
         app.launch()
@@ -51,7 +56,7 @@ extension NumberConverterUITests {
     @discardableResult
     func require(_ identifier: String) throws -> XCUIElement {
         let result = element(identifier)
-        guard result.waitForExistence(timeout: 5) else {
+        guard result.exists || result.waitForExistence(timeout: 5) else {
             XCTFail("Missing UI element: \(identifier)")
             throw UIAuditError.missingElement(identifier)
         }
@@ -60,7 +65,9 @@ extension NumberConverterUITests {
 
     func tap(_ identifier: String) throws {
         let target = element(identifier)
-        _ = target.waitForExistence(timeout: 2)
+        if !target.exists {
+            _ = target.waitForExistence(timeout: 2)
+        }
         try reveal(target, identifier: identifier)
         if target.elementType == .switch {
             target.coordinate(withNormalizedOffset: CGVector(dx: 0.93, dy: 0.5)).tap()
@@ -71,6 +78,7 @@ extension NumberConverterUITests {
 
     func selectTab(_ index: Int) throws {
         dismissKeyboard()
+        _ = try require("app.tab.\(Self.tabIdentifiers[index])")
         let query = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "app.tab."))
         let actualIDs = Set(query.allElementsBoundByIndex.map(\.identifier))
         let expectedIDs = Set(Self.tabIdentifiers.map { "app.tab.\($0)" })
@@ -102,7 +110,7 @@ extension NumberConverterUITests {
 
     func replace(_ identifier: String, with text: String) throws {
         dismissKeyboard()
-        let field = try require(identifier)
+        let field = element(identifier)
         try reveal(field, identifier: identifier)
         field.tap()
         XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 3), "No keyboard after focusing \(identifier)")
@@ -113,7 +121,8 @@ extension NumberConverterUITests {
     }
 
     func dismissKeyboard() {
-        guard app.keyboards.firstMatch.exists else { return }
+        let keyboard = app.keyboards.firstMatch
+        guard keyboard.exists else { return }
         let done = app.toolbars.buttons["keyboard.done"]
         if done.waitForExistence(timeout: 1), done.frame.intersects(app.frame), !done.frame.isEmpty {
             // native hit testing sometimes rejects this visible accessory
@@ -123,7 +132,7 @@ extension NumberConverterUITests {
             app.swipeDown()
         }
         let dismissed = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "exists == false"), object: app.keyboards.firstMatch
+            predicate: NSPredicate(format: "keyboards.count == 0"), object: app
         )
         XCTAssertEqual(XCTWaiter.wait(for: [dismissed], timeout: 3), .completed, "Keyboard did not dismiss")
     }
@@ -253,7 +262,9 @@ extension NumberConverterUITests {
         attachment.name = "\(language.rawValue)-\(screen)"
         attachment.lifetime = .keepAlways
         add(attachment)
-        auditCapturedScreen(language, screen: screen)
+        if capturesIncludeNativeAudit {
+            auditCapturedScreen(language, screen: screen)
+        }
     }
 
     private func auditCapturedScreen(_ language: UITestLanguage, screen: String) {
@@ -325,14 +336,18 @@ extension NumberConverterUITests {
                 + "and a displayed tip price returned."
             : "Converter, arbitrary-base, calculator, quiz, statistics, Support retry, "
                 + "and nine-page Help workflows returned."
-        let mode = collectsAllAuditIssues ? "diagnostic-full-traversal" : "strict-acceptance"
+        let mode = capturesIncludeNativeAudit
+            ? collectsAllAuditIssues
+                ? "diagnostic-full-traversal"
+                : "strict-native-audit-acceptance"
+            : "functional-controls-and-passive-layout; native audits run separately"
         let attachment = XCTAttachment(string: """
         Completed locale: \(language.rawValue)
         Completed variant: \(variant)
         Mode: \(mode)
         \(scope)
         """)
-        let prefix = collectsAllAuditIssues ? "diagnostic-" : ""
+        let prefix = collectsAllAuditIssues ? "diagnostic-" : capturesIncludeNativeAudit ? "" : "functional-"
         attachment.name = "\(prefix)workflow-completed-\(language.rawValue)-\(variant)"
         attachment.lifetime = .keepAlways
         add(attachment)
@@ -352,10 +367,10 @@ extension NumberConverterUITests {
         for part in 0 ..< 160 {
             assertNoLocalizationKeys()
             capture(language, screen: "\(screen)-part-\(part)")
-            let position = scrollAnchor(in: container)
+            let position = scrollAnchor(in: container, target: last)
             let moved = didScroll(from: previousPosition, to: position, height: container.frame.height)
             stalledGestures = moved ? 0 : stalledGestures + 1
-            if !moved, last.exists, last.isHittable {
+            if !moved, isEndVisible(last, in: container) {
                 return
             }
             guard stalledGestures < 3 else {
@@ -363,22 +378,33 @@ extension NumberConverterUITests {
                 throw UIAuditError.missingElement(screen)
             }
             previousPosition = position
-            // the leading gutter avoids text-selection gestures inside multiline inputs.
-            container.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.8)).press(
-                forDuration: 0.05,
-                thenDragTo: container.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.35)),
-                withVelocity: .slow,
-                thenHoldForDuration: 0.1
-            )
+            container.swipeUp(velocity: .slow)
         }
         XCTFail("Scrollable screen did not reach its final element: \(screen)")
         throw UIAuditError.missingElement(screen)
     }
 
-    private func scrollAnchor(in container: XCUIElement) -> ScrollAnchor? {
+    private func scrollAnchor(in container: XCUIElement, target: XCUIElement) -> ScrollAnchor? {
+        if target.exists, !target.frame.isEmpty {
+            return ScrollAnchor(identity: "last element", minY: target.frame.minY)
+        }
         let text = container.staticTexts.firstMatch
         guard text.exists else { return nil }
         return ScrollAnchor(identity: text.label, minY: text.frame.minY)
+    }
+
+    private func isEndVisible(_ target: XCUIElement, in container: XCUIElement) -> Bool {
+        guard target.exists, !target.frame.isEmpty else { return false }
+        var bottom = container.frame.maxY
+        let tabBar = app.tabBars.firstMatch
+        if tabBar.exists, tabBar.isHittable {
+            bottom = min(bottom, tabBar.frame.minY)
+        }
+        let navigationBottom = app.navigationBars.allElementsBoundByIndex
+            .filter { $0.isHittable && $0.frame.intersects(container.frame) }
+            .map(\.frame.maxY).max() ?? container.frame.minY
+        let top = max(container.frame.minY, navigationBottom)
+        return target.frame.maxY <= bottom && target.frame.maxY >= top
     }
 
     private func didScroll(from previous: ScrollAnchor?, to current: ScrollAnchor?, height: CGFloat) -> Bool {

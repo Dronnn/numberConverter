@@ -235,7 +235,7 @@ extension NumberConverterUITests {
 
     func checkStatisticsPersistence(_ language: UITestLanguage) throws {
         app.terminate()
-        app.launch()
+        launch(language)
         try selectTab(3)
         try openOverallStatistics()
         try expectCounts("statistics.counts.all", asked: 2, correct: 1)
@@ -262,7 +262,7 @@ extension NumberConverterUITests {
             }
             try tap("statistics.reset")
         }
-        alert.buttons[language.resetStatistics].tap()
+        alert.buttons.matching(identifier: language.resetStatistics).firstMatch.tap()
         try reveal(element("statistics.counts.all"), upward: false)
         try expectCounts("statistics.counts.all", asked: 0, correct: 0)
     }
