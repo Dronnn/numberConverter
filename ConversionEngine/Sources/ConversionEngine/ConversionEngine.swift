@@ -136,7 +136,7 @@ public enum ConversionEngine {
             if op == .divide {
                 return .success(try divide(va, vb, toBase: resultBase))
             }
-            let result = try decimalOperation(op, va, vb)
+            let result = try arithmetic(op, va, vb)
             return .success(render(result, toBase: resultBase))
         } catch {
             return .failure(error)

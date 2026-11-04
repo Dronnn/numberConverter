@@ -75,6 +75,20 @@ extension ConversionEngine {
         return normalizedDigits(result)
     }
 
+    static func addIntegers(_ lhs: [Int], _ rhs: [Int]) -> [Int] {
+        var result: [Int] = []
+        var carry = 0
+        for offset in 0..<max(lhs.count, rhs.count) {
+            let left = offset < lhs.count ? lhs[lhs.count - offset - 1] : 0
+            let right = offset < rhs.count ? rhs[rhs.count - offset - 1] : 0
+            let sum = left + right + carry
+            result.append(sum % 10)
+            carry = sum / 10
+        }
+        if carry > 0 { result.append(carry) }
+        return normalizedDigits(result.reversed())
+    }
+
     static func subtractIntegers(_ lhs: [Int], _ rhs: [Int]) -> [Int] {
         var result = lhs
         var borrow = 0
