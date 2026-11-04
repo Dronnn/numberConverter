@@ -1,0 +1,1064 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-05",
+  "scope": "Expected management applies to the first two consumable tips; the three larger tips remain automatic everywhere. Bands are developer affordability hypotheses, not official World Bank income classes.",
+  "countryAliases": {
+    "Côte d’Ivoire": "Cote d’Ivoire",
+    "Czech Republic": "Czechia",
+    "Naoero": "Nauru",
+    "Korea, Republic of": "Republic of Korea",
+    "São Tomé and Príncipe": "Sao Tome and Principe"
+  },
+  "storefronts": [
+    {
+      "storefront": "AFG",
+      "country": "Afghanistan",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "AGO",
+      "country": "Angola",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "AIA",
+      "country": "Anguilla",
+      "band": "automatic_unknown",
+      "management": "automatic"
+    },
+    {
+      "storefront": "ALB",
+      "country": "Albania",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "ARE",
+      "country": "United Arab Emirates",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "ARG",
+      "country": "Argentina",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "ARM",
+      "country": "Armenia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "ATG",
+      "country": "Antigua and Barbuda",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "AUS",
+      "country": "Australia",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "AUT",
+      "country": "Austria",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "AZE",
+      "country": "Azerbaijan",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "BEL",
+      "country": "Belgium",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "BEN",
+      "country": "Benin",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "BFA",
+      "country": "Burkina Faso",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "BGR",
+      "country": "Bulgaria",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "BHR",
+      "country": "Bahrain",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "BHS",
+      "country": "Bahamas",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "BIH",
+      "country": "Bosnia and Herzegovina",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "BLR",
+      "country": "Belarus",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "BLZ",
+      "country": "Belize",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "BMU",
+      "country": "Bermuda",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "BOL",
+      "country": "Bolivia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "BRA",
+      "country": "Brazil",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "BRB",
+      "country": "Barbados",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "BRN",
+      "country": "Brunei",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "BTN",
+      "country": "Bhutan",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "BWA",
+      "country": "Botswana",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "CAN",
+      "country": "Canada",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "CHE",
+      "country": "Switzerland",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "CHL",
+      "country": "Chile",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "CHN",
+      "country": "China mainland",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "CIV",
+      "country": "Cote d’Ivoire",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "CMR",
+      "country": "Cameroon",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "COD",
+      "country": "Congo, Democratic Republic of the",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "COG",
+      "country": "Congo, Republic of the",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "COL",
+      "country": "Colombia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "CPV",
+      "country": "Cape Verde",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "CRI",
+      "country": "Costa Rica",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "CYM",
+      "country": "Cayman Islands",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "CYP",
+      "country": "Cyprus",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "CZE",
+      "country": "Czechia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "DEU",
+      "country": "Germany",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "DMA",
+      "country": "Dominica",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "DNK",
+      "country": "Denmark",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "DOM",
+      "country": "Dominican Republic",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "DZA",
+      "country": "Algeria",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "ECU",
+      "country": "Ecuador",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "EGY",
+      "country": "Egypt",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "ESP",
+      "country": "Spain",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "EST",
+      "country": "Estonia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "FIN",
+      "country": "Finland",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "FJI",
+      "country": "Fiji",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "FRA",
+      "country": "France",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "FSM",
+      "country": "Micronesia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "GAB",
+      "country": "Gabon",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "GBR",
+      "country": "United Kingdom",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "GEO",
+      "country": "Georgia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "GHA",
+      "country": "Ghana",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "GMB",
+      "country": "Gambia",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "GNB",
+      "country": "Guinea-Bissau",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "GRC",
+      "country": "Greece",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "GRD",
+      "country": "Grenada",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "GTM",
+      "country": "Guatemala",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "GUY",
+      "country": "Guyana",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "HKG",
+      "country": "Hong Kong",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "HND",
+      "country": "Honduras",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "HRV",
+      "country": "Croatia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "HUN",
+      "country": "Hungary",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "IDN",
+      "country": "Indonesia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "IND",
+      "country": "India",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "IRL",
+      "country": "Ireland",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "IRQ",
+      "country": "Iraq",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "ISL",
+      "country": "Iceland",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "ISR",
+      "country": "Israel",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "ITA",
+      "country": "Italy",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "JAM",
+      "country": "Jamaica",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "JOR",
+      "country": "Jordan",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "JPN",
+      "country": "Japan",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "KAZ",
+      "country": "Kazakhstan",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "KEN",
+      "country": "Kenya",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "KGZ",
+      "country": "Kyrgyzstan",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "KHM",
+      "country": "Cambodia",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "KNA",
+      "country": "St. Kitts and Nevis",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "KOR",
+      "country": "Republic of Korea",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "KWT",
+      "country": "Kuwait",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "LAO",
+      "country": "Laos",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "LBN",
+      "country": "Lebanon",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "LBR",
+      "country": "Liberia",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "LBY",
+      "country": "Libya",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "LCA",
+      "country": "St. Lucia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "LKA",
+      "country": "Sri Lanka",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "LTU",
+      "country": "Lithuania",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "LUX",
+      "country": "Luxembourg",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "LVA",
+      "country": "Latvia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "MAC",
+      "country": "Macau",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "MAR",
+      "country": "Morocco",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "MDA",
+      "country": "Moldova",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "MDG",
+      "country": "Madagascar",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "MDV",
+      "country": "Maldives",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "MEX",
+      "country": "Mexico",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "MKD",
+      "country": "North Macedonia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "MLI",
+      "country": "Mali",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "MLT",
+      "country": "Malta",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "MMR",
+      "country": "Myanmar",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "MNE",
+      "country": "Montenegro",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "MNG",
+      "country": "Mongolia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "MOZ",
+      "country": "Mozambique",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "MRT",
+      "country": "Mauritania",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "MSR",
+      "country": "Montserrat",
+      "band": "automatic_unknown",
+      "management": "automatic"
+    },
+    {
+      "storefront": "MUS",
+      "country": "Mauritius",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "MWI",
+      "country": "Malawi",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "MYS",
+      "country": "Malaysia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "NAM",
+      "country": "Namibia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "NER",
+      "country": "Niger",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "NGA",
+      "country": "Nigeria",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "NIC",
+      "country": "Nicaragua",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "NLD",
+      "country": "Netherlands",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "NOR",
+      "country": "Norway",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "NPL",
+      "country": "Nepal",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "NRU",
+      "country": "Nauru",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "NZL",
+      "country": "New Zealand",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "OMN",
+      "country": "Oman",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "PAK",
+      "country": "Pakistan",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "PAN",
+      "country": "Panama",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "PER",
+      "country": "Peru",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "PHL",
+      "country": "Philippines",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "PLW",
+      "country": "Palau",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "PNG",
+      "country": "Papua New Guinea",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "POL",
+      "country": "Poland",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "PRT",
+      "country": "Portugal",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "PRY",
+      "country": "Paraguay",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "QAT",
+      "country": "Qatar",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "ROU",
+      "country": "Romania",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "RUS",
+      "country": "Russia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "RWA",
+      "country": "Rwanda",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "SAU",
+      "country": "Saudi Arabia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "SEN",
+      "country": "Senegal",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "SGP",
+      "country": "Singapore",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "SLB",
+      "country": "Solomon Islands",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "SLE",
+      "country": "Sierra Leone",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "SLV",
+      "country": "El Salvador",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "SRB",
+      "country": "Serbia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "STP",
+      "country": "Sao Tome and Principe",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "SUR",
+      "country": "Suriname",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "SVK",
+      "country": "Slovakia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "SVN",
+      "country": "Slovenia",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "SWE",
+      "country": "Sweden",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "SWZ",
+      "country": "Eswatini",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "SYC",
+      "country": "Seychelles",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "TCA",
+      "country": "Turks and Caicos Islands",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "TCD",
+      "country": "Chad",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "THA",
+      "country": "Thailand",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "TJK",
+      "country": "Tajikistan",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "TKM",
+      "country": "Turkmenistan",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "TON",
+      "country": "Tonga",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "TTO",
+      "country": "Trinidad and Tobago",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "TUN",
+      "country": "Tunisia",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "TUR",
+      "country": "Türkiye",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "TWN",
+      "country": "Taiwan",
+      "band": "automatic_unknown",
+      "management": "automatic"
+    },
+    {
+      "storefront": "TZA",
+      "country": "Tanzania",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "UGA",
+      "country": "Uganda",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "UKR",
+      "country": "Ukraine",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "URY",
+      "country": "Uruguay",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "USA",
+      "country": "United States",
+      "band": "standard",
+      "management": "automatic"
+    },
+    {
+      "storefront": "UZB",
+      "country": "Uzbekistan",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "VCT",
+      "country": "St. Vincent and the Grenadines",
+      "band": "reduced",
+      "management": "manual"
+    },
+    {
+      "storefront": "VEN",
+      "country": "Venezuela",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "VGB",
+      "country": "British Virgin Islands",
+      "band": "automatic_unknown",
+      "management": "automatic"
+    },
+    {
+      "storefront": "VNM",
+      "country": "Vietnam",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "VUT",
+      "country": "Vanuatu",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "XKS",
+      "country": "Kosovo",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "YEM",
+      "country": "Yemen",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "ZAF",
+      "country": "South Africa",
+      "band": "low",
+      "management": "manual"
+    },
+    {
+      "storefront": "ZMB",
+      "country": "Zambia",
+      "band": "lowest",
+      "management": "manual"
+    },
+    {
+      "storefront": "ZWE",
+      "country": "Zimbabwe",
+      "band": "lowest",
+      "management": "manual"
+    }
+  ]
+}

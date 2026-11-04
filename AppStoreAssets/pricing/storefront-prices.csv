@@ -1,0 +1,176 @@
+country,storefront,band,currency,small,medium,large,extraLarge,patron,management
+Afghanistan (USD),AFG,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Albania (USD),ALB,reduced,USD,$0.99,$4.99,$22.99,$59.99,$119.99,manual
+Algeria (USD),DZA,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Angola (USD),AGO,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Anguilla (USD),AIA,automatic_unknown,USD,$2.99,$8.99,$19.99,$49.99,$99.99,automatic
+Antigua and Barbuda (USD),ATG,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Argentina (USD),ARG,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Armenia (USD),ARM,low,USD,$0.49,$1.99,$22.99,$59.99,$119.99,manual
+Australia (AUD),AUS,standard,AUD,$4.99,$14.99,$29.99,$79.99,$149.99,automatic
+Austria (EUR),AUT,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+Azerbaijan (USD),AZE,low,USD,$0.49,$1.99,$22.99,$59.99,$119.99,manual
+Bahamas (USD),BHS,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Bahrain (USD),BHR,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Barbados (USD),BRB,reduced,USD,$0.99,$4.99,$22.99,$59.99,$119.99,manual
+Belarus (USD),BLR,low,USD,$0.49,$1.99,$22.99,$59.99,$119.99,manual
+Belgium (EUR),BEL,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+Belize (USD),BLZ,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Benin (USD),BEN,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Bermuda (USD),BMU,standard,USD,$2.99,$8.99,$19.99,$49.99,$99.99,automatic
+Bhutan (USD),BTN,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Bolivia (USD),BOL,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Bosnia and Herzegovina (EUR),BIH,low,EUR,€0.49,€1.99,€22.99,€59.99,€99.99,manual
+Botswana (USD),BWA,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Brazil (BRL),BRA,reduced,BRL,R$6.90,R$24.90,R$129.90,R$299.90,R$599.90,manual
+British Virgin Islands (USD),VGB,automatic_unknown,USD,$2.99,$8.99,$19.99,$49.99,$99.99,automatic
+Brunei (USD),BRN,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Bulgaria (EUR),BGR,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Burkina Faso (USD),BFA,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Cambodia (USD),KHM,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Cameroon (USD),CMR,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Canada (CAD),CAN,standard,CAD,$3.99,$11.99,$24.99,$69.99,$129.99,automatic
+Cape Verde (USD),CPV,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Cayman Islands (USD),CYM,standard,USD,$2.99,$8.99,$19.99,$49.99,$99.99,automatic
+Chad (USD),TCD,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Chile (CLP),CHL,reduced,CLP,$990.00,"$4,990.00","$22,990.00","$59,990.00","$99,990.00",manual
+China mainland (CNY),CHN,reduced,CNY,¥8.00,¥28.00,¥148.00,¥328.00,¥698.00,manual
+Colombia (COP),COL,low,COP,"$1,900.00","$9,900.00","$99,900.00","$229,900.00","$499,900.00",manual
+"Congo, Democratic Republic of the (USD)",COD,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+"Congo, Republic of the (USD)",COG,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Costa Rica (USD),CRI,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Côte d’Ivoire (USD),CIV,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Croatia (EUR),HRV,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Cyprus (EUR),CYP,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Czech Republic (CZK),CZE,reduced,CZK,Kč 29.00,Kč 99.00,Kč 499.00,"Kč 1,290.00","Kč 2,790.00",manual
+Denmark (DKK),DNK,standard,DKK,kr 29.00,kr 79.00,kr 179.00,kr 399.00,kr 899.00,automatic
+Dominica (USD),DMA,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Dominican Republic (USD),DOM,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Ecuador (USD),ECU,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Egypt (EGP),EGY,low,EGP,E£29.99,E£99.99,E£999.99,"E£2,499.99","E£4,999.99",manual
+El Salvador (USD),SLV,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Estonia (EUR),EST,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Eswatini (USD),SWZ,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Fiji (USD),FJI,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Finland (EUR),FIN,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+France (EUR),FRA,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+Gabon (USD),GAB,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Gambia (USD),GMB,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Georgia (USD),GEO,low,USD,$0.49,$1.99,$22.99,$59.99,$119.99,manual
+Germany (EUR),DEU,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+Ghana (USD),GHA,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Greece (EUR),GRC,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Grenada (USD),GRD,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Guatemala (USD),GTM,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Guinea-Bissau (USD),GNB,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Guyana (USD),GUY,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Honduras (USD),HND,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Hong Kong (HKD),HKG,standard,HKD,$22.00,$68.00,$148.00,$388.00,$788.00,automatic
+Hungary (HUF),HUN,reduced,HUF,Ft 499.00,"Ft 1,790.00","Ft 8,990.00","Ft 22,990.00","Ft 44,990.00",manual
+Iceland (USD),ISL,standard,USD,$3.99,$9.99,$22.99,$59.99,$119.99,automatic
+India (INR),IND,lowest,INR,₹29.00,₹99.00,"₹1,999.00","₹4,999.00","₹9,900.00",manual
+Indonesia (IDR),IDN,low,IDR,"Rp 9,000.00","Rp 39,000.00","Rp 399,000.00","Rp 999,000.00","Rp 1,999,000.00",manual
+Iraq (USD),IRQ,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Ireland (EUR),IRL,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+Israel (ILS),ISR,standard,ILS,₪9.90,₪29.90,₪59.90,₪149.90,₪299.90,automatic
+Italy (EUR),ITA,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+Jamaica (USD),JAM,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Japan (JPY),JPN,reduced,JPY,¥150.00,¥600.00,"¥3,000.00","¥8,000.00","¥15,000.00",manual
+Jordan (USD),JOR,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Kazakhstan (KZT),KAZ,reduced,KZT,₸499.00,"₸2,490.00","₸11,990.00","₸29,990.00","₸59,990.00",manual
+Kenya (USD),KEN,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+"Korea, Republic of (KRW)",KOR,reduced,KRW,"₩1,100.00","₩6,600.00","₩33,000.00","₩77,000.00","₩149,000.00",manual
+Kosovo (EUR),XKS,low,EUR,€0.49,€1.99,€22.99,€59.99,€99.99,manual
+Kuwait (USD),KWT,standard,USD,$2.99,$8.99,$19.99,$49.99,$99.99,automatic
+Kyrgyzstan (USD),KGZ,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Laos (USD),LAO,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Latvia (EUR),LVA,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Lebanon (USD),LBN,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Liberia (USD),LBR,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Libya (USD),LBY,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Lithuania (EUR),LTU,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Luxembourg (EUR),LUX,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+Macau (USD),MAC,standard,USD,$2.99,$8.99,$19.99,$49.99,$99.99,automatic
+Madagascar (USD),MDG,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Malawi (USD),MWI,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Malaysia (MYR),MYS,reduced,MYR,RM 4.90,RM 19.90,RM 99.90,RM 229.90,RM 499.90,manual
+Maldives (USD),MDV,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Mali (USD),MLI,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Malta (EUR),MLT,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+Mauritania (USD),MRT,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Mauritius (USD),MUS,reduced,USD,$0.99,$4.99,$22.99,$59.99,$119.99,manual
+Mexico (MXN),MEX,reduced,MXN,$19.00,$89.00,$399.00,$999.00,"$1,999.00",manual
+Micronesia (USD),FSM,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Moldova (USD),MDA,low,USD,$0.49,$1.99,$22.99,$59.99,$119.99,manual
+Mongolia (USD),MNG,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Montenegro (EUR),MNE,reduced,EUR,€0.99,€3.99,€19.99,€49.99,€99.99,manual
+Montserrat (USD),MSR,automatic_unknown,USD,$2.99,$8.99,$19.99,$49.99,$99.99,automatic
+Morocco (USD),MAR,low,USD,$0.49,$1.99,$22.99,$59.99,$119.99,manual
+Mozambique (USD),MOZ,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Myanmar (USD),MMR,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Namibia (USD),NAM,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Naoero (USD),NRU,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Nepal (USD),NPL,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Netherlands (EUR),NLD,standard,EUR,€2.99,€9.99,€22.99,€59.99,€99.99,automatic
+New Zealand (NZD),NZL,standard,NZD,$4.99,$14.99,$39.99,$99.99,$199.99,automatic
+Nicaragua (USD),NIC,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Niger (USD),NER,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Nigeria (NGN),NGA,lowest,NGN,₦500.00,"₦1,500.00","₦29,900.00","₦79,900.00","₦149,900.00",manual
+North Macedonia (USD),MKD,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Norway (NOK),NOR,standard,NOK,kr 39.00,kr 99.00,kr 249.00,kr 599.00,"kr 1,290.00",automatic
+Oman (USD),OMN,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Pakistan (PKR),PAK,lowest,PKR,Rs 100.00,Rs 300.00,"Rs 4,900.00","Rs 12,900.00","Rs 24,900.00",manual
+Palau (USD),PLW,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Panama (USD),PAN,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Papua New Guinea (USD),PNG,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Paraguay (USD),PRY,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Peru (PEN),PER,low,PEN,PEN 1.90,PEN 9.90,PEN 89.90,PEN 229.90,PEN 449.90,manual
+Philippines (PHP),PHL,low,PHP,₱29.00,₱129.00,"₱1,290.00","₱2,990.00","₱5,990.00",manual
+Poland (PLN),POL,reduced,PLN,zł 4.99,zł 19.99,zł 99.99,zł 229.99,zł 499.99,manual
+Portugal (EUR),PRT,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Qatar (QAR),QAT,standard,QAR,QAR 9.99,QAR 29.99,QAR 69.99,QAR 199.99,QAR 399.99,automatic
+Romania (RON),ROU,reduced,RON,lei 4.99,lei 19.99,lei 99.99,lei 299.99,lei 499.99,manual
+Russia (RUB),RUS,reduced,RUB,₽99.00,₽349.00,"₽1,790.00","₽4,490.00","₽8,990.00",manual
+Rwanda (USD),RWA,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+São Tomé and Príncipe (USD),STP,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Saudi Arabia (SAR),SAU,reduced,SAR,‎⃁ 4.99,‎⃁ 17.99,‎⃁ 89.99,‎⃁ 199.99,‎⃁ 399.99,manual
+Senegal (USD),SEN,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Serbia (EUR),SRB,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Seychelles (USD),SYC,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Sierra Leone (USD),SLE,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Singapore (SGD),SGP,standard,SGD,$3.98,$12.98,$29.98,$69.98,$149.98,automatic
+Slovakia (EUR),SVK,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Slovenia (EUR),SVN,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Solomon Islands (USD),SLB,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+South Africa (ZAR),ZAF,low,ZAR,R 9.99,R 39.99,R 399.99,R 999.99,"R 1,999.99",manual
+Spain (EUR),ESP,reduced,EUR,€0.99,€3.99,€22.99,€59.99,€99.99,manual
+Sri Lanka (USD),LKA,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+St. Kitts and Nevis (USD),KNA,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+St. Lucia (USD),LCA,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+St. Vincent and the Grenadines (USD),VCT,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Suriname (USD),SUR,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Sweden (SEK),SWE,standard,SEK,kr 39.00,kr 119.00,kr 249.00,kr 599.00,"kr 1,295.00",automatic
+Switzerland (CHF),CHE,standard,CHF,CHF 3.00,CHF 8.00,CHF 18.00,CHF 40.00,CHF 90.00,automatic
+Taiwan (TWD),TWN,automatic_unknown,TWD,$90.00,$290.00,$690.00,"$1,490.00","$2,990.00",automatic
+Tajikistan (USD),TJK,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Tanzania (TZS),TZA,lowest,TZS,TZS 900.00,"TZS 2,900.00","TZS 59,900.00","TZS 149,900.00","TZS 299,900.00",manual
+Thailand (THB),THA,low,THB,฿19.00,฿79.00,฿699.00,"฿1,990.00","฿3,990.00",manual
+Tonga (USD),TON,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Trinidad and Tobago (USD),TTO,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Tunisia (USD),TUN,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Türkiye (TRY),TUR,reduced,TRY,₺49.99,₺199.99,₺999.99,"₺2,499.99","₺4,999.99",manual
+Turkmenistan (USD),TKM,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Turks and Caicos Islands (USD),TCA,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Uganda (USD),UGA,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Ukraine (USD),UKR,low,USD,$0.49,$1.99,$22.99,$59.99,$119.99,manual
+United Arab Emirates (AED),ARE,standard,AED,AED 12.99,AED 34.99,AED 79.99,AED 199.99,AED 399.99,automatic
+United Kingdom (GBP),GBR,standard,GBP,£2.99,£8.99,£19.99,£49.99,£99.99,automatic
+United States (USD),USA,standard,USD,$2.99,$8.99,$19.99,$49.99,$99.99,automatic
+Uruguay (USD),URY,reduced,USD,$0.99,$3.99,$19.99,$49.99,$99.99,manual
+Uzbekistan (USD),UZB,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Vanuatu (USD),VUT,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Venezuela (USD),VEN,low,USD,$0.49,$1.99,$19.99,$49.99,$99.99,manual
+Vietnam (VND),VNM,low,VND,"₫19,000.00","₫59,000.00","₫599,000.00","₫1,499,000.00","₫2,999,000.00",manual
+Yemen (USD),YEM,lowest,USD,$0.29,$0.99,$19.99,$49.99,$99.99,manual
+Zambia (USD),ZMB,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
+Zimbabwe (USD),ZWE,lowest,USD,$0.29,$0.99,$22.99,$59.99,$119.99,manual
