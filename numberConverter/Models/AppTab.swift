@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - AppTab
 
-/// the five top-level tabs of the app shell.
+/// app destinations, including the legacy help shortcut.
 /// the stable `rawValue` doubles as the routing id used by home-screen
 /// quick actions (phase 9) to select a tab programmatically.
 enum AppTab: String, CaseIterable, Identifiable {
@@ -18,7 +18,11 @@ enum AppTab: String, CaseIterable, Identifiable {
     case allSystems
     case calculator
     case quiz
+    case support
     case info
+
+    static let toolTabs: [AppTab] = [.converter, .allSystems, .calculator, .quiz]
+    static let tabs: [AppTab] = toolTabs + [.support]
 
     var id: String {
         rawValue
@@ -31,6 +35,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .allSystems: "tab.allSystems"
         case .calculator: "tab.calculator"
         case .quiz: "tab.quiz"
+        case .support: "tab.support"
         case .info: "tab.info"
         }
     }
@@ -42,6 +47,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .allSystems: "nav.allSystems"
         case .calculator: "nav.calculator"
         case .quiz: "nav.quiz"
+        case .support: "nav.support"
         case .info: "nav.info"
         }
     }
@@ -53,6 +59,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         case .allSystems: "square.grid.2x2"
         case .calculator: "plus.forwardslash.minus"
         case .quiz: "checklist"
+        case .support: "heart"
         case .info: "graduationcap"
         }
     }
@@ -72,17 +79,8 @@ enum AppTab: String, CaseIterable, Identifiable {
         self.init(rawValue: String(shortcutType.dropFirst(prefix.count)))
     }
 
-    /// home-screen quick-action title.
-    /// TODO: localize via String(localized:) once English strings are provided and the RU locale pin is removed.
-    /// hardcoded to the exact RU `nav.*` catalog values: the OS resolves shortcut titles
-    /// from the bundle, not the SwiftUI `.environment(\.locale)` pin, and the en source is empty.
+    /// home-screen quick-action title resolved using the app's preferred language.
     var localizedShortcutTitle: String {
-        switch self {
-        case .converter: "Конвертер систем счисления"
-        case .allSystems: "Все системы"
-        case .calculator: "Калькулятор"
-        case .quiz: "Тестирование"
-        case .info: "Справочная информация"
-        }
+        String(localized: navigationTitleKey)
     }
 }

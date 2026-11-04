@@ -17,11 +17,14 @@ enum HelpBlock: Identifiable {
     /// language-neutral monospaced block (ascii table or aligned computation),
     /// rendered verbatim inside a horizontally scrollable container.
     case mono(String)
+    /// monospaced example containing labels that need translation.
+    case localizedMono(LocalizedStringResource)
 
     var id: String {
         switch self {
         case let .paragraph(resource): "p-\(resource.key)"
         case let .mono(text): "m-\(text.hashValue)"
+        case let .localizedMono(resource): "lm-\(resource.key)"
         }
     }
 }

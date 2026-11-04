@@ -57,6 +57,7 @@ struct DecimalToAllViewModelTests {
         let bases = sut.rows.map(\.base)
         #expect(bases == Array(2 ... 36))
         #expect(Set(bases).count == bases.count)
+        #expect(sut.rows.map(\.id) == bases)
     }
 
     @Test
@@ -108,6 +109,13 @@ struct DecimalToAllViewModelTests {
         #expect(sut.rows.count == 35)
         #expect(value(in: sut, base: 16) == "FF")
         #expect(value(in: sut, base: 2) == "11111111")
+    }
+
+    @Test
+    func numericallyOutOfRangeInputYieldsNoRows() {
+        let sut = DecimalToAllViewModel(number: String(repeating: "9", count: 200))
+
+        #expect(sut.rows.isEmpty)
     }
 
     // MARK: Helpers

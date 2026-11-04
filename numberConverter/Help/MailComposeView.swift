@@ -16,7 +16,9 @@ import SwiftUI
 struct MailComposeView: UIViewControllerRepresentable {
     /// developer contact carried over from the legacy app.
     static let recipient = "vanyurin@me.com"
-    static let subject = "Обращение по поводу приложения Системы счисления"
+    static var subject: String {
+        String(localized: "help.mail.subject")
+    }
 
     @Environment(\.dismiss) private var dismiss
 

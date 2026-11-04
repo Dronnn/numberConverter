@@ -19,21 +19,19 @@ struct RootView: View {
     @Environment(QuickActionRouter.self) private var quickActionRouter
     @Environment(\.scenePhase) private var scenePhase
 
+    @State private var tipStore: TipStore
+
+    init(tipStore: TipStore = TipStore.makeAppStore()) {
+        _tipStore = State(initialValue: tipStore)
+    }
+
     var body: some View {
         @Bindable var navigation = navigation
 
         TabView(selection: $navigation.selectedTab) {
-            ForEach(AppTab.allCases) { tab in
+            ForEach(AppTab.tabs) { tab in
                 Tab(value: tab) {
-                    NavigationStack {
-                        switch tab {
-                        case .converter: ConverterView()
-                        case .allSystems: AllSystemsView()
-                        case .calculator: CalculatorView()
-                        case .quiz: QuizMenuView()
-                        case .info: HelpIndexView()
-                        }
-                    }
+                    content(for: tab)
                 } label: {
                     Label {
                         Text(tab.titleKey)
@@ -41,25 +39,47 @@ struct RootView: View {
                         Image(systemName: tab.systemImage)
                     }
                 }
+                .accessibilityIdentifier("app.tab.\(tab.rawValue)")
             }
+        }
+        .sheet(isPresented: $navigation.isShowingHelp) {
+            HelpIndexView()
         }
         .onChange(of: navigation.selectedTab) { _, newTab in
             AppLogger.lifecycle.info("selected tab \(newTab.rawValue, privacy: .public)")
         }
-        // cold launch: a quick action may already be pending before the view appears.
-        .task { routePendingQuickAction() }
-        // warm launch: the appdelegate sets a new pending tab while running.
-        .onChange(of: quickActionRouter.pendingTab) { _, _ in routePendingQuickAction() }
+        // handles cold and warm requests without mutating an observed value inside onchange.
+        .task(id: quickActionRouter.requestSequence) { routePendingQuickAction() }
         // safety net: re-check when the scene becomes active.
         .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .active { routePendingQuickAction() }
+            if newPhase == .active {
+                routePendingQuickAction()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func content(for tab: AppTab) -> some View {
+        switch tab {
+        case .converter:
+            NavigationStack { ConverterView() }
+        case .allSystems:
+            NavigationStack { AllSystemsView() }
+        case .calculator:
+            NavigationStack { CalculatorView() }
+        case .quiz:
+            QuizMenuView()
+        case .support:
+            NavigationStack { SupportView(store: tipStore) }
+        case .info:
+            EmptyView()
         }
     }
 
     /// routes a pending home-screen quick action to its tab, then clears it.
     private func routePendingQuickAction() {
         guard let tab = quickActionRouter.pendingTab else { return }
-        navigation.selectedTab = tab
+        navigation.select(tabID: tab.rawValue)
         quickActionRouter.pendingTab = nil
         AppLogger.lifecycle.info("routed quick action to \(tab.rawValue, privacy: .public)")
     }

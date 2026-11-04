@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import ConversionEngine
 @testable import numberConverter
 import SnapshotTesting
 import SwiftUI
@@ -15,11 +16,58 @@ import XCTest
 
 /// image-snapshot matrix for every main screen across locale × appearance ×
 /// device, plus the important converter states and a large Dynamic Type pass.
-/// `en` snapshots render localization keys on purpose (the English catalog is
-/// empty for now); they will be re-recorded once English strings are provided.
 @MainActor
 final class SnapshotTests: XCTestCase {
     // MARK: Core screens (locale × appearance × device)
+
+    func test_tabBar() {
+        forEachMatrixCell { cell in
+            assertScreen(
+                RootView(tipStore: TipStore(service: SnapshotTipService(locale: cell.locale))),
+                named: "tab-bar",
+                cell: cell,
+                embedsInNavigationStack: false
+            )
+        }
+    }
+
+    func test_support() async {
+        for locale in SnapshotLocale.allCases {
+            let store = TipStore(service: SnapshotTipService(locale: locale))
+            await store.loadProducts()
+            for appearance in SnapshotAppearance.allCases {
+                for device in SnapshotDevice.allCases {
+                    autoreleasepool {
+                        assertScreen(
+                            SupportView(store: store),
+                            named: "support",
+                            cell: MatrixCell(locale: locale, appearance: appearance, device: device)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    func test_supportStatesAtLargestText() async {
+        for locale in SnapshotLocale.allCases {
+            for mode in ["available", "unavailable", "pending", "purchased", "unverified", "failed"] {
+                let store = TipStore(service: SnapshotTipService(locale: locale, mode: mode))
+                await store.loadProducts()
+                if mode != "available", let product = store.products.first {
+                    await store.purchase(product)
+                }
+                autoreleasepool {
+                    assertScreen(
+                        SupportView(store: store),
+                        named: "support-\(mode)-ax5",
+                        cell: MatrixCell(locale: locale, appearance: .light, device: .compact),
+                        dynamicTypeSize: .accessibility5
+                    )
+                }
+            }
+        }
+    }
 
     func test_converter() {
         forEachMatrixCell { cell in
@@ -53,7 +101,7 @@ final class SnapshotTests: XCTestCase {
 
     func test_quizMenu() {
         forEachMatrixCell { cell in
-            assertScreen(QuizMenuView(), named: "quiz-menu", cell: cell)
+            assertScreen(QuizMenuView(), named: "quiz-menu", cell: cell, embedsInNavigationStack: false)
         }
     }
 
@@ -71,13 +119,69 @@ final class SnapshotTests: XCTestCase {
 
     func test_helpIndex() {
         forEachMatrixCell { cell in
-            assertScreen(HelpIndexView(), named: "help-index", cell: cell)
+            assertScreen(HelpIndexView(), named: "help-index", cell: cell, embedsInNavigationStack: false)
+        }
+    }
+
+    func test_privacy() {
+        forEachMatrixCell { cell in
+            assertScreen(PrivacyView(), named: "privacy", cell: cell)
         }
     }
 
     func test_helpPage2() {
         forEachMatrixCell { cell in
             assertScreen(HelpPageView(topic: HelpContent.topic(page: 2)), named: "help-page2", cell: cell)
+        }
+    }
+
+    func test_helpPages() {
+        for page in [1, 3, 4, 5, 6, 7, 8, 9] {
+            forEachMatrixCell { cell in
+                assertScreen(HelpPageView(topic: HelpContent.topic(page: page)), named: "help-page-\(page)", cell: cell)
+            }
+        }
+    }
+
+    func test_resultErrors() {
+        let errors: [ConversionError] = [.invalidCharacter, .baseOutOfRange, .divisionByZero, .numberOutOfRange]
+        for (index, error) in errors.enumerated() {
+            for locale in SnapshotLocale.allCases {
+                assertScreen(
+                    Form {
+                        ResultRow(
+                            label: "allSystems.field.result",
+                            prompt: "",
+                            result: "",
+                            error: error,
+                            accessibilityPrefix: "result"
+                        )
+                    },
+                    named: "result-error-\(index)",
+                    cell: MatrixCell(locale: locale, appearance: .light, device: .compact)
+                )
+            }
+        }
+    }
+
+    func test_longResults() {
+        for locale in SnapshotLocale.allCases {
+            for size in [DynamicTypeSize.large, .accessibility5] {
+                assertScreen(
+                    Form {
+                        ResultRow(
+                            label: "allSystems.field.result",
+                            prompt: "",
+                            result: "12345678901234567890123456789012345678",
+                            error: nil,
+                            accessibilityPrefix: "result"
+                        )
+                    },
+                    named: "long-result-\(size)",
+                    cell: MatrixCell(locale: locale, appearance: .light, device: .compact),
+                    dynamicTypeSize: size
+                )
+            }
         }
     }
 
@@ -101,13 +205,17 @@ final class SnapshotTests: XCTestCase {
     // MARK: Large Dynamic Type (iPhone × ru × {light, dark})
 
     func test_converterLargeDynamicType() {
-        for appearance in SnapshotAppearance.allCases {
-            assertScreen(
-                state(makeConverter(decimal: "255")),
-                named: "converter-dynamic-type-ax5",
-                cell: MatrixCell(locale: .ru, appearance: appearance, device: .iphone),
-                dynamicTypeSize: .accessibility5
-            )
+        for locale in SnapshotLocale.allCases {
+            for appearance in SnapshotAppearance.allCases {
+                for device in [SnapshotDevice.compact, .iphone] {
+                    assertScreen(
+                        state(makeConverter(decimal: "255")),
+                        named: "converter-dynamic-type-ax5",
+                        cell: MatrixCell(locale: locale, appearance: appearance, device: device),
+                        dynamicTypeSize: .accessibility5
+                    )
+                }
+            }
         }
     }
 

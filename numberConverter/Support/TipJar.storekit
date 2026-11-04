@@ -1,0 +1,217 @@
+{
+  "identifier": "E38C3BFB-0988-482E-870D-72CDD15CA6CD",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "3",
+      "familyShareable": false,
+      "internalID": "2AD78313-73D9-4835-BB9F-44786BFF7722",
+      "localizations": [
+        {
+          "description": "Optional tip. No features are unlocked.",
+          "displayName": "Small tip",
+          "locale": "en_US"
+        },
+        {
+          "description": "Добровольная поддержка без новых функций.",
+          "displayName": "Небольшая поддержка",
+          "locale": "ru_RU"
+        },
+        {
+          "description": "Propina opcional, sin funciones adicionales.",
+          "displayName": "Pequeña propina",
+          "locale": "es_ES"
+        },
+        {
+          "description": "Freiwilliges Trinkgeld ohne Zusatzfunktionen.",
+          "displayName": "Kleines Trinkgeld",
+          "locale": "de_DE"
+        },
+        {
+          "description": "Pourboire facultatif, sans fonction ajoutée.",
+          "displayName": "Petit pourboire",
+          "locale": "fr_FR"
+        },
+        {
+          "description": "Gorjeta opcional, sem recursos adicionais.",
+          "displayName": "Pequena gorjeta",
+          "locale": "pt_BR"
+        }
+      ],
+      "productID": "com.mrmaier.NumberConverter.tip.small",
+      "referenceName": "Small tip",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "9",
+      "familyShareable": false,
+      "internalID": "EAA71D3C-6858-4ABC-9A33-955A7E286ED4",
+      "localizations": [
+        {
+          "description": "Optional tip. No features are unlocked.",
+          "displayName": "Medium tip",
+          "locale": "en_US"
+        },
+        {
+          "description": "Добровольная поддержка без новых функций.",
+          "displayName": "Средняя поддержка",
+          "locale": "ru_RU"
+        },
+        {
+          "description": "Propina opcional, sin funciones adicionales.",
+          "displayName": "Propina mediana",
+          "locale": "es_ES"
+        },
+        {
+          "description": "Freiwilliges Trinkgeld ohne Zusatzfunktionen.",
+          "displayName": "Mittleres Trinkgeld",
+          "locale": "de_DE"
+        },
+        {
+          "description": "Pourboire facultatif, sans fonction ajoutée.",
+          "displayName": "Pourboire moyen",
+          "locale": "fr_FR"
+        },
+        {
+          "description": "Gorjeta opcional, sem recursos adicionais.",
+          "displayName": "Gorjeta média",
+          "locale": "pt_BR"
+        }
+      ],
+      "productID": "com.mrmaier.NumberConverter.tip.medium",
+      "referenceName": "Medium tip",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "19",
+      "familyShareable": false,
+      "internalID": "94E5C001-F0B1-402C-80B7-92AF643BA5CB",
+      "localizations": [
+        {
+          "description": "Optional tip. No features are unlocked.",
+          "displayName": "Large tip",
+          "locale": "en_US"
+        },
+        {
+          "description": "Добровольная поддержка без новых функций.",
+          "displayName": "Большая поддержка",
+          "locale": "ru_RU"
+        },
+        {
+          "description": "Propina opcional, sin funciones adicionales.",
+          "displayName": "Gran propina",
+          "locale": "es_ES"
+        },
+        {
+          "description": "Freiwilliges Trinkgeld ohne Zusatzfunktionen.",
+          "displayName": "Großes Trinkgeld",
+          "locale": "de_DE"
+        },
+        {
+          "description": "Pourboire facultatif, sans fonction ajoutée.",
+          "displayName": "Grand pourboire",
+          "locale": "fr_FR"
+        },
+        {
+          "description": "Gorjeta opcional, sem recursos adicionais.",
+          "displayName": "Grande gorjeta",
+          "locale": "pt_BR"
+        }
+      ],
+      "productID": "com.mrmaier.NumberConverter.tip.large",
+      "referenceName": "Large tip",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "49",
+      "familyShareable": false,
+      "internalID": "41F98684-3DA5-407F-98C6-CCAACF221EDF",
+      "localizations": [
+        {
+          "description": "Optional tip. No features are unlocked.",
+          "displayName": "Extra-large tip",
+          "locale": "en_US"
+        },
+        {
+          "description": "Добровольная поддержка без новых функций.",
+          "displayName": "Щедрая поддержка",
+          "locale": "ru_RU"
+        },
+        {
+          "description": "Propina opcional, sin funciones adicionales.",
+          "displayName": "Propina generosa",
+          "locale": "es_ES"
+        },
+        {
+          "description": "Freiwilliges Trinkgeld ohne Zusatzfunktionen.",
+          "displayName": "Großzügiges Trinkgeld",
+          "locale": "de_DE"
+        },
+        {
+          "description": "Pourboire facultatif, sans fonction ajoutée.",
+          "displayName": "Pourboire généreux",
+          "locale": "fr_FR"
+        },
+        {
+          "description": "Gorjeta opcional, sem recursos adicionais.",
+          "displayName": "Gorjeta generosa",
+          "locale": "pt_BR"
+        }
+      ],
+      "productID": "com.mrmaier.NumberConverter.tip.extraLarge",
+      "referenceName": "Extra-large tip",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "99",
+      "familyShareable": false,
+      "internalID": "E179F811-F95B-41CF-8440-4F6B9CB1B21D",
+      "localizations": [
+        {
+          "description": "Optional tip. No features are unlocked.",
+          "displayName": "Patron tip",
+          "locale": "en_US"
+        },
+        {
+          "description": "Добровольная поддержка без новых функций.",
+          "displayName": "Поддержка мецената",
+          "locale": "ru_RU"
+        },
+        {
+          "description": "Propina opcional, sin funciones adicionales.",
+          "displayName": "Propina de mecenas",
+          "locale": "es_ES"
+        },
+        {
+          "description": "Freiwilliges Trinkgeld ohne Zusatzfunktionen.",
+          "displayName": "Förderbeitrag",
+          "locale": "de_DE"
+        },
+        {
+          "description": "Pourboire facultatif, sans fonction ajoutée.",
+          "displayName": "Pourboire de mécène",
+          "locale": "fr_FR"
+        },
+        {
+          "description": "Gorjeta opcional, sem recursos adicionais.",
+          "displayName": "Gorjeta de patrono",
+          "locale": "pt_BR"
+        }
+      ],
+      "productID": "com.mrmaier.NumberConverter.tip.patron",
+      "referenceName": "Patron tip",
+      "type": "Consumable"
+    }
+  ],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "en_US",
+    "_storefront": "USA",
+    "_storeKitErrors": []
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

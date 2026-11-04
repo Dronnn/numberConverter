@@ -27,6 +27,9 @@ struct QuizStatsView: View {
                 QuizStatsRowView(row: viewModel.overall)
             } header: {
                 Text("quiz.stats.overall")
+                    .foregroundStyle(Color.primary)
+                    .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Section {
@@ -35,21 +38,29 @@ struct QuizStatsView: View {
                 }
             } header: {
                 Text("quiz.stats.perQuiz")
+                    .foregroundStyle(Color.primary)
+                    .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Section {
                 Button("quiz.stats.reset", role: .destructive) {
                     isConfirmingReset = true
                 }
+                .accessibilityIdentifier("statistics.reset")
             }
         }
-        .navigationTitle(Text("quiz.menu.row9"))
+        .navigationTitle(Text("quiz.stats.title"))
+        .appHelpToolbar()
+        .accessibilityIdentifier("statistics.list")
         .onAppear { AppLogger.quiz.screen("quizStats") }
         .alert("quiz.stats.resetConfirmTitle", isPresented: $isConfirmingReset) {
             Button("quiz.stats.reset", role: .destructive) {
                 viewModel.reset()
             }
+            .accessibilityIdentifier("statistics.resetConfirm")
             Button("common.cancel", role: .cancel) {}
+                .accessibilityIdentifier("statistics.cancel")
         } message: {
             Text("quiz.stats.resetConfirmMessage")
         }
@@ -65,9 +76,12 @@ private struct QuizStatsRowView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(row.titleKey)
+                .fixedSize(horizontal: false, vertical: true)
             Text(QuizStatsText.message(asked: row.asked, right: row.right))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("statistics.counts.\(row.id)")
         }
     }
 }

@@ -209,6 +209,10 @@
 				en,
 				Base,
 				ru,
+				es,
+				de,
+				fr,
+				"pt-BR",
 			);
 			mainGroup = 1873D1312FCD6A93008BDE18;
 			minimizedProjectReferenceProxies = 1;
@@ -260,6 +264,7 @@
 			files = (
 			);
 			inputFileListPaths = (
+				"$(SRCROOT)/Scripts/LintInputs.xcfilelist",
 			);
 			inputPaths = (
 			);
@@ -270,7 +275,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# run swiftformat then swiftlint; skip cleanly if tools are missing\nif command -v swiftformat >/dev/null 2>&1; then\n  swiftformat \"$SRCROOT\" --config \"$SRCROOT/.swiftformat\"\nelse\n  echo \"warning: swiftformat not installed (brew install swiftformat)\"\nfi\n\nif command -v swiftlint >/dev/null 2>&1; then\n  swiftlint --config \"$SRCROOT/.swiftlint.yml\"\nelse\n  echo \"warning: swiftlint not installed (brew install swiftlint)\"\nfi\n";
+			shellScript = "# check declared inputs without changing source or disabling the script sandbox\nset -eu\n# GUI-launched Xcode does not inherit an interactive shell PATH.\nexport PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"\ntask_lint_list=\"$TEMP_DIR/LintSwiftSources.xcfilelist\"\n: > \"$task_lint_list\"\nwhile IFS= read -r task_lint_entry; do\n  case \"$task_lint_entry\" in\n    '$(SRCROOT)/'*) task_lint_entry=\"$SRCROOT/${task_lint_entry#'$(SRCROOT)/'}\" ;;\n  esac\n  case \"$task_lint_entry\" in\n    *.swift) printf '%s\\n' \"$task_lint_entry\" >> \"$task_lint_list\" ;;\n  esac\ndone < \"$SCRIPT_INPUT_FILE_LIST_0\"\nif command -v swiftformat >/dev/null 2>&1; then\n  swiftformat --filelist \"$task_lint_list\" --config \"$SRCROOT/.swiftformat\" --lint --cache ignore\nelse\n  echo \"warning: swiftformat not installed (brew install swiftformat)\"\nfi\nif command -v swiftlint >/dev/null 2>&1; then\n  SCRIPT_INPUT_FILE_LIST_0=\"$task_lint_list\" swiftlint --use-script-input-file-lists --config \"$SRCROOT/.swiftlint.yml\" --no-cache\nelse\n  echo \"warning: swiftlint not installed (brew install swiftlint)\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -441,7 +446,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Системы счисления";
+				INFOPLIST_KEY_CFBundleDisplayName = "Number Systems";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -485,7 +491,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Системы счисления";
+				INFOPLIST_KEY_CFBundleDisplayName = "Number Systems";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;

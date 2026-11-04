@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import ConversionEngine
 import SwiftUI
 
 // MARK: - BaseField + presentation
@@ -56,26 +57,51 @@ extension BaseField {
 struct BaseFieldRow: View {
     let field: BaseField
     @Binding var text: String
-    let isInvalid: Bool
+    let error: ConversionError?
     let onDetail: () -> Void
 
-    var body: some View {
-        LabeledContent {
-            HStack {
-                TextField(text: $text) {
-                    Text(verbatim: field.placeholder)
-                }
-                .multilineTextAlignment(.trailing)
-                .foregroundStyle(isInvalid ? Color.red : Color.primary)
-                .keyboardType(field.keyboardType)
-                .textInputAutocapitalization(field.autocapitalization)
-                .autocorrectionDisabled()
+    private var isInvalid: Bool {
+        error != nil
+    }
 
-                DetailButton(action: onDetail)
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            LabeledContent {
+                HStack {
+                    TextField(text: $text, axis: .vertical) {
+                        Text(verbatim: field.placeholder)
+                    }
+                    .lineLimit(nil)
+                    .multilineTextAlignment(.trailing)
+                    .foregroundStyle(isInvalid ? Color("ValidationError") : Color.primary)
+                    .keyboardType(field.keyboardType)
+                    .textInputAutocapitalization(field.autocapitalization)
+                    .autocorrectionDisabled()
+                    .accessibilityIdentifier("converter.input.\(field.base)")
+
+                    DetailButton(action: onDetail)
+                        .accessibilityIdentifier("converter.detail.\(field.base)")
+                        .disabled(isInvalid)
+                }
+            } label: {
+                Text(verbatim: field.labelText)
             }
-        } label: {
-            Text(verbatim: field.labelText)
+            if let error {
+                validationMessage(error)
+                    .font(.callout)
+                    .foregroundStyle(Color("ValidationError"))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("converter.error.\(field.base)")
+            }
         }
+    }
+
+    private func validationMessage(_ error: ConversionError) -> Text {
+        if error == .invalidCharacter {
+            let digits = String("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".prefix(field.base))
+            return Text("input.invalidForBase \(field.base) \(digits)")
+        }
+        return Text(error.localizedTextKey)
     }
 }
 
@@ -90,14 +116,18 @@ struct DecimalRangeRow: View {
     var body: some View {
         LabeledContent {
             HStack {
-                TextField(text: $text) {
+                TextField(text: $text, axis: .vertical) {
                     Text(verbatim: "129")
                 }
+                .lineLimit(nil)
                 .multilineTextAlignment(.trailing)
                 .keyboardType(.numbersAndPunctuation)
                 .autocorrectionDisabled()
+                .accessibilityIdentifier("converter.all.input")
 
                 DetailButton(action: onDetail)
+                    .accessibilityIdentifier("converter.all.detail")
+                    .disabled(ConversionEngine.toDecimal(text, fromBase: 10) == nil)
             }
         } label: {
             Text("converter.field.decimalInput")
@@ -114,6 +144,8 @@ private struct DetailButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "info.circle")
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.borderless)
         .accessibilityLabel(Text("converter.detail.accessibility"))

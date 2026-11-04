@@ -19,8 +19,7 @@ final class MetricKitManager: NSObject, MXMetricManagerSubscriber {
         MXMetricManager.shared.add(self)
     }
 
-    /// summarizes daily metric payloads: a concise line per payload plus the full
-    /// json at `.debug` for offline inspection.
+    /// summarizes daily metric payloads and logs their json byte counts.
     nonisolated func didReceive(_ payloads: [MXMetricPayload]) {
         AppLogger.metrics.info("received \(payloads.count, privacy: .public) metric payload(s)")
         for payload in payloads {
@@ -41,7 +40,7 @@ final class MetricKitManager: NSObject, MXMetricManagerSubscriber {
     }
 
     /// summarizes diagnostic payloads (the crashlytics replacement): counts each
-    /// diagnostic kind and emits the full json at `.debug`.
+    /// diagnostic kind and logs the json byte count at `.debug`.
     nonisolated func didReceive(_ payloads: [MXDiagnosticPayload]) {
         AppLogger.metrics.info("received \(payloads.count, privacy: .public) diagnostic payload(s)")
         for payload in payloads {

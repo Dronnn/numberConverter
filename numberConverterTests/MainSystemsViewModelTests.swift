@@ -83,4 +83,24 @@ struct MainSystemsViewModelTests {
         #expect(sut.decimal == "-5")
         #expect(sut.hexadecimal == "-5")
     }
+
+    @Test
+    func binaryTwosComplementSeedPreservesSignedValueInEverySystem() {
+        let sut = MainSystemsViewModel(base: 2, number: "11111011", twosComplement: true)
+
+        #expect(sut.binary == "11111011")
+        #expect(sut.octal == "-5")
+        #expect(sut.decimal == "-5")
+        #expect(sut.hexadecimal == "-5")
+    }
+
+    @Test
+    func invalidSeedHasNoRenderedValues() {
+        let sut = MainSystemsViewModel(base: 2, number: "2", twosComplement: true)
+
+        #expect(sut.binary.isEmpty)
+        #expect(sut.octal.isEmpty)
+        #expect(sut.decimal.isEmpty)
+        #expect(sut.hexadecimal.isEmpty)
+    }
 }

@@ -11,8 +11,8 @@ import Foundation
 // MARK: - HelpContent
 
 /// static source of the nine help topics, in menu order.
-/// prose lives in the string catalog; monospaced tables are verbatim
-/// and language-neutral so they are inlined here.
+/// prose and text-bearing examples live in the string catalog;
+/// language-neutral tables and computations are inlined here.
 enum HelpContent {
     /// all topics, indexed 1...9 to mirror the legacy `helpN.html` files.
     static let topics: [HelpTopic] = [
@@ -50,32 +50,7 @@ enum HelpContent {
             .paragraph("help.page1.p12"),
             .paragraph("help.page1.p13"),
             .paragraph("help.page1.p14"),
-            mono(
-                "    10 |   2    |  8   |  16",
-                "  ----------------------------",
-                "   0   | 0      |  0   |  0",
-                "   1   | 1      |  1   |  1",
-                "   2   | 10     |  2   |  2",
-                "   3   | 11     |  3   |  3",
-                "   4   | 100    |  4   |  4",
-                "   5   | 101    |  5   |  5",
-                "   6   | 110    |  6   |  6",
-                "   7   | 111    |  7   |  7",
-                "   8   | 1000   |  10  |  8",
-                "   9   | 1001   |  11  |  9",
-                "   10  | 1010   |  12  |  A",
-                "   11  | 1011   |  13  |  B",
-                "   12  | 1100   |  14  |  C",
-                "   13  | 1101   |  15  |  D",
-                "   14  | 1110   |  16  |  E",
-                "   15  | 1111   |  17  |  F",
-                "   16  | 10000  |  20  |  10",
-                "   17  | 10001  |  21  |  11",
-                "   18  | 10010  |  22  |  12",
-                "   19  | 10011  |  23  |  13",
-                "   20  | 10100  |  24  |  14",
-                "   и т.д."
-            )
+            .localizedMono("help.page1.table")
         ]
     )
 
@@ -90,13 +65,7 @@ enum HelpContent {
             .paragraph("help.page2.p2"),
             .paragraph("help.page2.p3"),
             .paragraph("help.page2.p4"),
-            mono(
-                "19 : 2 = 9 остаток 1",
-                "9  : 2 = 4 остаток 1",
-                "4  : 2 = 2 остаток 0",
-                "2  : 2 = 1 остаток 0",
-                "1  : 2 = 0 остаток 1"
-            ),
+            .localizedMono("help.page2.division"),
             .paragraph("help.page2.p5"),
             .paragraph("help.page2.p6"),
             .paragraph("help.page2.p7"),
@@ -158,10 +127,7 @@ enum HelpContent {
         blocks: [
             .paragraph("help.page4.p1"),
             .paragraph("help.page4.p2"),
-            mono(
-                "    степени: 4  3  2  1  0",
-                "    число  :1 0 0 1 1"
-            ),
+            .localizedMono("help.page4.powers"),
             .paragraph("help.page4.p3"),
             .paragraph("help.page4.p4"),
             .paragraph("help.page4.p5")
@@ -179,17 +145,14 @@ enum HelpContent {
             .paragraph("help.page5.p2"),
             .paragraph("help.page5.p3"),
             .paragraph("help.page5.p4"),
-            mono(
-                "степени:     -1  -2  -3",
-                "число  :   1  0  1"
-            ),
+            .localizedMono("help.page5.powers"),
             .paragraph("help.page5.p5"),
-            mono("1*2^-1 + 0*2^-2 + 0*2^-3"),
+            mono("1*2^-1 + 0*2^-2 + 1*2^-3"),
             mono(
                 "1*2^(-1) = 0.5",
                 "0*2^(-2) = 0",
-                "0*2^(-3) = 0.125",
-                "1*2^(-1) + 0*2^(-2) + 0*2^(-3) = 0.625"
+                "1*2^(-3) = 0.125",
+                "1*2^(-1) + 0*2^(-2) + 1*2^(-3) = 0.625"
             )
         ]
     )
@@ -330,38 +293,7 @@ enum HelpContent {
         blocks: [
             .paragraph("help.page8.p1"),
             .paragraph("help.page8.p2"),
-            mono(
-                "десятичное   прямой       дополнительный",
-                "число        код          код",
-                "----------------------------------------",
-                "127          01111111     01111111",
-                "11           00001011     00001011",
-                "10           00001010     00001010",
-                "9            00001001     00001001",
-                "8            00001000     00001000",
-                "7            00000111     00000111",
-                "6            00000110     00000110",
-                "5            00000101     00000101",
-                "4            00000100     00000100",
-                "3            00000011     00000011",
-                "2            00000010     00000010",
-                "1            00000001     00000001",
-                "0            00000000     00000000",
-                "-0           10000000     --------",
-                "-1           10000001     11111111",
-                "-2           10000010     11111110",
-                "-3           10000011     11111101",
-                "-4           10000100     11111100",
-                "-5           10000101     11111011",
-                "-6           10000110     11111010",
-                "-7           10000111     11111001",
-                "-8           10001000     11111000",
-                "-9           10001001     11110111",
-                "-10          10001010     11110110",
-                "-11          10001011     11110101",
-                "-127         11111111     10000001",
-                "-128         --------     10000000"
-            ),
+            .localizedMono("help.page8.table"),
             .paragraph("help.page8.p3"),
             .paragraph("help.page8.p4"),
             .paragraph("help.page8.p5"),

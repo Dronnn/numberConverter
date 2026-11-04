@@ -233,4 +233,131 @@ struct ConverterViewModelTests {
         #expect(sut.binary == "1111111101111111")
         #expect(sut.invalidFields.isEmpty)
     }
+
+    @Test
+    func clearingAnInputClearsEveryValidationError() {
+        let sut = ConverterViewModel()
+        sut.userEdited(.binary, "2")
+        sut.userEdited(.hexadecimal, "G")
+        #expect(sut.invalidFields == [.binary, .hexadecimal])
+        #expect(sut.error(for: .binary) == .invalidCharacter)
+        #expect(sut.error(for: .hexadecimal) == .invalidCharacter)
+
+        sut.userEdited(.decimal, "")
+
+        #expect(sut.binary.isEmpty)
+        #expect(sut.hexadecimal.isEmpty)
+        #expect(sut.invalidFields.isEmpty)
+        #expect(BaseField.allCases.allSatisfy { sut.error(for: $0) == nil })
+    }
+
+    @Test
+    func unchangedTwosComplementSettingPreservesTheEditedField() {
+        let sut = ConverterViewModel()
+        sut.userEdited(.hexadecimal, "ff")
+
+        sut.twosComplement = false
+
+        #expect(sut.hexadecimal == "ff")
+        #expect(sut.decimal == "255")
+    }
+
+    @Test
+    func togglingTwosComplementWithoutInputKeepsFieldsEmpty() {
+        let sut = ConverterViewModel()
+        sut.twosComplement = true
+
+        #expect(sut.binary.isEmpty)
+        #expect(sut.decimal.isEmpty)
+    }
+
+    @Test
+    func everyFieldSuppliesItsOwnNavigationSeed() {
+        let sut = ConverterViewModel()
+        sut.userEdited(.decimal, "255")
+        let expected: [(BaseField, Int, String)] = [
+            (.binary, 2, "11111111"), (.octal, 8, "377"),
+            (.decimal, 10, "255"), (.hexadecimal, 16, "FF")
+        ]
+        for (field, base, number) in expected {
+            let seed = sut.seed(for: field)
+            #expect(seed.base == base)
+            #expect(seed.number == number)
+        }
+    }
+
+    @Test
+    func outOfRangeInputFlagsItsSourceAndPreservesPreviousConversions() {
+        let sut = ConverterViewModel()
+        sut.userEdited(.decimal, "255")
+
+        sut.userEdited(.decimal, String(repeating: "9", count: 200))
+
+        #expect(sut.invalidFields == [.decimal])
+        #expect(sut.error(for: .decimal) == .numberOutOfRange)
+        #expect(sut.binary == "11111111")
+        #expect(sut.hexadecimal == "FF")
+
+        sut.userEdited(.decimal, "10")
+        #expect(sut.invalidFields.isEmpty)
+        #expect(sut.error(for: .decimal) == nil)
+        #expect(sut.binary == "1010")
+    }
+
+    @Test
+    func signedBitPatternModeRejectsAnExplicitMinusSignAtTheSource() {
+        let sut = ConverterViewModel(twosComplement: true)
+        sut.userEdited(.decimal, "-5")
+
+        sut.userEdited(.binary, "-101")
+
+        #expect(sut.invalidFields == [.binary])
+        #expect(sut.error(for: .binary) == .invalidCharacter)
+        #expect(sut.decimal == "-5")
+        #expect(sut.octal == "-5")
+    }
+
+    @Test
+    func signedBinaryRangeFailureKeepsOtherBasesCorrectAndRecoversInPlainMode() {
+        let sut = ConverterViewModel(twosComplement: true)
+        sut.userEdited(.decimal, "5")
+        #expect(sut.binary == "00000101")
+
+        // 2^63 fits native decimal but exceeds the signed 64-bit binary range.
+        sut.userEdited(.decimal, "9223372036854775808")
+
+        #expect(sut.invalidFields == [.binary])
+        #expect(sut.error(for: .binary) == .numberOutOfRange)
+        #expect(sut.error(for: .decimal) == nil)
+        #expect(sut.decimal == "9223372036854775808")
+        #expect(sut.binary == "00000101")
+        #expect(sut.octal == "1" + String(repeating: "0", count: 21))
+        #expect(sut.hexadecimal == "8000000000000000")
+
+        sut.twosComplement = false
+
+        #expect(sut.invalidFields.isEmpty)
+        #expect(sut.error(for: .binary) == nil)
+        #expect(sut.binary == "1" + String(repeating: "0", count: 63))
+    }
+
+    @Test
+    func invalidBinaryTextIsPreservedWithItsActualErrorUntilCorrected() {
+        let sut = ConverterViewModel()
+        sut.userEdited(.decimal, "255")
+
+        sut.userEdited(.binary, "1021")
+
+        #expect(sut.binary == "1021")
+        #expect(sut.error(for: .binary) == .invalidCharacter)
+        #expect(sut.invalidFields == [.binary])
+        #expect(sut.decimal == "255")
+        #expect(sut.octal == "377")
+        #expect(sut.hexadecimal == "FF")
+
+        sut.userEdited(.binary, "101")
+        #expect(sut.error(for: .binary) == nil)
+        #expect(sut.invalidFields.isEmpty)
+        #expect(sut.decimal == "5")
+    }
 }

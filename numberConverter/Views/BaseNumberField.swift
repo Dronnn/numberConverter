@@ -11,12 +11,20 @@ import SwiftUI
 
 // MARK: - BaseNumberField
 
-/// a numeric text field that edits an `Int` base via a string bridge. it accepts
-/// digits only and clamps the parsed value to the engine's supported range, so
-/// the bound base is always valid.
+/// keeps partially typed digits separate from the last valid base so entering
+/// a two-digit base does not clamp its first digit before the second is typed.
 struct BaseNumberField: View {
     let prompt: String
     @Binding var base: Int
+
+    @State private var text: String
+    @FocusState private var isFocused: Bool
+
+    init(prompt: String, base: Binding<Int>) {
+        self.prompt = prompt
+        _base = base
+        _text = State(initialValue: String(base.wrappedValue))
+    }
 
     var body: some View {
         TextField(text: bridge) {
@@ -24,18 +32,37 @@ struct BaseNumberField: View {
         }
         .multilineTextAlignment(.trailing)
         .keyboardType(.numberPad)
+        .focused($isFocused)
+        .onChange(of: isFocused) { _, focused in
+            if !focused {
+                commit()
+            }
+        }
+        .onChange(of: base) { _, newBase in
+            if !isFocused {
+                text = String(newBase)
+            }
+        }
     }
 
-    /// bridges the `Int` base to editable text, parsing and clamping on write.
+    /// empty text and an initial 1 remain editable without changing the base.
     private var bridge: Binding<String> {
         Binding(
-            get: { String(base) },
+            get: { text },
             set: { newText in
-                let digits = newText.filter(\.isNumber)
-                guard let parsed = Int(digits) else { return }
-                let range = ConversionEngine.supportedBaseRange
-                base = min(max(parsed, range.lowerBound), range.upperBound)
+                text = newText.filter { $0.isASCII && $0.isNumber }
+                if let parsed = Int(text), ConversionEngine.supportedBaseRange.contains(parsed) {
+                    base = parsed
+                }
             }
         )
+    }
+
+    private func commit() {
+        if let parsed = Int(text) {
+            let range = ConversionEngine.supportedBaseRange
+            base = min(max(parsed, range.lowerBound), range.upperBound)
+        }
+        text = String(base)
     }
 }

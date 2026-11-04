@@ -17,14 +17,25 @@ import SwiftUI
 @MainActor
 final class AppNavigationState {
     var selectedTab: AppTab
+    var isShowingHelp: Bool
 
     init(selectedTab: AppTab = .converter) {
-        self.selectedTab = selectedTab
+        self.selectedTab = selectedTab == .info ? .converter : selectedTab
+        isShowingHelp = selectedTab == .info
+    }
+
+    func presentHelp() {
+        isShowingHelp = true
     }
 
     /// selects a tab from its stable routing id (used by quick actions).
     func select(tabID: String) {
         guard let tab = AppTab(rawValue: tabID) else { return }
-        selectedTab = tab
+        if tab == .info {
+            presentHelp()
+        } else {
+            isShowingHelp = false
+            selectedTab = tab
+        }
     }
 }

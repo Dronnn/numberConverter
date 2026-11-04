@@ -21,7 +21,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         // swiftlint:disable:next discouraged_optional_collection
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        application.shortcutItems = AppTab.allCases.map { tab in
+        application.shortcutItems = AppTab.toolTabs.map { tab in
             UIApplicationShortcutItem(
                 type: tab.shortcutType,
                 localizedTitle: tab.localizedShortcutTitle,

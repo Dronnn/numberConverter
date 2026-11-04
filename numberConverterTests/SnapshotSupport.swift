@@ -12,16 +12,19 @@ import SwiftUI
 
 // MARK: - SnapshotDevice
 
-/// the two device presets the matrix renders on: a modern iPhone and an iPad.
-/// names feed the snapshot file suffix (`-iphone` / `-ipad`).
+/// compact, standard, landscape and tablet layouts in the screenshot matrix.
 enum SnapshotDevice: String, CaseIterable {
+    case compact
     case iphone
+    case landscape
     case ipad
 
     /// the `swift-snapshot-testing` layout preset for this device.
     var config: ViewImageConfig {
         switch self {
+        case .compact: .iPhoneSe
         case .iphone: .iPhone13
+        case .landscape: .iPhone13(.landscape)
         case .ipad: .iPadMini
         }
     }
@@ -44,11 +47,14 @@ enum SnapshotAppearance: String, CaseIterable {
 
 // MARK: - SnapshotLocale
 
-/// the two locales the matrix renders in. `en` intentionally renders the
-/// localization keys for now (the English catalog is empty by design).
+/// the six supported locales rendered by the snapshot matrix.
 enum SnapshotLocale: String, CaseIterable {
     case ru
     case en
+    case es
+    case de
+    case fr
+    case ptBR = "pt-BR"
 }
 
 // MARK: - Matrix helpers
@@ -81,6 +87,7 @@ func assertScreen(
     cell: MatrixCell,
     dynamicTypeSize: DynamicTypeSize = .large,
     twosComplement: Bool = false,
+    embedsInNavigationStack: Bool = true,
     file: StaticString = #filePath,
     testName: String = #function,
     line: UInt = #line
@@ -88,12 +95,18 @@ func assertScreen(
     let settings = AppSettings(defaults: isolatedDefaults())
     settings.twosComplement = twosComplement
 
-    let root = NavigationStack { view }
-        .environment(settings)
-        .environment(AppNavigationState())
-        .environment(QuickActionRouter.shared)
-        .environment(\.locale, Locale(identifier: cell.locale.rawValue))
-        .environment(\.dynamicTypeSize, dynamicTypeSize)
+    let root = Group {
+        if embedsInNavigationStack {
+            NavigationStack { view }
+        } else {
+            view
+        }
+    }
+    .environment(settings)
+    .environment(AppNavigationState())
+    .environment(QuickActionRouter.shared)
+    .environment(\.locale, Locale(identifier: cell.locale.rawValue))
+    .environment(\.dynamicTypeSize, dynamicTypeSize)
 
     let host = UIHostingController(rootView: root)
 
@@ -101,6 +114,7 @@ func assertScreen(
         of: host,
         as: .image(
             on: cell.device.config,
+            drawHierarchyInKeyWindow: true,
             perceptualPrecision: snapshotPerceptualPrecision,
             traits: UITraitCollection(userInterfaceStyle: cell.appearance.style)
         ),
@@ -117,7 +131,9 @@ func forEachMatrixCell(_ body: (MatrixCell) -> Void) {
     for locale in SnapshotLocale.allCases {
         for appearance in SnapshotAppearance.allCases {
             for device in SnapshotDevice.allCases {
-                body(MatrixCell(locale: locale, appearance: appearance, device: device))
+                autoreleasepool {
+                    body(MatrixCell(locale: locale, appearance: appearance, device: device))
+                }
             }
         }
     }

@@ -123,8 +123,11 @@ final class QuizSessionViewModel {
     /// parses `input` in the target base and compares its exact value to the
     /// expected value; non-parsing or unequal input is wrong.
     private func isCorrect(_ input: String) -> Bool {
-        let trimmed = input.trimmingCharacters(in: .whitespaces)
-        guard let value = ConversionEngine.toDecimal(trimmed, fromBase: question.direction.target) else {
+        let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard
+            trimmed.contains(where: { $0.isNumber || $0.isLetter }),
+            let value = ConversionEngine.toDecimal(trimmed, fromBase: question.direction.target)
+        else {
             return false
         }
         return value == question.expectedValue

@@ -336,6 +336,40 @@ final class QuizSessionViewModelTests {
 
     // MARK: Statistics integration
 
+    @Test(arguments: ["", " ", "\n", "-", ".", ",", "-."])
+    func incompleteAnswersCannotEarnCreditForZero(_ answer: String) {
+        let stats = makeStats()
+        let sut = QuizSessionViewModel(
+            category: .binaryInt,
+            stats: stats,
+            randomValue: { .zero },
+            pickDirection: pin(2, 10)
+        )
+        sut.answer = answer
+        sut.check()
+
+        #expect(sut.feedback == .wrong(correctAnswer: "0"))
+        #expect(stats.allRight == 0)
+    }
+
+    @Test
+    func explicitZeroWithSurroundingWhitespaceIsAccepted() {
+        let sut = QuizSessionViewModel(
+            category: .binaryInt,
+            stats: makeStats(),
+            randomValue: { .zero },
+            pickDirection: pin(2, 10)
+        )
+        sut.answer = " \n0\n "
+        sut.check()
+
+        #expect(sut.feedback == .correct)
+        sut.dismissFeedback()
+        #expect(sut.feedback == nil)
+        #expect(sut.statsAsked == 1)
+        #expect(sut.statsRight == 1)
+    }
+
     @Test
     func asksAreCountedOnGenerate() {
         let stats = makeStats()

@@ -28,8 +28,6 @@ struct NumberConverterApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-                // runs in russian until english strings are provided; remove to follow the device language
-                .environment(\.locale, Locale(identifier: "ru"))
                 .environment(navigation)
                 .environment(settings)
                 .environment(quickActionRouter)

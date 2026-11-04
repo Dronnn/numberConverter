@@ -34,6 +34,7 @@ struct QuickActionRoutingTests {
         #expect(AppTab.allSystems.shortcutType == "com.mrmaier.NumberConverter.allSystems")
         #expect(AppTab.calculator.shortcutType == "com.mrmaier.NumberConverter.calculator")
         #expect(AppTab.quiz.shortcutType == "com.mrmaier.NumberConverter.quiz")
+        #expect(AppTab.support.shortcutType == "com.mrmaier.NumberConverter.support")
         #expect(AppTab.info.shortcutType == "com.mrmaier.NumberConverter.info")
     }
 
@@ -46,6 +47,26 @@ struct QuickActionRoutingTests {
     }
 
     // MARK: - Navigation routing
+
+    @Test
+    func requestSequenceChangesForEveryRequestButNotForConsumption() {
+        let router = QuickActionRouter()
+        #expect(router.requestSequence == 0)
+        router.pendingTab = nil
+        #expect(router.requestSequence == 0)
+
+        router.pendingTab = .calculator
+        #expect(router.requestSequence == 1)
+        router.pendingTab = nil
+        #expect(router.requestSequence == 1)
+
+        router.pendingTab = .calculator
+        #expect(router.requestSequence == 2)
+        router.pendingTab = .calculator
+        #expect(router.requestSequence == 3)
+        router.pendingTab = nil
+        #expect(router.requestSequence == 3)
+    }
 
     @Test
     func pendingTabDrivesNavigationSelection() {
@@ -122,6 +143,18 @@ struct QuickActionRoutingTests {
     }
 
     // MARK: - AppDelegate cold launch (didFinishLaunchingWithOptions)
+
+    @Test
+    func registersOnlyTheFourCoreToolQuickActions() {
+        let delegate = AppDelegate()
+        _ = delegate.application(UIApplication.shared, didFinishLaunchingWithOptions: nil)
+
+        let shortcuts = UIApplication.shared.shortcutItems ?? []
+        #expect(shortcuts.map(\.type) == AppTab.toolTabs.map(\.shortcutType))
+        #expect(shortcuts.allSatisfy { !$0.localizedTitle.isEmpty })
+        #expect(!shortcuts.contains { $0.type == AppTab.info.shortcutType })
+        #expect(!shortcuts.contains { $0.type == AppTab.support.shortcutType })
+    }
 
     @Test
     func coldLaunchStashesRequestedTabAndDefersSystemHandling() {

@@ -22,6 +22,8 @@ enum ConverterDestination: Hashable {
 /// root screen of the converter tab: four base fields that stay in sync, an
 /// all-bases shortcut, and the two's-complement toggle.
 struct ConverterView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     @Environment(AppSettings.self) private var settings
 
     @State private var viewModel: ConverterViewModel
@@ -41,10 +43,14 @@ struct ConverterView: View {
             SettingsSection(twosComplement: $settings.twosComplement)
         }
         .navigationTitle(Text("nav.converter"))
+        .appHelpToolbar()
+        .navigationBarTitleDisplayMode(dynamicTypeSize.isAccessibilitySize ? .inline : .large)
+        .scrollDismissesKeyboard(.interactively)
+        .keyboardDismissal()
         .navigationDestination(item: $destination) { destination in
             switch destination {
             case let .mainSystems(base, number):
-                MainSystemsView(base: base, number: number)
+                MainSystemsView(base: base, number: number, twosComplement: settings.twosComplement)
             case let .decimalToAll(number):
                 DecimalToAllView(number: number)
             }
@@ -73,7 +79,7 @@ private struct MainSystemsSection: View {
                 BaseFieldRow(
                     field: field,
                     text: binding(for: field),
-                    isInvalid: viewModel.invalidFields.contains(field)
+                    error: viewModel.error(for: field)
                 ) {
                     let seed = viewModel.seed(for: field)
                     destination = .mainSystems(base: seed.base, number: seed.number)
@@ -81,6 +87,9 @@ private struct MainSystemsSection: View {
             }
         } header: {
             Text("converter.section.mainSystems")
+                .foregroundStyle(Color.primary)
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 
@@ -118,6 +127,9 @@ private struct AllRangeSection: View {
             }
         } header: {
             Text("converter.section.allRange")
+                .foregroundStyle(Color.primary)
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
@@ -132,10 +144,16 @@ private struct SettingsSection: View {
         Section {
             Toggle(isOn: $twosComplement) {
                 Text("converter.toggle.twosComplement")
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .tint(Color.accentColor)
+            .accessibilityIdentifier("converter.twosComplement")
         } header: {
             Text("converter.section.settings")
+                .foregroundStyle(Color.primary)
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("converter.header.settings")
         }
     }
 }

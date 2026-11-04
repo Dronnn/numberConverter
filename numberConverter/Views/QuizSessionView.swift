@@ -19,14 +19,19 @@ struct QuizSessionView: View {
     @State private var viewModel: QuizSessionViewModel
     @State private var isShowingStats = false
 
-    init(category: QuizCategory, viewModel: QuizSessionViewModel? = nil) {
+    private let onFinish: (() -> Void)?
+
+    init(category: QuizCategory, viewModel: QuizSessionViewModel? = nil, onFinish: (() -> Void)? = nil) {
         _viewModel = State(initialValue: viewModel ?? QuizSessionViewModel(category: category))
+        self.onFinish = onFinish
     }
 
     var body: some View {
         Form {
             Section {
                 Text(viewModel.category.headerKey)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("quiz.header")
             }
 
             QuizQuestionSection(viewModel: viewModel)
@@ -35,12 +40,23 @@ struct QuizSessionView: View {
                 isShowingStats = true
             }
         }
+        .accessibilityIdentifier("quiz.session")
         .navigationTitle(Text("quiz.session.title"))
+        .appHelpToolbar()
         .navigationBarTitleDisplayMode(.inline)
+        .scrollDismissesKeyboard(.interactively)
+        .keyboardDismissal()
         .onAppear { AppLogger.quiz.screen("quizSession") }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button("quiz.session.finish") { dismiss() }
+                Button("quiz.session.finish") {
+                    if let onFinish {
+                        onFinish()
+                    } else {
+                        dismiss()
+                    }
+                }
+                .accessibilityIdentifier("quiz.finish")
             }
         }
         .alert("quiz.session.feedbackTitle", isPresented: feedbackBinding) {
@@ -59,7 +75,11 @@ struct QuizSessionView: View {
     private var feedbackBinding: Binding<Bool> {
         Binding(
             get: { viewModel.feedback != nil },
-            set: { if !$0 { viewModel.dismissFeedback() } }
+            set: {
+                if !$0 {
+                    viewModel.dismissFeedback()
+                }
+            }
         )
     }
 }
@@ -75,12 +95,16 @@ private struct QuizQuestionSection: View {
         Section {
             Text("quiz.session.questionLabel")
             Text(viewModel.question.direction.promptKey)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("quiz.prompt")
             Text(verbatim: viewModel.question.displayed)
                 .bold()
                 .textSelection(.enabled)
+                .accessibilityIdentifier("quiz.question")
             Button("quiz.session.nextQuestion") {
                 viewModel.nextQuestion()
             }
+            .accessibilityIdentifier("quiz.next")
         }
     }
 }
@@ -95,16 +119,20 @@ private struct QuizAnswerSection: View {
     var body: some View {
         Section {
             Text("quiz.session.answerLabel")
-            TextField(text: $viewModel.answer) {
+            TextField(text: $viewModel.answer, axis: .vertical) {
                 Text("quiz.session.answerPlaceholder")
             }
+            .lineLimit(nil)
             .multilineTextAlignment(.trailing)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
+            .accessibilityIdentifier("quiz.answer")
             Button("quiz.session.check") {
                 viewModel.check()
             }
+            .accessibilityIdentifier("quiz.check")
             Button("quiz.stats.title", action: onShowStats)
+                .accessibilityIdentifier("quiz.statistics")
         }
     }
 }

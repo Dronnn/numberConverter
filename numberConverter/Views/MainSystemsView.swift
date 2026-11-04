@@ -15,8 +15,7 @@ import SwiftUI
 struct MainSystemsView: View {
     @State private var viewModel: MainSystemsViewModel
 
-    init(base: Int, number: String) {
-        let twosComplement = UserDefaults.standard.bool(forKey: AppSettings.twosComplementKey)
+    init(base: Int, number: String, twosComplement: Bool = false) {
         _viewModel = State(
             wrappedValue: MainSystemsViewModel(
                 base: base,
@@ -34,6 +33,7 @@ struct MainSystemsView: View {
             ValueRow(header: "mainSystems.header.hexadecimal", value: viewModel.hexadecimal)
         }
         .navigationTitle(Text("nav.mainSystems"))
+        .appHelpToolbar()
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { AppLogger.converter.screen("mainSystems") }
     }
@@ -53,6 +53,9 @@ private struct ValueRow: View {
                 .textSelection(.enabled)
         } header: {
             Text(header)
+                .foregroundStyle(Color.primary)
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

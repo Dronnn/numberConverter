@@ -46,8 +46,16 @@ final class ConverterViewModel {
     private(set) var decimal = ""
     private(set) var hexadecimal = ""
 
-    /// fields whose current text is invalid for their base.
-    private(set) var invalidFields: Set<BaseField> = []
+    private var errors: [BaseField: ConversionError] = [:]
+
+    /// fields whose current input or converted output has an engine error.
+    var invalidFields: Set<BaseField> {
+        Set(errors.keys)
+    }
+
+    func error(for field: BaseField) -> ConversionError? {
+        errors[field]
+    }
 
     /// whether the binary field renders negative integers in two's complement.
     /// the view sets this from `AppSettings`.
@@ -72,15 +80,21 @@ final class ConverterViewModel {
         if text.isEmpty {
             // empty input clears every field consistently.
             clearAll()
-            invalidFields.remove(field)
             return
         }
 
-        guard ConversionEngine.isValid(text, base: field.base) else {
-            invalidFields.insert(field)
+        switch ConversionEngine.convert(
+            text,
+            fromBase: field.base,
+            toBase: 10,
+            twosComplement: twosComplement
+        ) {
+        case .success:
+            errors.removeValue(forKey: field)
+        case let .failure(error):
+            errors[field] = error
             return
         }
-        invalidFields.remove(field)
         // event only - the value the user typed is never logged.
         AppLogger.converter.info("conversion performed from base \(field.base, privacy: .public)")
 
@@ -94,9 +108,9 @@ final class ConverterViewModel {
             switch converted {
             case let .success(value):
                 store(value, in: other)
-                invalidFields.remove(other)
-            case .failure:
-                invalidFields.insert(other)
+                errors.removeValue(forKey: other)
+            case let .failure(error):
+                errors[other] = error
             }
         }
     }
@@ -147,5 +161,6 @@ final class ConverterViewModel {
         octal = ""
         decimal = ""
         hexadecimal = ""
+        errors.removeAll()
     }
 }

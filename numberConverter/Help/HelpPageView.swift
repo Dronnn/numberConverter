@@ -19,6 +19,11 @@ struct HelpPageView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                Text(topic.title)
+                    .font(.title2.bold())
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("help.title")
+
                 ForEach(topic.blocks) { block in
                     HelpBlockView(block: block)
                 }
@@ -27,7 +32,8 @@ struct HelpPageView: View {
             .padding()
         }
         .scrollIndicators(.hidden)
-        .navigationTitle(Text(topic.title))
+        .accessibilityIdentifier("help.content")
+        .navigationTitle(Text("nav.info"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { AppLogger.help.info("help page opened: \(topic.id, privacy: .public)") }
     }
@@ -38,29 +44,42 @@ struct HelpPageView: View {
 /// renders a single help block: prose as body text, or a monospaced block
 /// inside a horizontally scrollable container so columns stay aligned.
 private struct HelpBlockView: View {
+    @Environment(\.locale) private var locale
     let block: HelpBlock
 
     var body: some View {
         switch block {
         case let .paragraph(resource):
-            Text(resource)
+            localizedText(resource)
+                .fixedSize(horizontal: false, vertical: true)
                 .textSelection(.enabled)
+                .accessibilityIdentifier("help.block.\(resource.key)")
         case let .mono(text):
-            MonospacedBlock(text: text)
+            MonospacedBlock(text: Text(verbatim: text))
+        case let .localizedMono(resource):
+            MonospacedBlock(text: localizedText(resource))
+                .accessibilityIdentifier("help.block.\(resource.key)")
         }
+    }
+
+    /// Mathematical asterisks are multiplication signs, not Markdown emphasis.
+    private func localizedText(_ resource: LocalizedStringResource) -> Text {
+        var localized = resource
+        localized.locale = locale
+        return Text(verbatim: String(localized: localized))
     }
 }
 
 // MARK: - MonospacedBlock
 
-/// a verbatim, monospaced, horizontally scrollable block for ascii tables
+/// a monospaced, horizontally scrollable block for ascii tables
 /// and aligned computations.
 private struct MonospacedBlock: View {
-    let text: String
+    let text: Text
 
     var body: some View {
         ScrollView(.horizontal) {
-            Text(verbatim: text)
+            text
                 .font(.system(.body, design: .monospaced))
                 .textSelection(.enabled)
                 .padding(.vertical, 4)

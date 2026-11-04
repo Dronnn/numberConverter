@@ -24,9 +24,9 @@ final class MainSystemsViewModel {
 
     init(base: Int, number: String, twosComplement: Bool) {
         binary = rendered(number, fromBase: base, toBase: 2, twosComplement: twosComplement)
-        octal = rendered(number, fromBase: base, toBase: 8, twosComplement: false)
-        decimal = rendered(number, fromBase: base, toBase: 10, twosComplement: false)
-        hexadecimal = rendered(number, fromBase: base, toBase: 16, twosComplement: false)
+        octal = rendered(number, fromBase: base, toBase: 8, twosComplement: twosComplement)
+        decimal = rendered(number, fromBase: base, toBase: 10, twosComplement: twosComplement)
+        hexadecimal = rendered(number, fromBase: base, toBase: 16, twosComplement: twosComplement)
     }
 
     // MARK: Private

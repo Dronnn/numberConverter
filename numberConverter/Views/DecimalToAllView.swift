@@ -27,9 +27,13 @@ struct DecimalToAllView: View {
                 }
             } header: {
                 Text("decimalToAll.header")
+                    .foregroundStyle(Color.primary)
+                    .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .navigationTitle(Text("nav.allSystems"))
+        .appHelpToolbar()
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { AppLogger.converter.screen("decimalToAll") }
     }

@@ -13,7 +13,7 @@ import Foundation
 /// composes the localized statistics line «Всего вопросов: X, из них правильно: Y»
 /// shared by the per-quiz alert and the overall statistics screen.
 enum QuizStatsText {
-    static func message(asked: Int, right: Int) -> String {
-        String(localized: "quiz.stats.message \(asked) \(right)")
+    static func message(asked: Int, right: Int) -> LocalizedStringResource {
+        "quiz.stats.message \(asked) \(right)"
     }
 }

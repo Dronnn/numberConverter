@@ -19,7 +19,16 @@ final class QuickActionRouter {
     static let shared = QuickActionRouter()
 
     /// a tab requested by a home-screen quick action, awaiting routing.
-    var pendingTab: AppTab?
+    var pendingTab: AppTab? {
+        didSet {
+            if pendingTab != nil {
+                requestSequence &+= 1
+            }
+        }
+    }
 
-    private init() {}
+    /// clearing a consumed request does not schedule another routing task.
+    private(set) var requestSequence: UInt = 0
+
+    init() {}
 }

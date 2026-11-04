@@ -15,6 +15,8 @@ import SwiftUI
 /// root screen of the calculator tab: two operands in any bases, an operation,
 /// and a result rendered in a chosen base. it recomputes live.
 struct CalculatorView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     @State private var viewModel = CalculatorViewModel()
 
     var body: some View {
@@ -25,6 +27,10 @@ struct CalculatorView: View {
             CalculatorOperationSection(operation: $viewModel.operation)
         }
         .navigationTitle(Text("nav.calculator"))
+        .appHelpToolbar()
+        .navigationBarTitleDisplayMode(dynamicTypeSize.isAccessibilitySize ? .inline : .large)
+        .scrollDismissesKeyboard(.interactively)
+        .keyboardDismissal()
         .onAppear { AppLogger.calculator.screen("calculator") }
     }
 }
@@ -39,24 +45,28 @@ private struct CalculatorDataSection: View {
         Section {
             LabeledContent {
                 OperandField(prompt: "1000", text: $viewModel.operandA)
+                    .accessibilityIdentifier("calculator.operandA")
             } label: {
                 Text("calculator.field.operandA")
             }
 
             LabeledContent {
                 BaseNumberField(prompt: "2", base: $viewModel.baseA)
+                    .accessibilityIdentifier("calculator.baseA")
             } label: {
                 Text("calculator.field.base")
             }
 
             LabeledContent {
                 OperandField(prompt: "100", text: $viewModel.operandB)
+                    .accessibilityIdentifier("calculator.operandB")
             } label: {
                 Text("calculator.field.operandB")
             }
 
             LabeledContent {
                 BaseNumberField(prompt: "2", base: $viewModel.baseB)
+                    .accessibilityIdentifier("calculator.baseB")
             } label: {
                 Text("calculator.field.base")
             }
@@ -65,16 +75,22 @@ private struct CalculatorDataSection: View {
                 label: "calculator.field.result",
                 prompt: "",
                 result: viewModel.result,
-                error: viewModel.error
+                error: viewModel.error,
+                accessibilityPrefix: "calculator"
             )
 
             LabeledContent {
                 BaseNumberField(prompt: "8", base: $viewModel.resultBase)
+                    .accessibilityIdentifier("calculator.resultBase")
             } label: {
                 Text("calculator.field.base")
+                    .accessibilityIdentifier("calculator.resultBaseLabel")
             }
         } header: {
             Text("calculator.section.data")
+                .foregroundStyle(Color.primary)
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
@@ -93,10 +109,17 @@ private struct CalculatorOperationSection: View {
                 }
             } label: {
                 Text("calculator.section.operation")
+                    .foregroundStyle(Color.primary)
+                    .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .pickerStyle(.segmented)
+            .accessibilityIdentifier("calculator.operation")
         } header: {
             Text("calculator.section.operation")
+                .foregroundStyle(Color.primary)
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
@@ -110,9 +133,10 @@ private struct OperandField: View {
     @Binding var text: String
 
     var body: some View {
-        TextField(text: $text) {
+        TextField(text: $text, axis: .vertical) {
             Text(verbatim: prompt)
         }
+        .lineLimit(nil)
         .multilineTextAlignment(.trailing)
         .keyboardType(.asciiCapable)
         .textInputAutocapitalization(.characters)
