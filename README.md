@@ -34,6 +34,12 @@ The app ships the local `ConversionEngine` package for conversion and arithmetic
 - The conversion package has standalone correctness and safety tests (`swift test --package-path ConversionEngine --enable-code-coverage`). Arithmetic uses native `Decimal` precision; unsupported precision/range is reported as an error. Two's complement uses signed, byte-aligned native integers.
 - UI tests cover the supported languages, full feature flows, large text, rotation, persistence, and accessibility. Snapshot tests cover compact/standard/landscape/tablet layouts in light and dark mode.
 
+## Xcode Cloud tests
+
+Configure a required **Test** action using the shared `numberConverter` scheme and both complete test targets. This includes app unit/integration tests, local StoreKit tests, snapshot comparisons, and the six-language UI tests. Keep selected-test/skip filters and snapshot recording disabled. Pin the Xcode/runtime used for snapshot acceptance.
+
+The executable `ci_scripts/ci_post_clone.sh` also runs all 68 `ConversionEngine` SwiftPM tests with coverage before Cloud builds. Engine failures fail the Cloud action; their individual results appear in the post-clone log, separately from the native iOS test report. The exact hook passed locally. A committed hook does not establish that the remote workflow has run or passed.
+
 ## Developer tips
 
 `numberConverter/Support/TipJar.storekit` contains local test products at USD 3, 9, 19, 49, and 99. The shared Debug scheme selects it for local StoreKit testing. These are consumable tips, without subscriptions or feature unlocks. Production displays `Product.displayPrice` from the customer's App Store storefront; it never substitutes a hardcoded price when products cannot be loaded.
@@ -57,7 +63,7 @@ Latest validation checkpoint, November 4, 2026:
 | Scope | Result | Limits |
 | --- | --- | --- |
 | Conversion engine | 68 tests passed; 100% line/function coverage, including large-number round trips through every supported base. | This is engine coverage, not whole-app coverage. |
-| App unit/integration tests | 160 checks passed in a full unit/integration run, including 8 local StoreKit integration checks. Three new native-conversion integration checks passed in a later focused run. | The cumulative 163 checks were not all rerun together after the last additions. The earlier unit-only coverage report measured 69.78% (2,528 of 3,623 app lines); UI coverage is not merged into that figure. |
+| App unit/integration tests | 163 checks passed together in the latest full unit/integration run, including 8 local StoreKit integration checks and 3 large-number app integration regressions. | The latest run used the current app binary on iOS 27.2. The current unit/integration coverage report measured 69.78% (2,554 of 3,660 app lines); UI coverage is not merged into that figure. |
 | UI validation | The strict English navigation smoke flow completed all five tabs, Help and a displayed Support price. | Full end-to-end, largest-text, six-language and device-matrix acceptance is still pending. Known measured native Dynamic Type diagnostics remain recorded; this is not a claim of zero accessibility issues. |
 
 App-wide 100% coverage and completion of the entire UI/device matrix have not been achieved. StoreKit tests use Apple's local test environment and do not establish that production App Store products are configured.
