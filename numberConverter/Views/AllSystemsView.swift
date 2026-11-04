@@ -27,6 +27,7 @@ struct AllSystemsView: View {
                         Text(verbatim: "1023")
                     }
                     .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.trailing)
                     .keyboardType(.asciiCapable)
                     .textInputAutocapitalization(.characters)

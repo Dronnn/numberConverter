@@ -24,9 +24,9 @@ extension NumberConverterUITests {
         "calculator.resultLabel", "calculator.result", "calculator.resultBaseLabel", "quiz.statisticsLabel"
     ]
 
-    private static let tabIdentifiers = ["converter", "allSystems", "calculator", "quiz", "support"]
+    static let tabIdentifiers = ["converter", "allSystems", "calculator", "quiz", "support"]
 
-    func launch(_ language: UITestLanguage, largeText: Bool = false, tipStoreState: String = "available") {
+    func launch(_ language: UITestLanguage, largeText: Bool = false, tipStoreState: String? = "available") {
         let auditMode = capturesIncludeNativeAudit
             ? collectsAllAuditIssues
                 ? "diagnostic full traversal"
@@ -36,9 +36,11 @@ extension NumberConverterUITests {
         XCUIDevice.shared.orientation = .portrait
         app.launchArguments = [
             "-AppleLanguages", "(\(language.rawValue))",
-            "-AppleLocale", language.region,
-            "-ui-tip-store", tipStoreState
+            "-AppleLocale", language.region
         ]
+        if let tipStoreState {
+            app.launchArguments += ["-ui-tip-store", tipStoreState]
+        }
         if largeText || !capturesIncludeNativeAudit {
             app.launchArguments += [
                 "-UIPreferredContentSizeCategoryName",
@@ -78,19 +80,13 @@ extension NumberConverterUITests {
 
     func selectTab(_ index: Int) throws {
         dismissKeyboard()
-        _ = try require("app.tab.\(Self.tabIdentifiers[index])")
-        let query = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "app.tab."))
-        let actualIDs = Set(query.allElementsBoundByIndex.map(\.identifier))
-        let expectedIDs = Set(Self.tabIdentifiers.map { "app.tab.\($0)" })
-        XCTAssertEqual(actualIDs, expectedIDs, "Expected five unique native tab controls")
-        try tap("app.tab.\(Self.tabIdentifiers[index])")
+        try verifyNativeTabInventory()
+        try nativeTabButton(at: index).tap()
         assertNoLocalizationKeys()
     }
 
     func expectTabLabels(_ language: UITestLanguage) throws {
-        for (identifier, label) in zip(Self.tabIdentifiers, language.tabLabels) {
-            XCTAssertEqual(try require("app.tab.\(identifier)").label, label)
-        }
+        try verifyNativeTabInventory(language: language)
     }
 
     func openHelp() throws {

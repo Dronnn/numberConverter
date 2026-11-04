@@ -119,7 +119,7 @@ struct SupportView: View {
         Text(verbatim: product.displayPrice)
             .foregroundStyle(Color.primary)
             .fontWeight(.semibold)
-            .fixedSize()
+            .fixedSize(horizontal: false, vertical: true)
             .accessibilityIdentifier("support.price.\(product.id)")
     }
 

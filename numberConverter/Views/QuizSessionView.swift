@@ -119,14 +119,14 @@ private struct QuizAnswerSection: View {
     var body: some View {
         Section {
             Text("quiz.session.answerLabel")
-            TextField(text: $viewModel.answer, axis: .vertical) {
-                Text("quiz.session.answerPlaceholder")
-            }
-            .lineLimit(nil)
-            .multilineTextAlignment(.trailing)
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
-            .accessibilityIdentifier("quiz.answer")
+            TextField("", text: $viewModel.answer, axis: .vertical)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.trailing)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .accessibilityLabel(Text("quiz.session.answerLabel"))
+                .accessibilityIdentifier("quiz.answer")
             Button("quiz.session.check") {
                 viewModel.check()
             }

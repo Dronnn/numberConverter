@@ -31,10 +31,15 @@
             formatter.numberStyle = .currency
             formatter.currencyCode = "USD"
             return zip(TipProduct.allowedIDs, [3, 9, 19, 49, 99]).map { identifier, amount in
-                TipProduct(
+                // exact saved App Store Connect Indonesia price for the USD99 tier.
+                // this explicit fixture never contacts StoreKit or makes a transaction.
+                let price = mode == "regional-price" && amount == 99
+                    ? "Rp\u{00A0}1,999,000.00"
+                    : formatter.string(from: NSNumber(value: amount)) ?? ""
+                return TipProduct(
                     id: identifier,
                     displayName: identifier,
-                    displayPrice: formatter.string(from: NSNumber(value: amount)) ?? ""
+                    displayPrice: price
                 )
             }
         }

@@ -69,8 +69,13 @@ $(SRCROOT)/numberConverterTests/numberConverterTests.swift
 $(SRCROOT)/numberConverterUITests/FunctionalEndToEndTests.swift
 $(SRCROOT)/numberConverterUITests/HeaderDynamicTypeTests.swift
 $(SRCROOT)/numberConverterUITests/KeyboardRegressionTests.swift
+$(SRCROOT)/numberConverterUITests/NativeTabSupport.swift
+$(SRCROOT)/numberConverterUITests/NumericInputVisualTests.swift
+$(SRCROOT)/numberConverterUITests/RenderedTextAssertions.swift
 $(SRCROOT)/numberConverterUITests/ScrollLayoutRegressionTests.swift
+$(SRCROOT)/numberConverterUITests/StoreScreenshotTests.swift
 $(SRCROOT)/numberConverterUITests/SupportDynamicTypeTests.swift
+$(SRCROOT)/numberConverterUITests/SupportRegionalPriceTests.swift
 $(SRCROOT)/numberConverterUITests/SupportUIWorkflows.swift
 $(SRCROOT)/numberConverterUITests/UIAccessibilityLayoutWorkflows.swift
 $(SRCROOT)/numberConverterUITests/UIAuditSupport.swift

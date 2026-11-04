@@ -1,8 +1,8 @@
-# Number Systems privacy policy
+# Number Systems Lab privacy policy
 
 Last updated: November 4, 2026
 
-This policy covers the Number Systems iPhone and iPad app (`com.mrmaier.NumberConverter`).
+This policy covers the Number Systems Lab iPhone and iPad app (`com.mrmaier.NumberConverter`).
 
 ## On-device data
 

@@ -137,6 +137,7 @@ private struct OperandField: View {
             Text(verbatim: prompt)
         }
         .lineLimit(nil)
+        .fixedSize(horizontal: false, vertical: true)
         .multilineTextAlignment(.trailing)
         .keyboardType(.asciiCapable)
         .textInputAutocapitalization(.characters)

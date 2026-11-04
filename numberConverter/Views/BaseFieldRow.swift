@@ -72,6 +72,7 @@ struct BaseFieldRow: View {
                         Text(verbatim: field.placeholder)
                     }
                     .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.trailing)
                     .foregroundStyle(isInvalid ? Color("ValidationError") : Color.primary)
                     .keyboardType(field.keyboardType)
@@ -120,6 +121,7 @@ struct DecimalRangeRow: View {
                     Text(verbatim: "129")
                 }
                 .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.trailing)
                 .keyboardType(.numbersAndPunctuation)
                 .autocorrectionDisabled()
