@@ -24,6 +24,8 @@ extension NumberConverterUITests {
         "calculator.resultLabel", "calculator.result", "calculator.resultBaseLabel", "quiz.statisticsLabel"
     ]
 
+    private static let tabIdentifiers = ["converter", "allSystems", "calculator", "quiz", "support"]
+
     func launch(_ language: UITestLanguage, largeText: Bool = false, tipStoreState: String = "available") {
         let auditMode = collectsAllAuditIssues ? "diagnostic full traversal" : "strict acceptance"
         XCTContext.runActivity(named: "UI audit mode: \(auditMode)") { _ in }
@@ -39,7 +41,7 @@ extension NumberConverterUITests {
             ]
         }
         app.launch()
-        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        XCTAssertTrue(element("app.tab.converter").waitForExistence(timeout: 10))
     }
 
     func element(_ identifier: String) -> XCUIElement {
@@ -69,14 +71,18 @@ extension NumberConverterUITests {
 
     func selectTab(_ index: Int) throws {
         dismissKeyboard()
-        let buttons = app.tabBars.buttons
-        guard buttons.count == 5 else {
-            XCTFail("Expected five visible tabs; found \(buttons.count)")
-            throw UIAuditError.missingElement("tab \(index)")
-        }
-        let identifiers = ["converter", "allSystems", "calculator", "quiz", "support"]
-        try tap("app.tab.\(identifiers[index])")
+        let query = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "app.tab."))
+        let actualIDs = Set(query.allElementsBoundByIndex.map(\.identifier))
+        let expectedIDs = Set(Self.tabIdentifiers.map { "app.tab.\($0)" })
+        XCTAssertEqual(actualIDs, expectedIDs, "Expected five unique native tab controls")
+        try tap("app.tab.\(Self.tabIdentifiers[index])")
         assertNoLocalizationKeys()
+    }
+
+    func expectTabLabels(_ language: UITestLanguage) throws {
+        for (identifier, label) in zip(Self.tabIdentifiers, language.tabLabels) {
+            XCTAssertEqual(try require("app.tab.\(identifier)").label, label)
+        }
     }
 
     func openHelp() throws {

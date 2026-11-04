@@ -139,7 +139,7 @@ final class NumberConverterUITests: XCTestCase {
     func exerciseLanguage(_ language: UITestLanguage, largeText: Bool = false) throws {
         launch(language, largeText: largeText)
         XCTAssertEqual(app.navigationBars.firstMatch.identifier, language.converterTitle)
-        XCTAssertEqual(app.tabBars.buttons.allElementsBoundByIndex.map(\.label), language.tabLabels)
+        try expectTabLabels(language)
         capture(language, screen: "converter-empty")
 
         try exerciseConverter(language)

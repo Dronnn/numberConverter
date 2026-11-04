@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1873D68F2FCDE467008BDE18 /* InlineSnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 1873D68E2FCDE467008BDE18 /* InlineSnapshotTesting */; };
-		1873D6912FCDE467008BDE18 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 1873D6902FCDE467008BDE18 /* SnapshotTesting */; };
 		AA00000000000000000000A1 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = AA00000000000000000000A2 /* SnapshotTesting */; };
 		CE0000000000000000000003 /* ConversionEngine in Frameworks */ = {isa = PBXBuildFile; productRef = CE0000000000000000000002 /* ConversionEngine */; };
 /* End PBXBuildFile section */
@@ -75,8 +73,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1873D68F2FCDE467008BDE18 /* InlineSnapshotTesting in Frameworks */,
-				1873D6912FCDE467008BDE18 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,8 +168,6 @@
 			);
 			name = numberConverterUITests;
 			packageProductDependencies = (
-				1873D68E2FCDE467008BDE18 /* InlineSnapshotTesting */,
-				1873D6902FCDE467008BDE18 /* SnapshotTesting */,
 			);
 			productName = numberConverterUITests;
 			productReference = 1873D1532FCD6A94008BDE18 /* numberConverterUITests.xctest */;
@@ -685,16 +679,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1873D68E2FCDE467008BDE18 /* InlineSnapshotTesting */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1873D68D2FCDE467008BDE18 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
-			productName = InlineSnapshotTesting;
-		};
-		1873D6902FCDE467008BDE18 /* SnapshotTesting */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 1873D68D2FCDE467008BDE18 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
-			productName = SnapshotTesting;
-		};
 		AA00000000000000000000A2 /* SnapshotTesting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 1873D68D2FCDE467008BDE18 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;

@@ -43,7 +43,8 @@ extension NumberConverterUITests {
         try tap("converter.all.detail")
         XCTAssertTrue(app.staticTexts["11111111"].waitForExistence(timeout: 5))
         capture(language, screen: "all-bases-detail")
-        try reveal(app.staticTexts["73"], identifier: "base 36 result 73")
+        try reveal(element("base.value.36"), identifier: "base.value.36")
+        try expectText("base.value.36", "73")
         capture(language, screen: "all-bases-detail-bottom")
         back()
     }

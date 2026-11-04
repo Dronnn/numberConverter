@@ -49,10 +49,16 @@ private struct BaseValueRow: View {
     var body: some View {
         LabeledContent {
             Text(verbatim: "\(base)")
-                .foregroundStyle(.secondary)
+                .font(.body)
+                .foregroundStyle(Color.primary)
+                .accessibilityIdentifier("base.label.\(base)")
         } label: {
             Text(verbatim: value)
+                .font(.body)
+                .foregroundStyle(Color.primary)
+                .fixedSize(horizontal: false, vertical: true)
                 .textSelection(.enabled)
+                .accessibilityIdentifier("base.value.\(base)")
         }
     }
 }

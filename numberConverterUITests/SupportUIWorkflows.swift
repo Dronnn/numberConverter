@@ -19,7 +19,7 @@ extension NumberConverterUITests {
 
     func exerciseNavigationSmoke(_ language: UITestLanguage) throws {
         launch(language)
-        XCTAssertEqual(app.tabBars.buttons.allElementsBoundByIndex.map(\.label), language.tabLabels)
+        try expectTabLabels(language)
         for index in 0 ..< 5 {
             try selectTab(index)
             XCTAssertTrue(try require("app.help").isHittable)

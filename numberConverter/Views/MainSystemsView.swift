@@ -49,6 +49,9 @@ private struct ValueRow: View {
     var body: some View {
         Section {
             Text(verbatim: value)
+                .font(.body)
+                .foregroundStyle(Color.primary)
+                .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .textSelection(.enabled)
         } header: {

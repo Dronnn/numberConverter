@@ -24,6 +24,8 @@ A from-scratch SwiftUI rewrite of the original "Number Systems" app.
 - Conversion logic in a local Swift package
 - Apple-native diagnostics (os.Logger, MetricKit)
 
+The app ships the local `ConversionEngine` package for conversion and arithmetic. `swift-snapshot-testing` is linked only to the unit-test target for image comparisons. `swift-custom-dump`, `swift-syntax`, and `xctest-dynamic-overlay` are transitive test-tool dependencies that may remain in the resolved package graph; they are not runtime libraries in the shipping app. The UI-test target uses Apple's XCTest, UIKit, and Vision frameworks.
+
 ## Development
 
 - The "Lint & Format" build phase checks formatting and lint without rewriting source. Configs live at the repo root. The phase adds the standard Apple Silicon and Intel Homebrew binary directories to `PATH`, so GUI-launched Xcode can find installed tools.
@@ -50,9 +52,23 @@ The Duo outer display can be tested on the available simulator. Open and Book po
 
 ## Release preparation
 
-The engine has 68 passing tests and 100% line/function coverage, including large-number round trips through every supported base. App-wide 100% coverage and completion of the entire UI/device matrix have not been achieved; full UI validation is ongoing.
+Latest validation checkpoint, November 4, 2026:
 
-Release also requires a public privacy policy linked inside the app and in App Store Connect, the UserDefaults required-reason privacy manifest, production tip products and commerce setup, localized store metadata/screenshots, privacy/age-rating declarations, and a signed Release archive validated through TestFlight. A local build or StoreKit test does not establish App Review approval.
+| Scope | Result | Limits |
+| --- | --- | --- |
+| Conversion engine | 68 tests passed; 100% line/function coverage, including large-number round trips through every supported base. | This is engine coverage, not whole-app coverage. |
+| App unit/integration tests | 160 checks passed in a full unit/integration run, including 8 local StoreKit integration checks. Three new native-conversion integration checks passed in a later focused run. | The cumulative 163 checks were not all rerun together after the last additions. The earlier unit-only coverage report measured 69.78% (2,528 of 3,623 app lines); UI coverage is not merged into that figure. |
+| UI validation | The strict English navigation smoke flow completed all five tabs, Help and a displayed Support price. | Full end-to-end, largest-text, six-language and device-matrix acceptance is still pending. Known measured native Dynamic Type diagnostics remain recorded; this is not a claim of zero accessibility issues. |
+
+App-wide 100% coverage and completion of the entire UI/device matrix have not been achieved. StoreKit tests use Apple's local test environment and do not establish that production App Store products are configured.
+
+The public privacy policy and six-language in-app policy are implemented. Before release, verify the policy entry on the final app, set the published URL in App Store Connect, and inspect the UserDefaults required-reason manifest in the signed archive. Production tip products and commerce setup, a confirmed monitored support contact, localized store metadata/screenshots, privacy/age-rating declarations, final device QA, and a signed Release archive validated through TestFlight remain release work. A local build or StoreKit test does not establish App Review approval.
+
+## Support and privacy
+
+For non-confidential questions or bug reports, use the [project's issue tracker](https://github.com/Dronnn/numberConverter/issues). Use Help's contact option for private correspondence, and keep private numbers, personal information, and payment details out of public issues.
+
+The [privacy policy](PRIVACY.md) describes local storage, optional tips, diagnostics, and contact handling. It is also available from Help inside the app in all six supported languages.
 
 ## License
 
