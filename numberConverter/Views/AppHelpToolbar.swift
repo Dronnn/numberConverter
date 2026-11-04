@@ -39,13 +39,17 @@ private struct HelpCloseToolbar: ViewModifier {
         content.toolbar {
             if isEnabled {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("help.close") {
+                    Button {
                         if let navigation {
                             navigation.isShowingHelp = false
                         } else {
                             dismiss()
                         }
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundStyle(Color.primary)
                     }
+                    .accessibilityLabel(Text("help.close"))
                     .accessibilityIdentifier("help.close")
                 }
             }

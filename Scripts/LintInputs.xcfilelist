@@ -55,6 +55,7 @@ $(SRCROOT)/numberConverterTests/DecimalToAllViewModelTests.swift
 $(SRCROOT)/numberConverterTests/LocalizationTests.swift
 $(SRCROOT)/numberConverterTests/MainSystemsViewModelTests.swift
 $(SRCROOT)/numberConverterTests/MetricKitManagerTests.swift
+$(SRCROOT)/numberConverterTests/NativeConversionIntegrationTests.swift
 $(SRCROOT)/numberConverterTests/QuickActionRoutingTests.swift
 $(SRCROOT)/numberConverterTests/QuizSessionViewModelTests.swift
 $(SRCROOT)/numberConverterTests/QuizStatsTests.swift
@@ -66,6 +67,7 @@ $(SRCROOT)/numberConverterTests/StoreKitTipIntegrationTests.swift
 $(SRCROOT)/numberConverterTests/TipStoreTests.swift
 $(SRCROOT)/numberConverterTests/numberConverterTests.swift
 $(SRCROOT)/numberConverterUITests/HeaderDynamicTypeTests.swift
+$(SRCROOT)/numberConverterUITests/SupportDynamicTypeTests.swift
 $(SRCROOT)/numberConverterUITests/SupportUIWorkflows.swift
 $(SRCROOT)/numberConverterUITests/UIAccessibilityLayoutWorkflows.swift
 $(SRCROOT)/numberConverterUITests/UIAuditSupport.swift

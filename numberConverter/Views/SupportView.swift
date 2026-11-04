@@ -10,6 +10,8 @@ import SwiftUI
 
 /// Optional, one-time developer tips. StoreKit supplies every purchasable price.
 struct SupportView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let store: TipStore
 
     var body: some View {
@@ -52,7 +54,7 @@ struct SupportView: View {
                 .accessibilityIdentifier("support.explanation")
             Text("support.optional")
                 .font(.callout)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.primary)
         }
         .fixedSize(horizontal: false, vertical: true)
     }
@@ -83,18 +85,17 @@ struct SupportView: View {
                 Button {
                     Task { await store.purchase(product) }
                 } label: {
-                    ViewThatFits(in: .horizontal) {
-                        HStack {
-                            Text("support.tip")
-                            Spacer(minLength: 16)
-                            price(for: product)
-                        }
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("support.tip")
-                            price(for: product)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    tipLayout {
+                        Text("support.tip")
+                            .fontWeight(.semibold)
+                            .foregroundStyle(Color.primary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityIdentifier("support.tipLabel.\(product.id)")
+                        price(for: product)
                     }
+                    .font(.body)
+                    .foregroundStyle(Color.primary)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
@@ -106,8 +107,17 @@ struct SupportView: View {
         }
     }
 
+    private var tipLayout: AnyLayout {
+        if dynamicTypeSize.isAccessibilitySize {
+            AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+        } else {
+            AnyLayout(HStackLayout(spacing: 16))
+        }
+    }
+
     private func price(for product: TipProduct) -> some View {
         Text(verbatim: product.displayPrice)
+            .foregroundStyle(Color.primary)
             .fontWeight(.semibold)
             .fixedSize()
             .accessibilityIdentifier("support.price.\(product.id)")
@@ -118,7 +128,7 @@ struct SupportView: View {
             Text("support.unavailable.title")
                 .font(.headline)
             Text("support.unavailable.message")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.primary)
             Button("support.retry") {
                 Task { await store.loadProducts() }
             }

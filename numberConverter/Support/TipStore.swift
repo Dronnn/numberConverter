@@ -34,7 +34,15 @@ final class TipStore {
         #if DEBUG
             let arguments = ProcessInfo.processInfo.arguments
             if let index = arguments.firstIndex(of: "-ui-tip-store"), arguments.indices.contains(index + 1) {
-                return TipStore(service: UITestTipService(mode: arguments[index + 1]))
+                let locale: Locale = if
+                    let localeIndex = arguments.firstIndex(of: "-AppleLocale"),
+                    arguments.indices.contains(localeIndex + 1)
+                {
+                    Locale(identifier: arguments[localeIndex + 1])
+                } else {
+                    .current
+                }
+                return TipStore(service: UITestTipService(mode: arguments[index + 1], locale: locale))
             }
         #endif
         return TipStore()

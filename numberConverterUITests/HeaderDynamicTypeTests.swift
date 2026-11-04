@@ -137,7 +137,7 @@ extension NumberConverterUITests {
         XCTAssertGreaterThan(largest.value.glyphHeight, normal.value.glyphHeight * 1.4, report)
     }
 
-    private func launchTextMeasurement(category: String) {
+    func launchTextMeasurement(category: String) {
         app.terminate()
         app.launchArguments = [
             "-AppleLanguages", "(en)", "-AppleLocale", "en_US",
@@ -180,7 +180,7 @@ extension NumberConverterUITests {
         )
     }
 
-    private func measureText(
+    func measureText(
         _ element: XCUIElement,
         expectedText: String,
         name: String
@@ -290,7 +290,7 @@ extension NumberConverterUITests {
     }
 }
 
-private struct TextScaleMeasurement {
+struct TextScaleMeasurement {
     let frame: CGRect
     let glyphHeight: CGFloat
 }

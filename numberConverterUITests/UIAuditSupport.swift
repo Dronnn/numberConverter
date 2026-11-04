@@ -15,12 +15,18 @@ enum UIAuditError: Error {
 
 @MainActor
 extension NumberConverterUITests {
+    private var collectsAllAuditIssues: Bool {
+        ProcessInfo.processInfo.environment["UI_AUDIT_COLLECT_ALL"] == "1"
+    }
+
     private static let measuredDynamicTypeBindings = [
         "converter.header.settings", "allSystems.resultLabel", "allSystems.result",
-        "calculator.resultLabel", "calculator.result", "calculator.resultBaseLabel"
+        "calculator.resultLabel", "calculator.result", "calculator.resultBaseLabel", "quiz.statisticsLabel"
     ]
 
     func launch(_ language: UITestLanguage, largeText: Bool = false, tipStoreState: String = "available") {
+        let auditMode = collectsAllAuditIssues ? "diagnostic full traversal" : "strict acceptance"
+        XCTContext.runActivity(named: "UI audit mode: \(auditMode)") { _ in }
         XCUIDevice.shared.orientation = .portrait
         app.launchArguments = [
             "-AppleLanguages", "(\(language.rawValue))",
@@ -102,9 +108,11 @@ extension NumberConverterUITests {
 
     func dismissKeyboard() {
         guard app.keyboards.firstMatch.exists else { return }
-        let done = app.buttons["keyboard.done"]
-        if done.waitForExistence(timeout: 1), done.isHittable {
-            done.tap()
+        let done = app.toolbars.buttons["keyboard.done"]
+        if done.waitForExistence(timeout: 1), done.frame.intersects(app.frame), !done.frame.isEmpty {
+            // native hit testing sometimes rejects this visible accessory
+            // button's activation point; tap its observed frame and verify dismissal.
+            done.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         } else {
             app.swipeDown()
         }
@@ -259,7 +267,8 @@ extension NumberConverterUITests {
             continueAfterFailure = true
             defer { continueAfterFailure = previousContinuation }
             XCTAssertNoThrow(try XCTExpectFailure(
-                "Native audit flags measured Settings/ResultRow/result-base bindings despite about 3x glyph growth; "
+                "Native audit flags measured Settings/ResultRow/result-base/quiz-statistics bindings despite "
+                    + "about 3x glyph growth; "
                     + "see HeaderDynamicTypeTests",
                 options: options
             ) {
@@ -277,9 +286,18 @@ extension NumberConverterUITests {
                 })
             })
         }
+        assertNoUnexpectedAuditIssues(unexpectedIssues, context: "\(language.rawValue)-\(screen)")
+    }
+
+    private func assertNoUnexpectedAuditIssues(_ issues: [String], context: String) {
+        let previousContinuation = continueAfterFailure
+        if collectsAllAuditIssues {
+            continueAfterFailure = true
+        }
+        defer { continueAfterFailure = previousContinuation }
         XCTAssertTrue(
-            unexpectedIssues.isEmpty,
-            "Unexpected accessibility issues in \(language.rawValue)-\(screen): \(unexpectedIssues.joined(separator: "; "))"
+            issues.isEmpty,
+            "Unexpected accessibility issues in \(context): \(issues.joined(separator: "; "))"
         )
     }
 
@@ -301,14 +319,20 @@ extension NumberConverterUITests {
                 + "and a displayed tip price returned."
             : "Converter, arbitrary-base, calculator, quiz, statistics, Support retry, "
                 + "and nine-page Help workflows returned."
+        let mode = collectsAllAuditIssues ? "diagnostic-full-traversal" : "strict-acceptance"
         let attachment = XCTAttachment(string: """
         Completed locale: \(language.rawValue)
         Completed variant: \(variant)
+        Mode: \(mode)
         \(scope)
         """)
-        attachment.name = "workflow-completed-\(language.rawValue)-\(variant)"
+        let prefix = collectsAllAuditIssues ? "diagnostic-" : ""
+        attachment.name = "\(prefix)workflow-completed-\(language.rawValue)-\(variant)"
         attachment.lifetime = .keepAlways
         add(attachment)
+        if collectsAllAuditIssues {
+            XCTFail("Diagnostic full traversal requires a strict rerun before acceptance")
+        }
     }
 
     func auditScrolling(
@@ -317,18 +341,26 @@ extension NumberConverterUITests {
         container: XCUIElement,
         through last: XCUIElement
     ) throws {
-        var previousViewport: Data?
+        var previousPosition: ScrollAnchor?
+        var stalledGestures = 0
         for part in 0 ..< 160 {
             assertNoLocalizationKeys()
             capture(language, screen: "\(screen)-part-\(part)")
-            let viewport = container.screenshot().pngRepresentation
-            if previousViewport == viewport, last.exists, last.isHittable {
+            let position = scrollAnchor(in: container)
+            let moved = didScroll(from: previousPosition, to: position, height: container.frame.height)
+            stalledGestures = moved ? 0 : stalledGestures + 1
+            if !moved, last.exists, last.isHittable {
                 return
             }
-            previousViewport = viewport
-            container.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8)).press(
-                forDuration: 0.1,
-                thenDragTo: container.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)),
+            guard stalledGestures < 3 else {
+                XCTFail("Scroll gestures did not advance toward the final element: \(screen)")
+                throw UIAuditError.missingElement(screen)
+            }
+            previousPosition = position
+            // the leading gutter avoids text-selection gestures inside multiline inputs.
+            container.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.8)).press(
+                forDuration: 0.05,
+                thenDragTo: container.coordinate(withNormalizedOffset: CGVector(dx: 0.03, dy: 0.35)),
                 withVelocity: .slow,
                 thenHoldForDuration: 0.1
             )
@@ -336,4 +368,20 @@ extension NumberConverterUITests {
         XCTFail("Scrollable screen did not reach its final element: \(screen)")
         throw UIAuditError.missingElement(screen)
     }
+
+    private func scrollAnchor(in container: XCUIElement) -> ScrollAnchor? {
+        let text = container.staticTexts.firstMatch
+        guard text.exists else { return nil }
+        return ScrollAnchor(identity: text.label, minY: text.frame.minY)
+    }
+
+    private func didScroll(from previous: ScrollAnchor?, to current: ScrollAnchor?, height: CGFloat) -> Bool {
+        guard let previous, let current else { return true }
+        return previous.identity != current.identity || abs(previous.minY - current.minY) > height * 0.01
+    }
+}
+
+private struct ScrollAnchor {
+    let identity: String
+    let minY: CGFloat
 }

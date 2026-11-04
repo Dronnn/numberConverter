@@ -144,6 +144,7 @@ private struct DetailButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "info.circle")
+                .foregroundStyle(Color.accentColor)
                 .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Rectangle())
         }

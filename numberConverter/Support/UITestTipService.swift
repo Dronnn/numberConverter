@@ -12,11 +12,13 @@
     @MainActor
     final class UITestTipService: TipService {
         let mode: String
+        let locale: Locale
         private var nextIdentifier: UInt64 = 1
         private var loadCount = 0
 
-        init(mode: String) {
+        init(mode: String, locale: Locale = .current) {
             self.mode = mode
+            self.locale = locale
         }
 
         func loadProducts() async throws -> [TipProduct] {
@@ -25,7 +27,7 @@
                 return []
             }
             let formatter = NumberFormatter()
-            formatter.locale = .current
+            formatter.locale = locale
             formatter.numberStyle = .currency
             formatter.currencyCode = "USD"
             return zip(TipProduct.allowedIDs, [3, 9, 19, 49, 99]).map { identifier, amount in
