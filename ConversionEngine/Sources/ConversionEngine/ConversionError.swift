@@ -20,4 +20,7 @@ public enum ConversionError: Error, Equatable, Sendable {
 
     /// a division by zero was requested.
     case divisionByZero
+
+    /// the value exceeds native numeric range or would lose significant input digits.
+    case numberOutOfRange
 }

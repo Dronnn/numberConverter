@@ -385,22 +385,18 @@ enum DivergenceOracle {
         return renderRational(num: abs(resultNum), den: abs(resultDen), negative: negative, base: resultBase)
     }
 
-    /// independent two's-complement encode: non-negative -> plain binary of the
-    /// magnitude; negative -> the low `width` bits of `value`, width = smallest
-    /// multiple of 8 whose signed range holds the value.
+    /// independent two's-complement encode by inspecting each signed field bit.
     static func tcEncode(_ value: Int) -> String {
-        if value == 0 { return "0" }
-        if value > 0 { return plainBinary(UInt(value)) }
         var width = 8
         while width < Int.bitWidth {
             let upper = (1 << (width - 1)) - 1
             if -upper - 1 <= value, value <= upper { break }
             width += 8
         }
-        let mask: UInt = width == UInt.bitWidth ? .max : (1 << UInt(width)) - 1
-        let pattern = UInt(bitPattern: value) & mask
-        let bits = plainBinary(pattern)
-        return String(repeating: "0", count: max(0, width - bits.count)) + bits
+        let pattern = UInt(bitPattern: value)
+        return String((0..<width).reversed().map { shift -> Character in
+            pattern & (1 << UInt(shift)) == 0 ? "0" : "1"
+        })
     }
 
     /// independent two's-complement decode: unsigned value of the bits, minus
@@ -416,14 +412,4 @@ enum DivergenceOracle {
         return Int(n)
     }
 
-    private static func plainBinary(_ value: UInt) -> String {
-        if value == 0 { return "0" }
-        var n = value
-        var out: [Character] = []
-        while n != 0 {
-            out.append(n & 1 == 1 ? "1" : "0")
-            n >>= 1
-        }
-        return String(out.reversed())
-    }
 }

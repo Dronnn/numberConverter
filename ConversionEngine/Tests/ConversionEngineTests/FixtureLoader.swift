@@ -133,6 +133,7 @@ extension FixtureLoader {
         case "ERR:invalidCharacter": .invalidCharacter
         case "ERR:baseOutOfRange": .baseOutOfRange
         case "ERR:divisionByZero": .divisionByZero
+        case "ERR:numberOutOfRange": .numberOutOfRange
         default: nil
         }
     }
@@ -154,6 +155,7 @@ extension ConversionError {
         case .invalidCharacter: "invalidCharacter"
         case .baseOutOfRange: "baseOutOfRange"
         case .divisionByZero: "divisionByZero"
+        case .numberOutOfRange: "numberOutOfRange"
         }
     }
 }

@@ -12,110 +12,37 @@ import Testing
 
 // MARK: - Two's-complement boundaries & inverse property
 
-/// the engine encodes a non-negative value as its minimal unsigned binary (no
-/// sign padding) and a negative value as the smallest byte-aligned signed field.
-/// decoding always treats the bit count as the field width, so `decode(encode(v))`
-/// is the identity ONLY when `v` lies in that width's SIGNED range. a positive
-/// value whose minimal unsigned binary sets the top bit (e.g. 127->`1111111`,
-/// 255->`11111111`) decodes back as a NEGATIVE number — that asymmetry is the
-/// documented contract and is asserted explicitly below. every bit-pattern here
-/// was computed by hand.
+/// independently calculated signed-field boundaries plus the inverse property.
 @Suite struct TwosComplementBoundaryTests {
     private func encode(_ value: Int) -> String {
         ConversionEngine.twosComplementEncode(value, enabled: true)
     }
 
-    private func decode(_ bits: String) -> Int? {
-        switch ConversionEngine.twosComplementDecode(bits, enabled: true) {
-        case let .success(value): value
-        case .failure: nil
-        }
+    @Test func positiveBoundariesPreserveTheirSign() {
+        #expect(encode(0) == "00000000")
+        #expect(encode(1) == "00000001")
+        #expect(encode(127) == "01111111")
+        #expect(encode(128) == "0000000010000000")
+        #expect(encode(255) == "0000000011111111")
+        #expect(encode(256) == "0000000100000000")
+        #expect(encode(Int.max) == "0" + String(repeating: "1", count: Int.bitWidth - 1))
     }
 
-    /// positive boundaries: encode is minimal unsigned binary; when that pattern's
-    /// top bit is set the round-trip is asymmetric and decodes to a negative.
-    @Test func positiveBoundariesEncodeAndAsymmetricDecode() {
-        // 127 = 64+32+16+8+4+2+1 -> 7 ones; as a 7-bit signed field that is -1.
-        #expect(encode(127) == "1111111")
-        #expect(decode("1111111") == -1)              // 127 - 2^7
-        #expect(decode(encode(127)) == -1)            // inverse does NOT hold
-
-        // 128 = 2^7 -> 1 then 7 zeros (8 bits); as an 8-bit signed field that is -128.
-        #expect(encode(128) == "10000000")
-        #expect(decode("10000000") == -128)           // 128 - 2^8
-        #expect(decode(encode(128)) == -128)          // inverse does NOT hold
-
-        // 255 = 2^8-1 -> 8 ones; as an 8-bit signed field that is -1.
-        #expect(encode(255) == "11111111")
-        #expect(decode("11111111") == -1)             // 255 - 2^8
-        #expect(decode(encode(255)) == -1)            // inverse does NOT hold
-
-        // 256 = 2^8 -> 1 then 8 zeros (9 bits); as a 9-bit signed field that is -256.
-        #expect(encode(256) == "100000000")
-        #expect(decode("100000000") == -256)          // 256 - 2^9
-        #expect(decode(encode(256)) == -256)          // inverse does NOT hold
-    }
-
-    /// negative boundaries: encode picks the smallest byte-aligned width and the
-    /// value is inside that width's signed range, so decode(encode(v)) == v.
-    @Test func negativeBoundariesAreInverse() {
-        // -1: width 8, pattern = -1 + 2^8 = 255 = 11111111.
+    @Test func negativeBoundariesUseTheSmallestSignedByteWidth() {
         #expect(encode(-1) == "11111111")
-        #expect(decode("11111111") == -1)
-        #expect(decode(encode(-1)) == -1)
-
-        // -128: width 8 (smallest with -128 >= -2^7), pattern = -128 + 256 = 128.
         #expect(encode(-128) == "10000000")
-        #expect(decode("10000000") == -128)
-        #expect(decode(encode(-128)) == -128)
-
-        // -129: needs width 16 (-129 < -2^7); pattern = -129 + 2^16 = 65407 = 0xFF7F.
         #expect(encode(-129) == "1111111101111111")
-        #expect(decode("1111111101111111") == -129)
-        #expect(decode(encode(-129)) == -129)
-
-        // -32768 = -2^15: width 16 exactly; pattern = -32768 + 2^16 = 32768 = 0x8000.
         #expect(encode(-32_768) == "1000000000000000")
-        #expect(decode("1000000000000000") == -32_768)
-        #expect(decode(encode(-32_768)) == -32_768)
-
-        // -32769 < -2^15: needs width 24; pattern = -32769 + 2^24 = 16744447 = 0xFF7FFF.
         #expect(encode(-32_769) == "111111110111111111111111")
-        #expect(decode("111111110111111111111111") == -32_769)
-        #expect(decode(encode(-32_769)) == -32_769)
+        #expect(encode(Int.min) == "1" + String(repeating: "0", count: Int.bitWidth - 1))
     }
 
-    /// zero and the smallest values round-trip; zero is the bare `"0"`.
-    @Test func zeroAndUnitBoundaries() {
-        #expect(encode(0) == "0")
-        #expect(decode("0") == 0)
-        #expect(decode(encode(0)) == 0)
-
-        // 1 is minimal unsigned `1`; a 1-bit signed field with the top bit set is -1,
-        // so decode("1") == -1 while decode(encode(1)) == decode("1") == -1.
-        #expect(encode(1) == "1")
-        #expect(decode("1") == -1)
-        #expect(decode(encode(1)) == -1)               // inverse does NOT hold for +1
-    }
-
-    /// full native-`Int` boundaries. `Int.min` previously trapped during encode;
-    /// it now resolves to a 64-bit field and round-trips exactly. `Int.max` is
-    /// positive so it renders as 63 ones (minimal unsigned).
-    @Test func nativeIntegerExtremes() {
-        // Int.min = -2^63 -> 64-bit pattern: 1 then 63 zeros.
-        let minBits = "1" + String(repeating: "0", count: 63)
-        #expect(encode(Int.min) == minBits)
-        #expect(decode(minBits) == Int.min)
-        #expect(decode(encode(Int.min)) == Int.min)
-
-        // Int.max = 2^63 - 1 -> 63 ones (positive, minimal unsigned, no padding).
-        #expect(encode(Int.max) == String(repeating: "1", count: 63))
-
-        // Int.min + 1 = -2^63 + 1 -> 64-bit pattern: 1, 62 zeros, then 1.
-        let nearMin = "1" + String(repeating: "0", count: 62) + "1"
-        #expect(encode(Int.min + 1) == nearMin)
-        #expect(decode(nearMin) == Int.min + 1)
-        #expect(decode(encode(Int.min + 1)) == Int.min + 1)
+    @Test func everySmallIntegerAndNativeBoundariesRoundTrip() {
+        for value in Array(-1_024...1_024) + [Int.min, Int.min + 1, Int.max - 1, Int.max] {
+            let bits = encode(value)
+            #expect(bits.count.isMultiple(of: 8))
+            #expect(ConversionEngine.twosComplementDecode(bits, enabled: true) == .success(value))
+        }
     }
 }
 
@@ -246,49 +173,24 @@ import Testing
 
 // MARK: - Two's-complement decode edge contracts
 
-/// edge contracts for `twosComplementDecode` that the boundary suite does not
-/// reach: the full-width identity, over-width truncation, and malformed input.
-/// every expected value is derived from the field-width contract by hand:
-/// decode treats the bit count as the signed field width, and `n` is accumulated
-/// in a 64-bit unsigned register, so a string longer than 64 bits keeps only its
-/// low 64 bits.
 @Suite struct TwosComplementDecodeEdgeTests {
-    private func encode(_ value: Int) -> String {
-        ConversionEngine.twosComplementEncode(value, enabled: true)
+    @Test func redundantSignBitsPreserveTheValue() {
+        #expect(ConversionEngine.twosComplementDecode(String(repeating: "1", count: 200), enabled: true) == .success(-1))
+        #expect(ConversionEngine.twosComplementDecode(String(repeating: "0", count: 200) + "1", enabled: true) == .success(1))
+        #expect(ConversionEngine.twosComplementDecode("1" + String(repeating: "0", count: 64), enabled: true) == .failure(.numberOutOfRange))
+        #expect(ConversionEngine.twosComplementDecode("0" + String(repeating: "1", count: 64), enabled: true) == .failure(.numberOutOfRange))
     }
 
-    private func decode(_ bits: String) -> Result<Int, ConversionError> {
-        ConversionEngine.twosComplementDecode(bits, enabled: true)
+    @Test func unsignedNativeOverflowIsAnError() {
+        #expect(ConversionEngine.twosComplementDecode(String(repeating: "1", count: 64), enabled: false) == .failure(.numberOutOfRange))
+        #expect(ConversionEngine.twosComplementDecode(String(repeating: "0", count: 200), enabled: false) == .success(0))
     }
 
-    /// `encode(Int.max)` is 63 ones; as a 63-bit signed field that is exactly
-    /// `2^63 - 1 - 2^63 = -1`. (this case previously TRAPPED with an arithmetic
-    /// overflow while forming `2^63`; it must now decode cleanly to -1.)
-    @Test func decodeEncodeIntMaxIsNegativeOne() {
-        #expect(encode(Int.max) == String(repeating: "1", count: 63))
-        #expect(decode(encode(Int.max)) == .success(-1))
-        // the 63-bit and 64-bit all-ones fields both denote -1 (all bits set).
-        #expect(decode(String(repeating: "1", count: 63)) == .success(-1))
-        #expect(decode(String(repeating: "1", count: 64)) == .success(-1))
-    }
-
-    /// a string wider than 64 bits keeps only its low 64 bits (the unsigned
-    /// accumulator overshifts the rest away). `1` followed by 64 zeros is 65 bits;
-    /// its low 64 bits are all zero, so it decodes to 0. 65 ones keeps 64 ones -> -1.
-    @Test func overWidthFieldsTruncateToLow64Bits() {
-        let bit65High = "1" + String(repeating: "0", count: 64) // 65 bits, low 64 = 0
-        #expect(decode(bit65High) == .success(0))
-        #expect(decode(String(repeating: "1", count: 65)) == .success(-1))
-    }
-
-    /// any non-binary character makes the whole string malformed -> typed
-    /// `invalidCharacter`; an empty string is the documented zero.
     @Test func malformedDecodeIsTypedError() {
-        #expect(decode("10201") == .failure(.invalidCharacter))
-        #expect(decode("1.0") == .failure(.invalidCharacter))   // the '.' is illegal
-        #expect(decode("abc") == .failure(.invalidCharacter))
-        #expect(decode(" 1") == .failure(.invalidCharacter))    // whitespace is illegal
-        #expect(decode("") == .success(0))                      // empty -> 0
+        for bits in ["10201", "1.0", "abc", " 1", "-1"] {
+            #expect(ConversionEngine.twosComplementDecode(bits, enabled: true) == .failure(.invalidCharacter))
+        }
+        #expect(ConversionEngine.twosComplementDecode("", enabled: true) == .success(0))
     }
 }
 

@@ -11,147 +11,140 @@ import Foundation
 // MARK: - Parse / render
 
 extension ConversionEngine {
-    /// parses an already-validated base-`fromBase` string into an exact `Decimal`.
-    ///
-    /// the integer part is accumulated with horner's method; the fraction part
-    /// sums each digit weighted by `base^-position`. empty / lone `-` / lone `.`
-    /// / `-.` map to zero. letters A...Z map to 10...35; the sign is preserved.
-    /// callers must validate first.
-    static func parse(_ number: String, fromBase: Int) -> Decimal {
-        var s = number.replacing(",", with: ".")
-
-        if s.isEmpty || s == "-" || s == "." || s == "-." {
-            return .zero
-        }
-
-        let negative = s.hasPrefix("-")
-        if negative { s.removeFirst() }
-
-        let integerPart: Substring
-        let fractionPart: Substring
-        if let dotIndex = s.firstIndex(of: ".") {
-            integerPart = s[s.startIndex..<dotIndex]
-            fractionPart = s[s.index(after: dotIndex)...]
-        } else {
-            integerPart = s[...]
-            fractionPart = s[s.endIndex...]
-        }
+    /// finite input coefficients must fit `Decimal` exactly. non-terminating
+    /// fractions use native decimal precision before the final 12-digit rounding.
+    static func parse(_ number: String, fromBase: Int,
+                      allowRecurringFraction: Bool = false) throws(ConversionError) -> Decimal {
+        var normalized = number.replacing(",", with: ".")
+        let negative = normalized.hasPrefix("-")
+        if negative { normalized.removeFirst() }
+        let parts = normalized.split(separator: ".", omittingEmptySubsequences: false)
+        let integerPart = parts[0]
+        var fractionPart = parts.count > 1 ? parts[1] : Substring()
+        while fractionPart.last == "0" { fractionPart.removeLast() }
 
         let base = Decimal(fromBase)
-        var value = Decimal.zero
-
-        // integer part: horner over digits.
-        for ch in integerPart {
-            value = value * base + Decimal(digitValue(ch))
+        var coefficient = Decimal.zero
+        for character in integerPart + fractionPart {
+            coefficient = try decimalOperation(.multiply, coefficient, base)
+            coefficient = try decimalOperation(.add, coefficient, Decimal(digitValue(character)))
         }
-
-        // fraction part: digit * base^-pos.
-        if !fractionPart.isEmpty {
-            var weight = Decimal(1) / base // 1 / base
-            for ch in fractionPart {
-                value += Decimal(digitValue(ch)) * weight
-                weight /= base
-            }
+        var divisor = Decimal(1)
+        for _ in fractionPart {
+            divisor = try decimalOperation(.multiply, divisor, base)
         }
-
+        let value = try decimalOperation(.divide, coefficient, divisor)
+        if !allowRecurringFraction {
+            let result = decimalComponents(value)
+            let product = multiplyIntegers(result.digits, decimalComponents(divisor).digits)
+            let expected = normalizedDigits(decimalComponents(coefficient).digits + Array(repeating: 0, count: result.scale))
+            guard product == expected else { throw .numberOutOfRange }
+        }
         return negative ? -value : value
     }
 
-    /// renders an exact `Decimal` into a base-`toBase` string: the integer part
-    /// via repeated euclidean division, the fraction part via repeated
-    /// multiply-by-base, with base-aware half-up rounding of the final fraction
-    /// digit and carry that can ripple into the integer part.
-    static func render(_ value: Decimal, toBase: Int) -> String {
-        if value == .zero { return "0" }
-
-        let negative = value < .zero
-        let magnitude = negative ? -value : value
-        let base = Decimal(toBase)
-
-        var integerValue = floor(magnitude)       // value >= 0 so floor == truncation
-        let fraction = magnitude - integerValue   // 0 <= fraction < 1
-
-        var integerString = renderInteger(integerValue, base: toBase)
-
-        // fractional digits as values so rounding can carry.
-        var fractionDigits: [Int] = []
-        var f = fraction
-        for _ in 0..<maxFractionDigits {
-            if f == .zero { break }
-            f *= base
-            let digit = floor(f)
-            fractionDigits.append(intValue(digit))
-            f -= digit
-        }
-
-        // round the final digit half-up when a non-zero remainder is >= 1/2.
-        if !fractionDigits.isEmpty, f != .zero, f + f >= Decimal(1) {
-            var i = fractionDigits.count - 1
-            var carry = true
-            while i >= 0, carry {
-                fractionDigits[i] += 1
-                if fractionDigits[i] == toBase {
-                    // base-aware carry: carry only when the digit reaches the base.
-                    fractionDigits[i] = 0
-                    carry = true
-                    i -= 1
-                } else {
-                    carry = false
-                }
-            }
-            if carry {
-                // carry rippled past the radix point into the integer part.
-                integerValue += 1
-                integerString = renderInteger(integerValue, base: toBase)
-            }
-        }
-
-        // trim trailing zero fraction digits.
-        while let last = fractionDigits.last, last == 0 {
-            fractionDigits.removeLast()
-        }
-
-        let result: String
-        if fractionDigits.isEmpty {
-            result = integerString
-        } else {
-            let fractionString = String(fractionDigits.map { digitCharacter($0) })
-            result = integerString + "." + fractionString
-        }
-
-        if result == "0" { return "0" }
-        return negative ? "-" + result : result
-    }
-
-    // MARK: Decimal helpers
-
-    /// renders a non-negative integer-valued `Decimal` to a base string via
-    /// repeated euclidean division.
-    private static func renderInteger(_ value: Decimal, base: Int) -> String {
-        if value == .zero { return "0" }
-        var digitsOut: [Character] = []
-        var n = value
-        let baseDecimal = Decimal(base)
-        while n > .zero {
-            let quotient = floor(n / baseDecimal)
-            let remainder = n - quotient * baseDecimal
-            digitsOut.append(digitCharacter(intValue(remainder)))
-            n = quotient
-        }
-        return String(digitsOut.reversed())
-    }
-
-    /// largest integer-valued `Decimal` not greater than a non-negative `value`;
-    /// exact for the engine's value ranges.
-    private static func floor(_ value: Decimal) -> Decimal {
-        var input = value
+    /// decimal operations report overflow/underflow and discarded significant digits.
+    /// division may produce a recurring fraction, which the renderer rounds explicitly.
+    static func decimalOperation(_ operation: Operation,
+                                 _ lhs: Decimal,
+                                 _ rhs: Decimal) throws(ConversionError) -> Decimal {
+        var left = lhs
+        var right = rhs
         var result = Decimal()
-        NSDecimalRound(&result, &input, 0, .down)
+        let error: Decimal.CalculationError
+        switch operation {
+        case .add: error = NSDecimalAdd(&result, &left, &right, .plain)
+        case .subtract:
+            var negativeRight = -right
+            error = NSDecimalAdd(&result, &left, &negativeRight, .plain)
+        case .multiply: error = NSDecimalMultiply(&result, &left, &right, .plain)
+        case .divide: error = NSDecimalDivide(&result, &left, &right, .plain)
+        }
+        if error == .divideByZero { throw .divisionByZero }
+        guard error == .noError, !result.isNaN else { throw .numberOutOfRange }
         return result
     }
 
-    /// converts an integer-valued `Decimal` (a single base digit, 0...35) to `Int`.
-    private static func intValue(_ value: Decimal) -> Int {
-        NSDecimalNumber(decimal: value).intValue
+    /// renders a finite native decimal without rounding its integer quotient.
+    static func render(_ value: Decimal, toBase: Int) -> String {
+        var decimal = value
+        let text = NSDecimalString(&decimal, Locale(identifier: "en_US_POSIX"))
+        return renderPositional(text, fromBase: 10, toBase: toBase)
+    }
+
+    /// exact positional conversion uses only small digit/carry arithmetic. in
+    /// particular, binary/hexadecimal half-up ties never depend on an approximate
+    /// intermediate decimal fraction.
+    static func renderPositional(_ number: String, fromBase: Int, toBase: Int) -> String {
+        var normalized = number
+        let negative = normalized.hasPrefix("-")
+        if negative { normalized.removeFirst() }
+        let parts = normalized.split(separator: ".", omittingEmptySubsequences: false)
+        var whole = parts[0].map(digitValue)
+        var fraction = parts.count > 1 ? parts[1].map(digitValue) : []
+        var result: [Int] = []
+        repeat {
+            var quotient: [Int] = []
+            var remainder = 0
+            for digit in whole {
+                let current = remainder * fromBase + digit
+                let next = current / toBase
+                remainder = current % toBase
+                if next != 0 || !quotient.isEmpty { quotient.append(next) }
+            }
+            result.append(remainder)
+            whole = quotient
+        } while !whole.isEmpty
+        result.reverse()
+
+        var fractionCount = 0
+        for _ in 0..<maxFractionDigits {
+            if fraction.allSatisfy({ $0 == 0 }) { break }
+            result.append(multiplyFraction(&fraction, by: toBase, base: fromBase))
+            fractionCount += 1
+        }
+        return finishDigits(result, fractionCount: fractionCount,
+                            roundUp: multiplyFraction(&fraction, by: 2, base: fromBase) != 0,
+                            negative: negative, base: toBase)
+    }
+
+    static func finishDigits(_ digits: [Int], fractionCount: Int, roundUp: Bool,
+                             negative: Bool, base: Int) -> String {
+        var result = digits
+        var fractionCount = fractionCount
+        if roundUp {
+            var index = result.count - 1
+            while index >= 0, result[index] == base - 1 {
+                result[index] = 0
+                index -= 1
+            }
+            if index >= 0 {
+                result[index] += 1
+            } else {
+                result.insert(1, at: 0)
+            }
+        }
+        while fractionCount > 0, result.last == 0 {
+            result.removeLast()
+            fractionCount -= 1
+        }
+        var text = String(result.map(digitCharacter))
+        if fractionCount > 0 {
+            text.insert(".", at: text.index(text.endIndex, offsetBy: -fractionCount))
+        }
+        if text == "0" { return "0" }
+        return negative ? "-" + text : text
+    }
+
+    /// multiplies a base-fraction in place and returns its whole part. each
+    /// temporary value is bounded by 35*36+35, so native integer arithmetic is exact.
+    private static func multiplyFraction(_ digits: inout [Int], by multiplier: Int, base: Int) -> Int {
+        var carry = 0
+        for index in digits.indices.reversed() {
+            let product = digits[index] * multiplier + carry
+            digits[index] = product % base
+            carry = product / base
+        }
+        return carry
     }
 }

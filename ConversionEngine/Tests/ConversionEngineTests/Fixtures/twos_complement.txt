@@ -4,13 +4,14 @@
 # Do NOT hand-edit expected values. Error tokens: ERR:invalidCharacter / ERR:baseOutOfRange / ERR:divisionByZero.
 # op tcEncode|value=<int>,tc=ON|OFF|<bits>   (decimal int -> binary string)
 # op tcDecode|bits=<binary>,tc=ON|OFF|<int>   (binary string -> decimal int)
+# Positive encodings include a sign bit and whole-byte padding.
 # CORRECT two's complement: -128->8bit 10000000; 01111111->127; 00000001->1.
 
-tcEncode|value=255,tc=ON|11111111
-tcEncode|value=1,tc=ON|1
-tcEncode|value=7,tc=ON|111
-tcEncode|value=100,tc=ON|1100100
-tcEncode|value=0,tc=ON|0
+tcEncode|value=255,tc=ON|0000000011111111
+tcEncode|value=1,tc=ON|00000001
+tcEncode|value=7,tc=ON|00000111
+tcEncode|value=100,tc=ON|01100100
+tcEncode|value=0,tc=ON|00000000
 tcEncode|value=-1,tc=ON|11111111
 tcEncode|value=-2,tc=ON|11111110
 tcEncode|value=-7,tc=ON|11111001

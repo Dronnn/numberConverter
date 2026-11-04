@@ -22,6 +22,9 @@ public enum ConversionEngine {
     /// maximum number of fraction digits emitted before half-up rounding.
     public static let maxFractionDigits = 12
 
+    /// bounds per-keystroke work and pasted input before native numeric validation.
+    public static let maxInputLength = 1_024
+
     /// digit alphabet; index equals digit value (0...35).
     static let digits = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
@@ -79,39 +82,31 @@ public enum ConversionEngine {
                                twosComplement: Bool = false) -> Result<String, ConversionError> {
         guard supportedBaseRange.contains(fromBase) else { return .failure(.baseOutOfRange) }
         guard supportedBaseRange.contains(toBase) else { return .failure(.baseOutOfRange) }
+        guard number.utf8.count <= maxInputLength else { return .failure(.numberOutOfRange) }
         guard isValid(number, base: fromBase) else { return .failure(.invalidCharacter) }
 
-        // two's-complement integer fast paths (binary, no fraction).
-        if twosComplement {
+        do throws(ConversionError) {
             let normalized = number.replacing(",", with: ".")
-            let isInteger = !normalized.contains(".")
-
-            if isInteger, fromBase == 2, toBase == 2 {
-                // decode the binary input under TC, then re-encode under TC.
-                guard let value = try? TwosComplement.decode(normalized, enabled: true) else {
-                    return .failure(.invalidCharacter)
+            let signedBinary = twosComplement && !normalized.contains(".")
+            let value: Decimal
+            if signedBinary, fromBase == 2 {
+                value = Decimal(try TwosComplement.decode(normalized, enabled: true))
+            } else {
+                value = try parse(normalized, fromBase: fromBase, allowRecurringFraction: true)
+            }
+            if signedBinary, toBase == 2 {
+                guard value >= Decimal(Int.min), value <= Decimal(Int.max) else {
+                    return .failure(.numberOutOfRange)
                 }
-                return .success(TwosComplement.encode(value, enabled: true))
+                return .success(TwosComplement.encode(NSDecimalNumber(decimal: value).intValue, enabled: true))
             }
-
-            if isInteger, toBase == 2 {
-                // parse the (non-binary) integer exactly, then TC-encode.
-                let value = parse(number, fromBase: fromBase)
-                let integer = NSDecimalNumber(decimal: value).intValue
-                return .success(TwosComplement.encode(integer, enabled: true))
+            if signedBinary, fromBase == 2 {
+                return .success(render(value, toBase: toBase))
             }
-
-            if isInteger, fromBase == 2 {
-                // TC-decode the binary input, then render to the target base.
-                guard let value = try? TwosComplement.decode(normalized, enabled: true) else {
-                    return .failure(.invalidCharacter)
-                }
-                return .success(render(Decimal(value), toBase: toBase))
-            }
+            return .success(renderPositional(normalized, fromBase: fromBase, toBase: toBase))
+        } catch {
+            return .failure(error)
         }
-
-        let value = parse(number, fromBase: fromBase)
-        return .success(render(value, toBase: toBase))
     }
 
     // MARK: Calculate
@@ -127,24 +122,25 @@ public enum ConversionEngine {
                                  resultBase: Int) -> Result<String, ConversionError> {
         guard supportedBaseRange.contains(aBase),
               supportedBaseRange.contains(bBase) else { return .failure(.invalidCharacter) }
+        guard a.utf8.count <= maxInputLength, b.utf8.count <= maxInputLength else {
+            return .failure(.numberOutOfRange)
+        }
         guard isValid(a, base: aBase), isValid(b, base: bBase) else {
             return .failure(.invalidCharacter)
         }
         guard supportedBaseRange.contains(resultBase) else { return .failure(.baseOutOfRange) }
 
-        let va = parse(a, fromBase: aBase)
-        let vb = parse(b, fromBase: bBase)
-
-        let result: Decimal
-        switch op {
-        case .add: result = va + vb
-        case .subtract: result = va - vb
-        case .multiply: result = va * vb
-        case .divide:
-            if vb == .zero { return .failure(.divisionByZero) }
-            result = va / vb
+        do throws(ConversionError) {
+            let va = try parse(a, fromBase: aBase)
+            let vb = try parse(b, fromBase: bBase)
+            if op == .divide {
+                return .success(try divide(va, vb, toBase: resultBase))
+            }
+            let result = try decimalOperation(op, va, vb)
+            return .success(render(result, toBase: resultBase))
+        } catch {
+            return .failure(error)
         }
-        return .success(render(result, toBase: resultBase))
     }
 
     // MARK: Two's complement helpers
@@ -158,10 +154,8 @@ public enum ConversionEngine {
     public static func twosComplementDecode(_ bits: String, enabled: Bool) -> Result<Int, ConversionError> {
         do {
             return .success(try TwosComplement.decode(bits, enabled: enabled))
-        } catch let error as ConversionError {
-            return .failure(error)
         } catch {
-            return .failure(.invalidCharacter)
+            return .failure(error)
         }
     }
 
@@ -170,16 +164,17 @@ public enum ConversionEngine {
     /// parses a base-`fromBase` string into a `Decimal`, or `nil` when invalid /
     /// out of range. `Decimal` is the engine's native value type (SPEC 3.2 naming).
     public static func toDecimal(_ number: String, fromBase: Int) -> Decimal? {
-        guard supportedBaseRange.contains(fromBase), isValid(number, base: fromBase) else {
+        guard number.utf8.count <= maxInputLength,
+              supportedBaseRange.contains(fromBase), isValid(number, base: fromBase) else {
             return nil
         }
-        return parse(number, fromBase: fromBase)
+        return try? parse(number, fromBase: fromBase)
     }
 
     /// renders a `Decimal` into a base-`toBase` string, or `nil` when the base is
     /// out of range (SPEC 3.3 naming).
     public static func fromDecimal(_ value: Decimal, toBase: Int) -> String? {
-        guard supportedBaseRange.contains(toBase) else { return nil }
+        guard supportedBaseRange.contains(toBase), !value.isNaN else { return nil }
         return render(value, toBase: toBase)
     }
 
@@ -187,9 +182,13 @@ public enum ConversionEngine {
 
     /// value of a single digit character (0...35), or `-1` if not a base-36 digit.
     static func digitValue(_ character: Character) -> Int {
-        guard let scalar = character.uppercased().unicodeScalars.first else { return -1 }
-        let upper = Character(scalar)
-        return digits.firstIndex(of: upper) ?? -1
+        guard let ascii = character.asciiValue else { return -1 }
+        switch ascii {
+        case 48...57: return Int(ascii - 48)
+        case 65...90: return Int(ascii - 55)
+        case 97...122: return Int(ascii - 87)
+        default: return -1
+        }
     }
 
     /// character for a digit value 0...35.

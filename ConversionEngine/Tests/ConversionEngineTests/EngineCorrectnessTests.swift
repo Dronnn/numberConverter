@@ -33,10 +33,10 @@ import Testing
         #expect(ConversionEngine.twosComplementEncode(-128, enabled: true) == "10000000")
         #expect(ConversionEngine.twosComplementEncode(-129, enabled: true) == "1111111101111111")
         #expect(ConversionEngine.twosComplementEncode(-255, enabled: true) == "1111111100000001")
-        #expect(ConversionEngine.twosComplementEncode(255, enabled: true) == "11111111")
-        #expect(ConversionEngine.twosComplementEncode(1, enabled: true) == "1")
+        #expect(ConversionEngine.twosComplementEncode(255, enabled: true) == "0000000011111111")
+        #expect(ConversionEngine.twosComplementEncode(1, enabled: true) == "00000001")
         #expect(ConversionEngine.twosComplementEncode(-1, enabled: true) == "11111111")
-        #expect(ConversionEngine.twosComplementEncode(0, enabled: true) == "0")
+        #expect(ConversionEngine.twosComplementEncode(0, enabled: true) == "00000000")
         #expect(ConversionEngine.twosComplementEncode(-128, enabled: false) == "-10000000")
     }
 

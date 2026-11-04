@@ -18,6 +18,7 @@ extension ConversionError {
         case .invalidCharacter: "error.invalidCharacter"
         case .baseOutOfRange: "error.baseOutOfRange"
         case .divisionByZero: "error.divisionByZero"
+        case .numberOutOfRange: "error.numberOutOfRange"
         }
     }
 }
