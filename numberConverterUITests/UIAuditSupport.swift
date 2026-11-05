@@ -517,12 +517,16 @@ extension NumberConverterUITests {
         add(attachment)
     }
 
-    func markWorkflowCompleted(_ language: UITestLanguage, largestText: Bool = false, smoke: Bool = false) {
+    func markWorkflowCompleted(_ language: UITestLanguage, largestText: Bool = false, localization: Bool = false) {
         completedEndToEndWorkflow = true
-        let variant = smoke ? "navigation-smoke" : largestText ? "AX5-layout" : "normal-end-to-end"
-        let scope = smoke
-            ? "All five tabs, Help presentation/dismissal, localized Support explanation, "
-                + "and a displayed tip price returned."
+        let variant = if localization {
+            largestText ? "AX5-localization" : "normal-localization"
+        } else {
+            largestText ? "AX5-layout" : "normal-end-to-end"
+        }
+        let scope = localization
+            ? "Localized labels on all five tabs, Help and Privacy titles, Support explanation, "
+                + "and all five locale-formatted tip prices checked."
             : "Converter, arbitrary-base, calculator, quiz, statistics, Support retry, "
                 + "and nine-page Help workflows returned."
         let mode = capturesIncludeNativeAudit
@@ -536,7 +540,13 @@ extension NumberConverterUITests {
         Mode: \(mode)
         \(scope)
         """)
-        let prefix = collectsAllAuditIssues ? "diagnostic-" : capturesIncludeNativeAudit ? "" : "functional-"
+        let prefix = if localization {
+            ""
+        } else if collectsAllAuditIssues {
+            "diagnostic-"
+        } else {
+            capturesIncludeNativeAudit ? "" : "functional-"
+        }
         attachment.name = "\(prefix)workflow-completed-\(language.rawValue)-\(variant)"
         attachment.lifetime = .keepAlways
         add(attachment)

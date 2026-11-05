@@ -48,8 +48,7 @@
       },
       "parallelizable": false,
       "selectedTests": [
-        "NumberConverterUITests/testFrenchLargestTextEndToEnd()",
-        "NumberConverterUITests/testFrenchLargestTextFunctionalEndToEnd()"
+        "NumberConverterUITests/testFrenchLargestTextLocalization()"
       ]
     }
   ],

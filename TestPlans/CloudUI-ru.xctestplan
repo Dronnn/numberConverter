@@ -48,9 +48,7 @@
       },
       "parallelizable": false,
       "selectedTests": [
-        "NumberConverterUITests/testRussianEndToEnd()",
-        "NumberConverterUITests/testRussianFunctionalEndToEnd()",
-        "NumberConverterUITests/testRussianNavigationSmoke()",
+        "NumberConverterUITests/testRussianLocalization()",
         "NumberConverterUITests/testRussianStoreScreenshots()"
       ]
     }

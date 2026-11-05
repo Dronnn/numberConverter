@@ -46,70 +46,58 @@ final class NumberConverterUITests: XCTestCase {
             completedEndToEndWorkflow = false
             return result
         }
-        if name.contains("EndToEnd") || name.contains("NavigationSmoke") {
-            XCTAssertTrue(completed, "The end-to-end workflow exited before all screens and actions completed")
+        if name.contains("EndToEnd") || name.contains("Localization") {
+            XCTAssertTrue(completed, "The workflow exited before all required checks completed")
         }
         try await super.tearDown()
     }
 
-    func testEnglishEndToEnd() throws {
-        try exerciseLanguage(.english)
-        markWorkflowCompleted(.english)
+    func testEnglishLocalization() throws {
+        try exerciseLocalization(.english)
     }
 
-    func testRussianEndToEnd() throws {
-        try exerciseLanguage(.russian)
-        markWorkflowCompleted(.russian)
+    func testEnglishLargestTextLocalization() throws {
+        try exerciseLocalization(.english, largeText: true)
     }
 
-    func testSpanishEndToEnd() throws {
-        try exerciseLanguage(.spanish)
-        markWorkflowCompleted(.spanish)
+    func testRussianLocalization() throws {
+        try exerciseLocalization(.russian)
     }
 
-    func testGermanEndToEnd() throws {
-        try exerciseLanguage(.german)
-        markWorkflowCompleted(.german)
+    func testRussianLargestTextLocalization() throws {
+        try exerciseLocalization(.russian, largeText: true)
     }
 
-    func testFrenchEndToEnd() throws {
-        try exerciseLanguage(.french)
-        markWorkflowCompleted(.french)
+    func testSpanishLocalization() throws {
+        try exerciseLocalization(.spanish)
     }
 
-    func testPortugueseEndToEnd() throws {
-        try exerciseLanguage(.portuguese)
-        markWorkflowCompleted(.portuguese)
+    func testSpanishLargestTextLocalization() throws {
+        try exerciseLocalization(.spanish, largeText: true)
     }
 
-    func testEnglishLargestTextEndToEnd() throws {
-        try exerciseAccessibilityLayout(.english)
-        markWorkflowCompleted(.english, largestText: true)
+    func testGermanLocalization() throws {
+        try exerciseLocalization(.german)
     }
 
-    func testRussianLargestTextEndToEnd() throws {
-        try exerciseAccessibilityLayout(.russian)
-        markWorkflowCompleted(.russian, largestText: true)
+    func testGermanLargestTextLocalization() throws {
+        try exerciseLocalization(.german, largeText: true)
     }
 
-    func testSpanishLargestTextEndToEnd() throws {
-        try exerciseAccessibilityLayout(.spanish)
-        markWorkflowCompleted(.spanish, largestText: true)
+    func testFrenchLocalization() throws {
+        try exerciseLocalization(.french)
     }
 
-    func testGermanLargestTextEndToEnd() throws {
-        try exerciseAccessibilityLayout(.german)
-        markWorkflowCompleted(.german, largestText: true)
+    func testFrenchLargestTextLocalization() throws {
+        try exerciseLocalization(.french, largeText: true)
     }
 
-    func testFrenchLargestTextEndToEnd() throws {
-        try exerciseAccessibilityLayout(.french)
-        markWorkflowCompleted(.french, largestText: true)
+    func testPortugueseLocalization() throws {
+        try exerciseLocalization(.portuguese)
     }
 
-    func testPortugueseLargestTextEndToEnd() throws {
-        try exerciseAccessibilityLayout(.portuguese)
-        markWorkflowCompleted(.portuguese, largestText: true)
+    func testPortugueseLargestTextLocalization() throws {
+        try exerciseLocalization(.portuguese, largeText: true)
     }
 
     func testAccessibilityInEveryLanguage() throws {
@@ -123,40 +111,8 @@ final class NumberConverterUITests: XCTestCase {
         }
     }
 
-    func testEnglishNavigationSmoke() throws {
-        try exerciseNavigationSmoke(.english)
-        markWorkflowCompleted(.english, smoke: true)
-    }
-
-    func testRussianNavigationSmoke() throws {
-        try exerciseNavigationSmoke(.russian)
-        markWorkflowCompleted(.russian, smoke: true)
-    }
-
-    func testSpanishNavigationSmoke() throws {
-        try exerciseNavigationSmoke(.spanish)
-        markWorkflowCompleted(.spanish, smoke: true)
-    }
-
-    func testGermanNavigationSmoke() throws {
-        try exerciseNavigationSmoke(.german)
-        markWorkflowCompleted(.german, smoke: true)
-    }
-
-    func testFrenchNavigationSmoke() throws {
-        try exerciseNavigationSmoke(.french)
-        markWorkflowCompleted(.french, smoke: true)
-    }
-
-    func testPortugueseNavigationSmoke() throws {
-        try exerciseNavigationSmoke(.portuguese)
-        markWorkflowCompleted(.portuguese, smoke: true)
-    }
-
-    func testRotationPreservesQuizAndHelpInEveryLanguage() throws {
-        for language in UITestLanguage.allCases {
-            try exerciseRotation(language)
-        }
+    func testRotationPreservesQuizAndHelp() throws {
+        try exerciseRotation(.english)
     }
 
     func exerciseLanguage(_ language: UITestLanguage, largeText: Bool = false) throws {

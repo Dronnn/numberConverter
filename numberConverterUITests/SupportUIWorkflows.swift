@@ -17,21 +17,56 @@ extension NumberConverterUITests {
         }
     }
 
-    func exerciseNavigationSmoke(_ language: UITestLanguage) throws {
-        launch(language)
+    func exerciseLocalization(_ language: UITestLanguage, largeText: Bool = false) throws {
+        // dedicated audits and functional tests cover those concerns separately.
+        let originalAuditMode = capturesIncludeNativeAudit
+        capturesIncludeNativeAudit = false
+        defer {
+            app.terminate()
+            capturesIncludeNativeAudit = originalAuditMode
+        }
+        launch(language, largeText: largeText)
         try expectTabLabels(language)
-        for index in 0 ..< 5 {
+        XCTAssertEqual(app.navigationBars.firstMatch.identifier, language.converterTitle)
+        for index in Self.tabIdentifiers.indices {
             try selectTab(index)
+            let prefix = Self.tabIdentifiers[index] + "."
+            let labels = language.localizationLabels.filter { $0.key.hasPrefix(prefix) }
+            for (identifier, expected) in labels.sorted(by: { $0.key < $1.key }) {
+                try expectReachableLocalizedLabel(identifier, expected: expected)
+            }
             XCTAssertTrue(try require("app.help").isHittable)
-            capture(language, screen: "smoke-tab-\(index)")
+            assertNoLocalizationKeys()
+            capture(language, screen: "localization-tab-\(index)")
         }
         try expectText("support.explanation", language.supportExplanation)
-        try expectTipPrice(language, identifier: tipIdentifiers[0], amount: "2.99")
+        for (identifier, amount) in zip(tipIdentifiers, ["2.99", "8.99", "19.99", "49.99", "99.99"]) {
+            try expectTipPrice(language, identifier: identifier, amount: amount)
+        }
+        try exerciseLocalizedHelp(language)
+        markWorkflowCompleted(language, largestText: largeText, localization: true)
+    }
+
+    private func expectReachableLocalizedLabel(_ identifier: String, expected: String) throws {
+        let label = element(identifier)
+        try reveal(label, identifier: identifier)
+        XCTAssertTrue(label.label.contains(expected), "\(identifier): expected \(expected), actual \(label.label)")
+        XCTAssertGreaterThanOrEqual(label.frame.minX, app.frame.minX)
+        XCTAssertLessThanOrEqual(label.frame.maxX, app.frame.maxX)
+    }
+
+    private func exerciseLocalizedHelp(_ language: UITestLanguage) throws {
         try openHelp()
-        capture(language, screen: "smoke-help-modal")
+        try tap("help.topic.1")
+        try expectText("help.title", XCTUnwrap(language.localizationLabels["help.title"]))
+        assertNoLocalizationKeys()
+        capture(language, screen: "localization-help")
+        backToList("help.sidebar")
+        try tap("help.privacy")
+        try expectText("privacy.title", XCTUnwrap(language.localizationLabels["privacy.title"]))
+        assertNoLocalizationKeys()
+        capture(language, screen: "localization-privacy")
         try closeHelp()
-        XCTAssertTrue(try require("support.explanation").exists)
-        app.terminate()
     }
 
     func exerciseSupport(_ language: UITestLanguage) throws {

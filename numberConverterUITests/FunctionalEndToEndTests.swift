@@ -10,62 +10,22 @@ import XCTest
 
 @MainActor
 extension NumberConverterUITests {
+    /// Logic is independent of language. Translation/layout coverage lives in the localization tests.
     func testEnglishFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.english)
-    }
-
-    func testRussianFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.russian)
-    }
-
-    func testSpanishFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.spanish)
-    }
-
-    func testGermanFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.german)
-    }
-
-    func testFrenchFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.french)
-    }
-
-    func testPortugueseFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.portuguese)
+        try exerciseFunctionalWorkflow()
     }
 
     func testEnglishLargestTextFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.english, largestText: true)
+        try exerciseFunctionalWorkflow(largestText: true)
     }
 
-    func testRussianLargestTextFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.russian, largestText: true)
-    }
-
-    func testSpanishLargestTextFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.spanish, largestText: true)
-    }
-
-    func testGermanLargestTextFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.german, largestText: true)
-    }
-
-    func testFrenchLargestTextFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.french, largestText: true)
-    }
-
-    func testPortugueseLargestTextFunctionalEndToEnd() throws {
-        try exerciseFunctionalLanguage(.portuguese, largestText: true)
-    }
-
-    private func exerciseFunctionalLanguage(_ language: UITestLanguage, largestText: Bool = false) throws {
-        capturesIncludeNativeAudit = false
-        defer { capturesIncludeNativeAudit = true }
+    private func exerciseFunctionalWorkflow(largestText: Bool = false) throws {
+        // keep full native audit coverage once per text size, alongside the functional assertions.
         if largestText {
-            try exerciseAccessibilityLayout(language)
+            try exerciseAccessibilityLayout(.english)
         } else {
-            try exerciseLanguage(language)
+            try exerciseLanguage(.english)
         }
-        markWorkflowCompleted(language, largestText: largestText)
+        markWorkflowCompleted(.english, largestText: largestText)
     }
 }

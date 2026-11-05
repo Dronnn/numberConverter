@@ -48,9 +48,8 @@
       },
       "parallelizable": false,
       "selectedTests": [
-        "NumberConverterUITests/testEnglishEndToEnd()",
+        "NumberConverterUITests/testEnglishLocalization()",
         "NumberConverterUITests/testEnglishFunctionalEndToEnd()",
-        "NumberConverterUITests/testEnglishNavigationSmoke()",
         "NumberConverterUITests/testEnglishStoreScreenshots()"
       ]
     }
