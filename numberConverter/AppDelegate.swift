@@ -11,9 +11,8 @@ import UIKit
 
 // MARK: - AppDelegate
 
-/// minimal uikit bridge: swiftui's app lifecycle can't capture a launch-time
-/// `UIApplicationShortcutItem`, so the home-screen quick actions (phase 9) are
-/// registered and handled here, then routed through `QuickActionRouter`.
+/// registers home-screen quick actions and connects their scene delegate
+/// while swiftui continues to create and manage the app's windows.
 @MainActor
 final class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
@@ -47,10 +46,18 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 
     func application(
         _: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options _: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        QuickActionSceneDelegate.configuration(for: connectingSceneSession.role)
+    }
+
+    func application(
+        _: UIApplication,
         performActionFor shortcutItem: UIApplicationShortcutItem,
         completionHandler: @escaping (Bool) -> Void
     ) {
-        // warm launch: app was already running/backgrounded.
+        // legacy lifecycle fallback; scene-based launches use the scene delegate.
         guard let tab = AppTab(shortcutType: shortcutItem.type) else {
             completionHandler(false)
             return

@@ -50,6 +50,7 @@ struct QuizStatsView: View {
                 .accessibilityIdentifier("statistics.reset")
             }
         }
+        .modifier(StatisticsScrollEdgeEffect())
         .navigationTitle(Text("quiz.stats.title"))
         .appHelpToolbar()
         .accessibilityIdentifier("statistics.list")
@@ -67,6 +68,16 @@ struct QuizStatsView: View {
     }
 }
 
+private struct StatisticsScrollEdgeEffect: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.scrollEdgeEffectStyle(.hard, for: .bottom)
+        } else {
+            content
+        }
+    }
+}
+
 // MARK: - QuizStatsRowView
 
 /// a labeled statistics row: the quiz title and its «Всего вопросов / правильно» line.
@@ -79,7 +90,7 @@ private struct QuizStatsRowView: View {
                 .fixedSize(horizontal: false, vertical: true)
             Text(QuizStatsText.message(asked: row.asked, right: row.right))
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.primary)
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityIdentifier("statistics.counts.\(row.id)")
         }

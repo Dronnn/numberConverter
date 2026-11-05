@@ -27,12 +27,23 @@ struct BaseNumberField: View {
     }
 
     var body: some View {
-        TextField(text: bridge) {
+        TextField(text: $text) {
             Text(verbatim: prompt)
         }
         .multilineTextAlignment(.trailing)
         .keyboardType(.numberPad)
         .focused($isFocused)
+        .onChange(of: text) { _, newText in
+            // normalize after accepting the native edit so a repeated invalid
+            // paste still changes state and redraws the corrected text.
+            let digits = newText.filter { $0.isASCII && $0.isNumber }
+            if text != digits {
+                text = digits
+            }
+            if let parsed = Int(digits), ConversionEngine.supportedBaseRange.contains(parsed) {
+                base = parsed
+            }
+        }
         .onChange(of: isFocused) { _, focused in
             if !focused {
                 commit()
@@ -43,19 +54,6 @@ struct BaseNumberField: View {
                 text = String(newBase)
             }
         }
-    }
-
-    /// empty text and an initial 1 remain editable without changing the base.
-    private var bridge: Binding<String> {
-        Binding(
-            get: { text },
-            set: { newText in
-                text = newText.filter { $0.isASCII && $0.isNumber }
-                if let parsed = Int(text), ConversionEngine.supportedBaseRange.contains(parsed) {
-                    base = parsed
-                }
-            }
-        )
     }
 
     private func commit() {

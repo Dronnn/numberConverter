@@ -30,12 +30,13 @@
             formatter.locale = locale
             formatter.numberStyle = .currency
             formatter.currencyCode = "USD"
-            return zip(TipProduct.allowedIDs, [3, 9, 19, 49, 99]).map { identifier, amount in
-                // exact saved App Store Connect Indonesia price for the USD99 tier.
+            return zip(TipProduct.allowedIDs, [299, 899, 1_999, 4_999, 9_999]).map { identifier, cents in
+                let amount = NSDecimalNumber(mantissa: UInt64(cents), exponent: -2, isNegative: false)
+                // historical App Store Connect Indonesia price retained as a long-price regression.
                 // this explicit fixture never contacts StoreKit or makes a transaction.
-                let price = mode == "regional-price" && amount == 99
+                let price = mode == "regional-price" && identifier.hasSuffix(".tip.patron")
                     ? "Rp\u{00A0}1,999,000.00"
-                    : formatter.string(from: NSNumber(value: amount)) ?? ""
+                    : formatter.string(from: amount) ?? ""
                 return TipProduct(
                     id: identifier,
                     displayName: identifier,

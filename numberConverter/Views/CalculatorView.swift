@@ -50,12 +50,13 @@ private struct CalculatorDataSection: View {
                 Text("calculator.field.operandA")
             }
 
-            LabeledContent {
-                BaseNumberField(prompt: "2", base: $viewModel.baseA)
-                    .accessibilityIdentifier("calculator.baseA")
-            } label: {
-                Text("calculator.field.base")
-            }
+            BaseNumberRow(
+                label: "calculator.field.base",
+                prompt: "2",
+                base: $viewModel.baseA,
+                fieldIdentifier: "calculator.baseA",
+                labelIdentifier: "calculator.baseALabel"
+            )
 
             LabeledContent {
                 OperandField(prompt: "100", text: $viewModel.operandB)
@@ -64,12 +65,13 @@ private struct CalculatorDataSection: View {
                 Text("calculator.field.operandB")
             }
 
-            LabeledContent {
-                BaseNumberField(prompt: "2", base: $viewModel.baseB)
-                    .accessibilityIdentifier("calculator.baseB")
-            } label: {
-                Text("calculator.field.base")
-            }
+            BaseNumberRow(
+                label: "calculator.field.base",
+                prompt: "2",
+                base: $viewModel.baseB,
+                fieldIdentifier: "calculator.baseB",
+                labelIdentifier: "calculator.baseBLabel"
+            )
 
             ResultRow(
                 label: "calculator.field.result",
@@ -79,13 +81,13 @@ private struct CalculatorDataSection: View {
                 accessibilityPrefix: "calculator"
             )
 
-            LabeledContent {
-                BaseNumberField(prompt: "8", base: $viewModel.resultBase)
-                    .accessibilityIdentifier("calculator.resultBase")
-            } label: {
-                Text("calculator.field.base")
-                    .accessibilityIdentifier("calculator.resultBaseLabel")
-            }
+            BaseNumberRow(
+                label: "calculator.field.base",
+                prompt: "8",
+                base: $viewModel.resultBase,
+                fieldIdentifier: "calculator.resultBase",
+                labelIdentifier: "calculator.resultBaseLabel"
+            )
         } header: {
             Text("calculator.section.data")
                 .foregroundStyle(Color.primary)

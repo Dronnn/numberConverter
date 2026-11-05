@@ -7,37 +7,37 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Number Systems"
+            "value": "Base Lab"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Счисление"
+            "value": "Числа"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Numeración"
+            "value": "Bases"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zahlensysteme"
+            "value": "Basen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Numération"
+            "value": "Bases"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Numeração"
+            "value": "Bases"
           }
         }
       }

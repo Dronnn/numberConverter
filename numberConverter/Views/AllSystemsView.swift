@@ -37,19 +37,21 @@ struct AllSystemsView: View {
                     Text("allSystems.field.number")
                 }
 
-                LabeledContent {
-                    BaseNumberField(prompt: "6", base: $viewModel.sourceBase)
-                        .accessibilityIdentifier("allSystems.sourceBase")
-                } label: {
-                    Text("allSystems.field.fromBase")
-                }
+                BaseNumberRow(
+                    label: "allSystems.field.fromBase",
+                    prompt: "6",
+                    base: $viewModel.sourceBase,
+                    fieldIdentifier: "allSystems.sourceBase",
+                    labelIdentifier: "allSystems.sourceBaseLabel"
+                )
 
-                LabeledContent {
-                    BaseNumberField(prompt: "9", base: $viewModel.targetBase)
-                        .accessibilityIdentifier("allSystems.targetBase")
-                } label: {
-                    Text("allSystems.field.toBase")
-                }
+                BaseNumberRow(
+                    label: "allSystems.field.toBase",
+                    prompt: "9",
+                    base: $viewModel.targetBase,
+                    fieldIdentifier: "allSystems.targetBase",
+                    labelIdentifier: "allSystems.targetBaseLabel"
+                )
 
                 Button {
                     viewModel.convert()

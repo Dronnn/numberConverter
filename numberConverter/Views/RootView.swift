@@ -48,8 +48,11 @@ struct RootView: View {
         .onChange(of: navigation.selectedTab) { _, newTab in
             AppLogger.lifecycle.info("selected tab \(newTab.rawValue, privacy: .public)")
         }
-        // handles cold and warm requests without mutating an observed value inside onchange.
-        .task(id: quickActionRouter.requestSequence) { routePendingQuickAction() }
+        // consuming a request leaves this counter unchanged, so routing stays synchronous
+        // without retriggering the observer or depending on a view-bound task's lifetime.
+        .onChange(of: quickActionRouter.requestSequence, initial: true) { _, _ in
+            routePendingQuickAction()
+        }
         // safety net: re-check when the scene becomes active.
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {

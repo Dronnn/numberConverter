@@ -32,6 +32,15 @@ extension BaseField {
         }
     }
 
+    var detailTitle: LocalizedStringResource {
+        switch self {
+        case .binary: "mainSystems.header.binary"
+        case .octal: "mainSystems.header.octal"
+        case .decimal: "mainSystems.header.decimal"
+        case .hexadecimal: "mainSystems.header.hexadecimal"
+        }
+    }
+
     /// the keyboard best suited to this base's digit alphabet.
     var keyboardType: UIKeyboardType {
         switch self {
@@ -80,7 +89,7 @@ struct BaseFieldRow: View {
                     .autocorrectionDisabled()
                     .accessibilityIdentifier("converter.input.\(field.base)")
 
-                    DetailButton(action: onDetail)
+                    DetailButton(destination: field.detailTitle, action: onDetail)
                         .accessibilityIdentifier("converter.detail.\(field.base)")
                         .disabled(isInvalid)
                 }
@@ -127,7 +136,7 @@ struct DecimalRangeRow: View {
                 .autocorrectionDisabled()
                 .accessibilityIdentifier("converter.all.input")
 
-                DetailButton(action: onDetail)
+                DetailButton(destination: "converter.section.allRange", action: onDetail)
                     .accessibilityIdentifier("converter.all.detail")
                     .disabled(ConversionEngine.toDecimal(text, fromBase: 10) == nil)
             }
@@ -141,6 +150,7 @@ struct DecimalRangeRow: View {
 
 /// the trailing info button that opens a detail screen for a row.
 private struct DetailButton: View {
+    let destination: LocalizedStringResource
     let action: () -> Void
 
     var body: some View {
@@ -151,6 +161,6 @@ private struct DetailButton: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.borderless)
-        .accessibilityLabel(Text("converter.detail.accessibility"))
+        .accessibilityLabel(Text("converter.detail.accessibility") + Text(verbatim: ": ") + Text(destination))
     }
 }
