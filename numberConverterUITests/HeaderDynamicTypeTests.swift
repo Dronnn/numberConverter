@@ -12,6 +12,51 @@ import XCTest
 
 @MainActor
 extension NumberConverterUITests {
+    func isMeasuredInvalidNumberErrorIssue(
+        _ issue: XCUIAccessibilityAuditIssue,
+        language: UITestLanguage
+    ) -> Bool {
+        guard
+            language == .english,
+            issue.auditType == .dynamicType,
+            issue.compactDescription == "Dynamic Type font sizes are partially unsupported",
+            let element = issue.element, element.exists, element.elementType == .staticText,
+            element.identifier == "allSystems.error", element.label == "Invalid character"
+        else { return false }
+        return true
+    }
+
+    func testInvalidNumberErrorScalesAtLargestText() throws {
+        let normal = try measureInvalidNumberError(category: "UICTContentSizeCategoryL", name: "normal")
+        let largest = try measureInvalidNumberError(category: "UICTContentSizeCategoryAccessibilityXXXL", name: "AX5")
+        let report = """
+        Exact allSystems.error: Invalid character.
+        Normal frame: \(normal.frame); native glyph height: \(normal.glyphHeight)px.
+        AX5 frame: \(largest.frame); native glyph height: \(largest.glyphHeight)px.
+        Frame ratio: \(largest.frame.height / normal.frame.height).
+        Glyph ratio: \(largest.glyphHeight / normal.glyphHeight).
+        """
+        let attachment = XCTAttachment(string: report)
+        attachment.name = "allSystems-invalid-number-error-DynamicType-measurements"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        XCTAssertGreaterThan(largest.frame.height, normal.frame.height * 1.25, report)
+        XCTAssertGreaterThan(largest.glyphHeight, normal.glyphHeight * 1.4, report)
+        app.terminate()
+    }
+
+    private func measureInvalidNumberError(category: String, name: String) throws -> TextScaleMeasurement {
+        launchTextMeasurement(category: category)
+        try selectTab(1)
+        try replace("allSystems.number", with: "G")
+        dismissKeyboard()
+        let error = element("allSystems.error")
+        try reveal(error, attempts: 20, identifier: "allSystems.error")
+        centerSettingsHeader()
+        XCTAssertEqual(error.label, "Invalid character")
+        return try measureText(error, expectedText: "Invalid character", name: "allSystems-error-\(name)")
+    }
+
     func testSettingsHeaderScalesAtLargestText() throws {
         let normal = try measureSettingsHeader(category: "UICTContentSizeCategoryL", name: "normal")
         let largest = try measureSettingsHeader(category: "UICTContentSizeCategoryAccessibilityXXXL", name: "AX5")

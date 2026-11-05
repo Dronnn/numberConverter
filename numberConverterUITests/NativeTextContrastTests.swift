@@ -11,6 +11,29 @@ import XCTest
 
 @MainActor
 extension NumberConverterUITests {
+    func testNativeFinishHasAccessibleRenderedContrast() throws {
+        launch(.english)
+        try selectTab(3)
+        try tap("quiz.category.binaryInt")
+        let finish = try require("quiz.finish")
+        try reveal(finish, identifier: "quiz.finish")
+        XCTAssertTrue(finish.isHittable)
+        XCTAssertTrue(app.frame.contains(finish.frame))
+        let ratio = try renderedTextContrast(finish, name: "native-finish-independent-pixels")
+        XCTAssertGreaterThanOrEqual(ratio, 4.5)
+        let screen = XCTAttachment(screenshot: app.screenshot())
+        screen.name = "native-finish-positive-screen"
+        screen.lifetime = .keepAlways
+        add(screen)
+        try tap("quiz.finish")
+        let ended = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == false"), object: element("quiz.session")
+        )
+        XCTAssertEqual(XCTWaiter.wait(for: [ended], timeout: 5), .completed)
+        XCTAssertTrue(try require("quiz.category.binaryInt").isHittable)
+        app.terminate()
+    }
+
     func testSupportSmallTipHasAccessibleRenderedContrast() throws {
         launch(.english)
         try selectTab(4)
@@ -27,6 +50,17 @@ extension NumberConverterUITests {
             element.identifier == "support.tipLabel.com.mrmaier.NumberConverter.tip.small"
         else { return false }
         return (try? renderedTextContrast(element, name: "support-small-tip-failure-time-pixels"))
+            .map { $0 >= 4.5 } ?? false
+    }
+
+    func isMeasuredFinishContrastIssue(_ issue: XCUIAccessibilityAuditIssue, language: UITestLanguage) -> Bool {
+        guard
+            language == .english,
+            issue.auditType == .contrast, issue.compactDescription == "Contrast failed",
+            let element = issue.element, element.exists, element.isHittable, element.elementType == .button,
+            element.identifier == "quiz.finish", element.label == "Finish", app.frame.contains(element.frame)
+        else { return false }
+        return (try? renderedTextContrast(element, name: "native-finish-failure-time-pixels"))
             .map { $0 >= 4.5 } ?? false
     }
 

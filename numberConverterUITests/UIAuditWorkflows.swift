@@ -10,6 +10,42 @@ import XCTest
 
 @MainActor
 extension NumberConverterUITests {
+    func testPrivacyNativeAuditViewportRestoration() throws {
+        launch(.english)
+        try openHelp()
+        try tap("help.privacy")
+        try auditScrolling(
+            .english,
+            screen: "privacy-native-viewport",
+            container: require("privacy.content"),
+            through: app.links.matching(identifier: "privacy.applePolicy").firstMatch,
+            tabBarAffectsViewport: false
+        )
+        let completion =
+            XCTAttachment(string: "Privacy's actual final Apple-policy Link was reached after native audits.")
+        completion.name = "native-privacy-viewport-completed-en"
+        completion.lifetime = .keepAlways
+        add(completion)
+        app.terminate()
+        if collectsAllAuditIssues {
+            XCTFail("Diagnostic Privacy traversal requires a strict rerun before acceptance")
+        }
+    }
+
+    func testEnglishHelpNativeTraversal() throws {
+        executionTimeAllowance = 1_800
+        launch(.english)
+        try exerciseHelp(.english)
+        let completion = XCTAttachment(string: "All nine Help pages, Privacy and the contact alert returned.")
+        completion.name = "native-help-workflow-completed-en"
+        completion.lifetime = .keepAlways
+        add(completion)
+        app.terminate()
+        if collectsAllAuditIssues {
+            XCTFail("Diagnostic Help traversal requires a strict rerun before acceptance")
+        }
+    }
+
     func exerciseConverter(_ language: UITestLanguage) throws {
         let toggle = try require("converter.twosComplement")
         if toggle.value as? String == "1" {
@@ -294,7 +330,7 @@ extension NumberConverterUITests {
             language,
             screen: "privacy-policy",
             container: require("privacy.content"),
-            through: element("privacy.applePolicy"),
+            through: app.links.matching(identifier: "privacy.applePolicy").firstMatch,
             tabBarAffectsViewport: false
         )
         backToList("help.sidebar")
@@ -308,7 +344,11 @@ extension NumberConverterUITests {
 
     private func auditHelpPage(_ language: UITestLanguage, page: Int, lastBlock: String) throws {
         let content = try require("help.content")
-        let last = element("help.block.\(lastBlock)")
+        let finalMono = finalHelpMono(page: page)
+        let finalTexts = finalMono.map { text in
+            content.staticTexts.matching(NSPredicate(format: "label == %@", text))
+        }
+        let last = finalTexts?.element ?? element("help.block.\(lastBlock)")
         try auditScrolling(
             language,
             screen: "help-page-\(page)",
@@ -316,6 +356,13 @@ extension NumberConverterUITests {
             through: last,
             tabBarAffectsViewport: false
         )
+        if let finalTexts {
+            XCTAssertEqual(
+                finalTexts.count,
+                1,
+                "The complete final worked example must be unique in the current Help page"
+            )
+        }
         let mathProof: (block: String, equation: String)? = switch page {
         case 3: ("help.page3.p2", "0.89 * 2 = 1.78")
         case 4: ("help.page4.p4", "1*2^4 = 16")
@@ -327,6 +374,22 @@ extension NumberConverterUITests {
             try reveal(renderedText, container: content, identifier: identifier)
             XCTAssertTrue(renderedText.label.contains(mathProof.equation), renderedText.label)
             capture(language, screen: "help-page-\(page)-rendered-operators")
+        }
+    }
+
+    private func finalHelpMono(page: Int) -> String? {
+        switch page {
+        case 5:
+            [
+                "1*2^(-1) = 0.5", "0*2^(-2) = 0", "1*2^(-3) = 0.125",
+                "1*2^(-1) + 0*2^(-2) + 1*2^(-3) = 0.625"
+            ].joined(separator: "\n")
+        case 6:
+            [
+                "    11011", "     1101", "---------", "    11011", "   00000",
+                "  11011", " 11011", "----------", "101011111"
+            ].joined(separator: "\n")
+        default: nil
         }
     }
 }

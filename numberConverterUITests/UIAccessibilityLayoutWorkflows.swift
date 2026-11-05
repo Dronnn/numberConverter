@@ -10,6 +10,18 @@ import XCTest
 
 @MainActor
 extension NumberConverterUITests {
+    func testFrenchLargestTextCalculatorInputsRemainReachableAfterConversions() throws {
+        capturesIncludeNativeAudit = false
+        defer {
+            capturesIncludeNativeAudit = true
+            app.terminate()
+        }
+        launch(.french, largeText: true)
+        try layoutConverter(.french)
+        try layoutArbitraryBases(.french)
+        try layoutCalculator(.french)
+    }
+
     func testLargestTextConverterEditsRemainReachableAfterDetails() throws {
         capturesIncludeNativeAudit = false
         defer {

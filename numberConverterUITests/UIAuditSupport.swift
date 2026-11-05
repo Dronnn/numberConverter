@@ -16,7 +16,7 @@ enum UIAuditError: Error {
 
 @MainActor
 extension NumberConverterUITests {
-    private var collectsAllAuditIssues: Bool {
+    var collectsAllAuditIssues: Bool {
         ProcessInfo.processInfo.environment["UI_AUDIT_COLLECT_ALL"] == "1"
     }
 
@@ -117,8 +117,8 @@ extension NumberConverterUITests {
 
     func replace(_ identifier: String, with text: String) throws {
         dismissKeyboard()
-        let field = element(identifier)
-        try reveal(field, identifier: identifier)
+        let input = try visibleEditableInput(identifier)
+        let field = input.element
         let baseFields = [
             "allSystems.sourceBase", "allSystems.targetBase", "calculator.baseA", "calculator.baseB",
             "calculator.resultBase"
@@ -135,8 +135,12 @@ extension NumberConverterUITests {
             app.typeText(text)
             return
         }
-        try tapVisibleInput(field, identifier: identifier)
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 3), "No keyboard after focusing \(identifier)")
+        try tapEditableInput(input, identifier: identifier)
+        let keyboardAppeared = app.keyboards.firstMatch.waitForExistence(timeout: 3)
+        if !keyboardAppeared {
+            attachInputFocusState(identifier, stage: "no-keyboard-after-observed-tap")
+        }
+        XCTAssertTrue(keyboardAppeared, "No keyboard after focusing \(identifier)")
         if
             UIDevice.current.userInterfaceIdiom == .pad,
             ProcessInfo.processInfo.environment["UI_PAD_REPLACEMENT"] != "command"
@@ -158,23 +162,7 @@ extension NumberConverterUITests {
         field.typeText(XCUIKeyboardKey.delete.rawValue + text)
     }
 
-    private func tapVisibleInput(_ field: XCUIElement, identifier: String) throws {
-        let form = app.collectionViews.containing(.any, identifier: identifier).firstMatch
-        let visible = field.frame.intersection(visibleViewport(in: form.exists ? form : app))
-        guard visible.width > 0, visible.height > 0 else {
-            XCTFail("The input must have a visible area before focusing: \(identifier)")
-            throw UIAuditError.missingElement(identifier)
-        }
-        let offset = CGVector(
-            dx: (visible.midX - field.frame.minX) / field.frame.width,
-            dy: (visible.midY - field.frame.minY) / field.frame.height
-        )
-        XCTContext.runActivity(named: "Focus \(identifier) inside visible frame \(visible)") { _ in
-            field.coordinate(withNormalizedOffset: offset).tap()
-        }
-    }
-
-    private func visibleViewport(in container: XCUIElement, tabBarAffectsViewport: Bool = true) -> CGRect {
+    func visibleViewport(in container: XCUIElement, tabBarAffectsViewport: Bool = true) -> CGRect {
         let viewport = container.frame.intersection(app.frame)
         let navigationBottom = app.navigationBars.allElementsBoundByIndex
             .filter { $0.isHittable && $0.frame.intersects(viewport) }
@@ -230,12 +218,7 @@ extension NumberConverterUITests {
     func dismissKeyboard() {
         let keyboard = app.keyboards.firstMatch
         guard keyboard.exists else { return }
-        let done = app.toolbars.buttons["keyboard.done"]
-        if done.waitForExistence(timeout: 1), done.frame.intersects(app.frame), !done.frame.isEmpty {
-            // native hit testing sometimes rejects this visible accessory
-            // button's activation point; tap its observed frame and verify dismissal.
-            done.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        } else {
+        if !tapVisibleKeyboardDone() {
             app.swipeDown()
         }
         let dismissed = XCTNSPredicateExpectation(
@@ -485,6 +468,8 @@ extension NumberConverterUITests {
                         && Self.measuredDynamicTypeBindings.contains(issue.element?.identifier ?? "")
                     currentIssueIsMeasuredToolFailure = currentIssueIsMeasuredToolFailure
                         || self.isMeasuredSupportContrastIssue(issue)
+                        || self.isMeasuredFinishContrastIssue(issue, language: language)
+                        || (!forcedAXSize && self.isMeasuredInvalidNumberErrorIssue(issue, language: language))
                         || (!forcedAXSize && self.isMeasuredStatisticsAlertIssue(issue, language: language))
                     self.attachAuditIssue(issue, language: language, screen: screen)
                     if !currentIssueIsMeasuredToolFailure {
@@ -558,7 +543,23 @@ extension NumberConverterUITests {
         var stalledGestures = 0
         for part in 0 ..< 160 {
             assertNoLocalizationKeys()
+            let beforeAudit = capturesIncludeNativeAudit ? scrollObservation(container, target: last) : ""
+            let auditAnchor = capturesIncludeNativeAudit
+                ? try captureNativeAuditScrollAnchor(
+                    container: container, tabBarAffectsViewport: tabBarAffectsViewport, name: "\(screen)-part-\(part)"
+                )
+                : nil
             capture(language, screen: "\(screen)-part-\(part)")
+            if capturesIncludeNativeAudit {
+                try observeNativeAuditScroll(
+                    container,
+                    target: last,
+                    beforeAudit: beforeAudit,
+                    anchor: auditAnchor,
+                    tabBarAffectsViewport: tabBarAffectsViewport,
+                    name: "\(screen)-part-\(part)"
+                )
+            }
             let position = scrollAnchor(in: container, target: last)
             let moved = didScroll(from: previousPosition, to: position, height: container.frame.height)
             stalledGestures = moved ? 0 : stalledGestures + 1
@@ -566,14 +567,64 @@ extension NumberConverterUITests {
                 return
             }
             guard stalledGestures < 3 else {
+                attachScrollFailure(screen, container: container, target: last)
                 XCTFail("Scroll gestures did not advance toward the final element: \(screen)")
                 throw UIAuditError.missingElement(screen)
             }
             previousPosition = position
             container.swipeUp(velocity: .slow)
         }
+        attachScrollFailure(screen, container: container, target: last)
         XCTFail("Scrollable screen did not reach its final element: \(screen)")
         throw UIAuditError.missingElement(screen)
+    }
+
+    private func observeNativeAuditScroll(
+        _ container: XCUIElement,
+        target: XCUIElement,
+        beforeAudit: String,
+        anchor: NativeAuditScrollAnchor?,
+        tabBarAffectsViewport: Bool,
+        name: String
+    ) throws {
+        let report = XCTAttachment(string: """
+        Before native audit: \(beforeAudit)
+        After native audit: \(scrollObservation(container, target: target))
+        """)
+        report.name = "\(name)-post-audit-scroll-geometry"
+        report.lifetime = .keepAlways
+        add(report)
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "\(name)-post-audit-screen"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+        guard let anchor else {
+            XCTFail("Native audit traversal has no validated noninteractive viewport anchor")
+            throw UIAuditError.missingElement(name)
+        }
+        try restoreAuditScrollPosition(
+            container: container,
+            anchor: anchor,
+            tabBarAffectsViewport: tabBarAffectsViewport,
+            name: name
+        )
+    }
+
+    func attachScrollFailure(_ screen: String, container: XCUIElement, target: XCUIElement) {
+        let report = XCTAttachment(string: """
+        Screen: \(screen); app state: \(app.state.rawValue); app frame: \(app.frame).
+        Container exists: \(container.exists); frame: \(container.exists ? String(describing: container.frame) : "unavailable").
+        Target exists: \(target.exists); frame: \(target.exists ? String(describing: target.frame) : "unavailable").
+        Fresh native hierarchy including content, target and present chrome:
+        \(app.debugDescription)
+        """)
+        report.name = "\(screen)-scroll-failure-geometry"
+        report.lifetime = .keepAlways
+        add(report)
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "\(screen)-scroll-failure-screen"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
     }
 
     private func scrollAnchor(in container: XCUIElement, target: XCUIElement) -> ScrollAnchor? {

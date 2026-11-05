@@ -62,9 +62,33 @@ extension NumberConverterUITests {
         app.terminate()
     }
 
+    func tapVisibleKeyboardDone() -> Bool {
+        XCTAssertEqual(app.state, .runningForeground)
+        attachKeyboardDoneInventory()
+        let query = app.buttons.matching(identifier: "keyboard.done")
+        _ = query.firstMatch.waitForExistence(timeout: 1)
+        let appFrame = app.frame
+        let visible = query.allElementsBoundByIndex.compactMap { button -> (XCUIElement, CGRect)? in
+            guard button.exists, button.isHittable else { return nil }
+            let frame = button.frame
+            guard !frame.isEmpty, appFrame.contains(frame) else { return nil }
+            return (button, frame)
+        }
+        XCTAssertLessThanOrEqual(visible.count, 1, "Exactly one visible keyboard Done control may be targeted")
+        guard let (_, frame) = visible.first else { return false }
+        XCTContext.runActivity(named: "Tap unique visible keyboard.done at observed frame \(frame)") { _ in
+            app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(
+                dx: frame.midX - appFrame.minX,
+                dy: frame.midY - appFrame.minY
+            )).tap()
+        }
+        return true
+    }
+
     private func verifyDirectDoneDismissal(stage: String) throws {
         let keyboard = app.keyboards.firstMatch
         attachKeyboardState(name: "keyboard-before-Done-\(stage)")
+        attachKeyboardDoneInventory()
         XCTAssertTrue(keyboard.exists, "Editing must expose a keyboard before Done")
         let before = "before keyboard: \(keyboard.debugDescription)"
         let done = try require("keyboard.done")
@@ -84,6 +108,23 @@ extension NumberConverterUITests {
         report.lifetime = .keepAlways
         add(report)
         XCTAssertEqual(result, .completed)
+    }
+
+    private func attachKeyboardDoneInventory() {
+        let matches = app.descendants(matching: .any).matching(identifier: "keyboard.done")
+            .allElementsBoundByIndex
+        let lines = matches.map { element in
+            "role=\(element.elementType.rawValue); id=\(element.identifier); label=\(element.label); frame=\(element.frame); exists=\(element.exists); hittable=\(element.isHittable); enabled=\(element.isEnabled)"
+        }
+        let report =
+            XCTAttachment(
+                string: "App state=\(app.state.rawValue); frame=\(app.frame); keyboards=\(app.keyboards.count).\nExact keyboard.done matches=\(matches.count):\n" +
+                    lines.joined(separator: "\n")
+            )
+        report.name = "keyboard-Done-exact-ID-role-frame-inventory"
+        report.lifetime = .keepAlways
+        add(report)
+        attachKeyboardState(name: "keyboard-Done-inventory-screen")
     }
 
     private func attachKeyboardState(name: String) {
