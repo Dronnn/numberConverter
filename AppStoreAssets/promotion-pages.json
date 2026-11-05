@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-05",
+  "status": "Two saved App Store Connect drafts; not submitted or approved",
+  "locales": [
+    "en",
+    "ru",
+    "es",
+    "de",
+    "fr",
+    "pt-BR"
+  ],
+  "devices": {
+    "iphone": "screenshots/iphone",
+    "ipad": "screenshots/ipad",
+    "duo": "screenshots/iphone-duo"
+  },
+  "pages": [
+    {
+      "key": "learning",
+      "referenceName": "Learn Numeral Systems",
+      "promotionalText": {
+        "en": "Learn binary, octal and hexadecimal conversions with eight quizzes, local progress and worked examples. Practice integers and fractions offline. No ads or account.",
+        "ru": "Изучайте системы счисления: восемь категорий тестов, локальная статистика и разобранные примеры. Целые и дробные числа, без интернета и рекламы.",
+        "de": "Lerne Zahlensysteme mit acht Quiz-Kategorien, lokalem Fortschritt und durchgerechneten Beispielen. Übe ganze Zahlen und Brüche offline. Ohne Werbung.",
+        "fr": "Apprenez les conversions avec huit catégories de quiz, un suivi local et des exemples détaillés. Pratiquez avec des entiers et des fractions hors ligne, sans publicité.",
+        "es": "Aprende conversiones con ocho categorías de tests, progreso local y ejemplos resueltos. Practica con enteros y fracciones sin conexión, sin anuncios ni cuenta.",
+        "pt-BR": "Aprenda conversões com oito categorias de testes, progresso local e exemplos resolvidos. Pratique com inteiros e frações sem internet, sem anúncios e sem conta."
+      },
+      "screenshotOrder": [
+        "04-quiz.png",
+        "05-help.png",
+        "01-converter.png"
+      ],
+      "creative": {
+        "header": "creative/header-3840x1646.png",
+        "search": "creative/search-3840x2560.png"
+      },
+      "savedAssignments": {
+        "localizations": 6,
+        "screenshotGalleries": 18,
+        "screenshots": 54,
+        "allPreviewsLoaded": true
+      }
+    },
+    {
+      "key": "calculator",
+      "referenceName": "Mixed-Base Calculator",
+      "promotionalText": {
+        "en": "Add, subtract, multiply and divide numbers written in different bases. Choose the result base from 2 to 36. Negative numbers and fractions supported. Works offline.",
+        "ru": "Складывайте, вычитайте, умножайте и делите числа в разных системах счисления. Выбирайте основание результата от 2 до 36. Отрицательные числа и дроби, без интернета.",
+        "de": "Rechne mit Operanden in unterschiedlichen Basen: addieren, subtrahieren, multiplizieren und dividieren. Ergebnisbasis 2–36. Ganze Zahlen und Brüche, offline.",
+        "fr": "Additionnez, soustrayez, multipliez et divisez des nombres de bases différentes. Choisissez une base de résultat de 2 à 36. Entiers et fractions, hors ligne.",
+        "es": "Suma, resta, multiplica y divide números escritos en bases distintas. Elige la base del resultado del 2 al 36. Enteros y fracciones, sin conexión ni anuncios.",
+        "pt-BR": "Some, subtraia, multiplique e divida números em bases diferentes. Escolha a base do resultado de 2 a 36. Inteiros e frações, sem internet nem anúncios."
+      },
+      "screenshotOrder": [
+        "03-calculator.png",
+        "02-bases.png",
+        "01-converter.png"
+      ],
+      "creative": {
+        "header": "creative/header-3840x1646.png",
+        "search": "creative/search-3840x2560.png"
+      },
+      "savedAssignments": {
+        "localizations": 6,
+        "screenshotGalleries": 18,
+        "screenshots": 54,
+        "allPreviewsLoaded": true
+      }
+    }
+  ]
+}

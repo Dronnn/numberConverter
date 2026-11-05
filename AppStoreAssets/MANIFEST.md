@@ -12,8 +12,11 @@ Verified upload files for Number Systems Lab. [manifest.json](manifest.json) rec
 | IAP image, 1024 × 1024 | [Tip artwork](in-app-purchases/tip-promotional-1024.png) | Shared across the five optional consumables |
 | IAP review screenshot, 1206 × 2622 | [Support screen](in-app-purchases/support-review-en-usd.png) | Current US reference prices |
 | Saved regional prices | [175-storefront CSV](pricing/storefront-prices.csv), [membership](pricing/storefront-policy.json) and [policy](pricing/POLICY.md) | 875 verified prices; 142 manual and 33 automatic entry-tier storefronts |
+| Custom product pages | [Localized page plans](promotion-pages.json) | Two saved drafts; six languages, three display groups and 54 verified screenshot assignments each |
 
 Each screenshot set is ordered: **Converter, All Bases, Calculator, Quiz, Help**. The files are exact copies of actual simulator captures, with no invented UI, resizing or retouching. Screenshots use the production StoreKit service without purchasing. The separate IAP review image uses a safe display fixture matching the independently tested local USD catalog; it does not show a payment sheet or account details.
+
+The learning draft uses **Quiz, Help, Converter**; the calculator draft uses **Calculator, All Bases, Converter**. Each has six saved localized promotional texts and 18 galleries with three processed previews each, plus the shared language-neutral Header/Search artwork. They reuse this package's native screenshots. The drafts have not been submitted or approved; their links are not a claim of a published campaign.
 
 The package contains **90 screenshots and four creative/IAP files**. Russian Calculator images were refreshed on all three devices after the base labels were corrected to «Основание»; the original truncated Duo image is not included. Duo images preserve the genuine native 1398 × 2034 display. The capture API did not expose a hinge angle, so the pose is **unknown**. These captures establish the current display only, without a claim about folded, unfolded or every possible pose.
 
