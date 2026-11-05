@@ -18,6 +18,26 @@ import XCTest
 /// device, plus the important converter states and a large Dynamic Type pass.
 @MainActor
 final class SnapshotTests: XCTestCase {
+    private var snapshotWindow: SnapshotTestWindow?
+    private var animationsWereEnabled: Bool?
+
+    override func setUp() async throws {
+        try await super.setUp()
+        animationsWereEnabled = UIView.areAnimationsEnabled
+        continueAfterFailure = false
+        snapshotWindow = try SnapshotTestWindow()
+    }
+
+    override func tearDown() async throws {
+        if let animationsWereEnabled {
+            UIView.setAnimationsEnabled(animationsWereEnabled)
+        }
+        animationsWereEnabled = nil
+        snapshotWindow?.restore()
+        snapshotWindow = nil
+        try await super.tearDown()
+    }
+
     // MARK: Core screens (locale × appearance × device)
 
     func test_tabBar() {

@@ -94,6 +94,11 @@ func assertScreen(
     testName: String = #function,
     line: UInt = #line
 ) {
+    // finish coalesced UIKit updates after restoring the window and animation
+    // state, before the next matrix cell constructs another hierarchy.
+    defer {
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01))
+    }
     let animationsWereEnabled = UIView.areAnimationsEnabled
     UIView.setAnimationsEnabled(false)
     defer { UIView.setAnimationsEnabled(animationsWereEnabled) }
@@ -135,6 +140,38 @@ func assertScreen(
     } else {
         let host = UIHostingController(rootView: root)
         compareScreen(host, named: "\(name)-\(cell.suffix)", cell: cell, file: file, testName: testName, line: line)
+    }
+}
+
+/// keeps snapshot rendering out of the live app window. the dependency may
+/// resize and replace this test window's root for each matrix cell.
+@MainActor
+final class SnapshotTestWindow {
+    private let previousWindow: UIWindow
+    private let previousWindowWasHidden: Bool
+    private let window: UIWindow
+
+    init() throws {
+        let windows = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+        previousWindow = try XCTUnwrap(windows.first(where: \.isKeyWindow), "Snapshots require a key window")
+        previousWindowWasHidden = previousWindow.isHidden
+        let scene = try XCTUnwrap(previousWindow.windowScene, "Snapshots require a window scene")
+        window = UIWindow(windowScene: scene)
+        window.frame = previousWindow.frame
+        window.windowLevel = previousWindow.windowLevel
+        window.rootViewController = UIViewController()
+        window.makeKeyAndVisible()
+        previousWindow.isHidden = true
+        XCTAssertTrue(window.isKeyWindow, "Snapshots must render in their own key window")
+    }
+
+    func restore() {
+        window.isHidden = true
+        window.rootViewController = nil
+        previousWindow.isHidden = previousWindowWasHidden
+        previousWindow.makeKey()
     }
 }
 
