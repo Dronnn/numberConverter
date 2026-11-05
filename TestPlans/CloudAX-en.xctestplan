@@ -1,0 +1,57 @@
+{
+  "configurations": [
+    {
+      "id": "B5DCEE21-F2D2-57DE-9E2F-D7ADDD8642AC",
+      "name": "CloudAX-en",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "codeCoverage": true,
+    "codeCoverageTargets": [
+      {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1392FCD6A93008BDE18",
+        "name": "numberConverter"
+      },
+      {
+        "containerPath": "container:ConversionEngine",
+        "identifier": "ConversionEngine",
+        "name": "ConversionEngine"
+      }
+    ],
+    "targetForVariableExpansion": {
+      "containerPath": "container:numberConverter.xcodeproj",
+      "identifier": "1873D1392FCD6A93008BDE18",
+      "name": "numberConverter"
+    },
+    "commandLineArgumentEntries": [
+      {
+        "argument": "-ui-tip-store",
+        "enabled": true
+      },
+      {
+        "argument": "available",
+        "enabled": true
+      }
+    ],
+    "testTimeoutsEnabled": true,
+    "defaultTestExecutionTimeAllowance": 600,
+    "maximumTestExecutionTimeAllowance": 3600
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1522FCD6A94008BDE18",
+        "name": "numberConverterUITests"
+      },
+      "parallelizable": false,
+      "selectedTests": [
+        "NumberConverterUITests/testEnglishLargestTextEndToEnd()",
+        "NumberConverterUITests/testEnglishLargestTextFunctionalEndToEnd()"
+      ]
+    }
+  ],
+  "version": 1
+}

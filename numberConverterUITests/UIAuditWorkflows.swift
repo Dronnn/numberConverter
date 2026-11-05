@@ -294,7 +294,8 @@ extension NumberConverterUITests {
             language,
             screen: "privacy-policy",
             container: require("privacy.content"),
-            through: element("privacy.applePolicy")
+            through: element("privacy.applePolicy"),
+            tabBarAffectsViewport: false
         )
         backToList("help.sidebar")
         try tap("help.contact")
@@ -308,7 +309,13 @@ extension NumberConverterUITests {
     private func auditHelpPage(_ language: UITestLanguage, page: Int, lastBlock: String) throws {
         let content = try require("help.content")
         let last = element("help.block.\(lastBlock)")
-        try auditScrolling(language, screen: "help-page-\(page)", container: content, through: last)
+        try auditScrolling(
+            language,
+            screen: "help-page-\(page)",
+            container: content,
+            through: last,
+            tabBarAffectsViewport: false
+        )
         let mathProof: (block: String, equation: String)? = switch page {
         case 3: ("help.page3.p2", "0.89 * 2 = 1.78")
         case 4: ("help.page4.p4", "1*2^4 = 16")

@@ -26,7 +26,7 @@ extension NumberConverterUITests {
             capture(language, screen: "smoke-tab-\(index)")
         }
         try expectText("support.explanation", language.supportExplanation)
-        try expectTipPrice(language, identifier: tipIdentifiers[0], amount: 3)
+        try expectTipPrice(language, identifier: tipIdentifiers[0], amount: "2.99")
         try openHelp()
         capture(language, screen: "smoke-help-modal")
         try closeHelp()
@@ -44,7 +44,7 @@ extension NumberConverterUITests {
             container: app.scrollViews.firstMatch,
             through: lastProduct
         )
-        for (identifier, amount) in zip(tipIdentifiers, [3, 9, 19, 49, 99]) {
+        for (identifier, amount) in zip(tipIdentifiers, ["2.99", "8.99", "19.99", "49.99", "99.99"]) {
             try expectTipPrice(language, identifier: identifier, amount: amount)
         }
         let largestText = app.launchArguments.contains("UICTContentSizeCategoryAccessibilityXXXL")
@@ -55,12 +55,12 @@ extension NumberConverterUITests {
         XCTAssertTrue(try require("support.availability").exists)
         capture(language, screen: "support-unavailable")
         try tap("support.retry")
-        try expectTipPrice(language, identifier: tipIdentifiers[0], amount: 3)
+        try expectTipPrice(language, identifier: tipIdentifiers[0], amount: "2.99")
         capture(language, screen: "support-recovered-after-retry")
         XCTAssertFalse(element("support.retry").exists)
     }
 
-    private func expectTipPrice(_ language: UITestLanguage, identifier: String, amount: Int) throws {
+    private func expectTipPrice(_ language: UITestLanguage, identifier: String, amount: String) throws {
         let product = element("support.product.\(identifier)")
         try reveal(product, identifier: "support.product.\(identifier)")
         XCTAssertTrue(product.isEnabled)
@@ -68,7 +68,7 @@ extension NumberConverterUITests {
         formatter.locale = Locale(identifier: language.region)
         formatter.numberStyle = .currency
         formatter.currencyCode = "USD"
-        let expected = try XCTUnwrap(formatter.string(from: NSNumber(value: amount)))
+        let expected = try XCTUnwrap(formatter.string(from: NSDecimalNumber(string: amount)))
         let price = element("support.price.\(identifier)")
         if price.exists {
             try expectText("support.price.\(identifier)", expected)

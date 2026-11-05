@@ -10,6 +10,37 @@ import XCTest
 
 @MainActor
 extension NumberConverterUITests {
+    func testSupportReviewScreenshot() throws {
+        capturesIncludeNativeAudit = false
+        defer { capturesIncludeNativeAudit = true }
+        launch(.english)
+        try selectTab(4)
+        try expectText("support.explanation", UITestLanguage.english.supportExplanation)
+        var frames: [String] = []
+        for (tier, amount) in zip(
+            ["small", "medium", "large", "extraLarge", "patron"],
+            ["2.99", "8.99", "19.99", "49.99", "99.99"]
+        ) {
+            let identifier = "support.price.com.mrmaier.NumberConverter.tip.\(tier)"
+            try expectText(identifier, "$\(amount)")
+            let price = try require(identifier)
+            XCTAssertTrue(price.isHittable, identifier)
+            XCTAssertTrue(app.frame.contains(price.frame), "\(identifier): \(price.frame)")
+            frames.append("$\(amount): \(price.frame)")
+        }
+        XCTAssertEqual(app.keyboards.count, 0)
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "support-review-en-v2"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+        let proof = XCTAttachment(string: "Verified all five current USD prices, no purchase actions.\n" + frames
+            .joined(separator: "\n"))
+        proof.name = "support-review-en-v2-prices"
+        proof.lifetime = .keepAlways
+        add(proof)
+        app.terminate()
+    }
+
     func testSupportTipLabelsScaleAtLargestText() throws {
         let normal = try measureSupportTips(category: "UICTContentSizeCategoryL", name: "normal")
         let largest = try measureSupportTips(category: "UICTContentSizeCategoryAccessibilityXXXL", name: "AX5")
@@ -37,9 +68,12 @@ extension NumberConverterUITests {
         launchTextMeasurement(category: category)
         try selectTab(4)
         var measurements: [String: TextScaleMeasurement] = [:]
-        for (tier, price) in zip(["small", "medium", "large", "extraLarge", "patron"], [3, 9, 19, 49, 99]) {
+        for (tier, price) in zip(
+            ["small", "medium", "large", "extraLarge", "patron"],
+            ["2.99", "8.99", "19.99", "49.99", "99.99"]
+        ) {
             let productID = "com.mrmaier.NumberConverter.tip.\(tier)"
-            for (prefix, text) in [("tipLabel", "Leave a tip"), ("price", "$\(price).00")] {
+            for (prefix, text) in [("tipLabel", "Leave a tip"), ("price", "$\(price)")] {
                 let identifier = "support.\(prefix).\(productID)"
                 let label = element(identifier)
                 try reveal(label, attempts: 20, identifier: identifier)

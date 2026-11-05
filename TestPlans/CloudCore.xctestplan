@@ -1,0 +1,64 @@
+{
+  "configurations": [
+    {
+      "id": "A2A730A9-C5C1-577C-BA26-8F793F92085A",
+      "name": "CloudCore",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "codeCoverage": true,
+    "codeCoverageTargets": [
+      {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1392FCD6A93008BDE18",
+        "name": "numberConverter"
+      },
+      {
+        "containerPath": "container:ConversionEngine",
+        "identifier": "ConversionEngine",
+        "name": "ConversionEngine"
+      }
+    ],
+    "targetForVariableExpansion": {
+      "containerPath": "container:numberConverter.xcodeproj",
+      "identifier": "1873D1392FCD6A93008BDE18",
+      "name": "numberConverter"
+    },
+    "commandLineArgumentEntries": [
+      {
+        "argument": "-ui-tip-store",
+        "enabled": true
+      },
+      {
+        "argument": "available",
+        "enabled": true
+      }
+    ],
+    "testTimeoutsEnabled": true,
+    "defaultTestExecutionTimeAllowance": 600,
+    "maximumTestExecutionTimeAllowance": 600
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:ConversionEngine",
+        "identifier": "ConversionEngineTests",
+        "name": "ConversionEngineTests"
+      },
+      "parallelizable": false
+    },
+    {
+      "parallelizable": false,
+      "target": {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1482FCD6A94008BDE18",
+        "name": "numberConverterTests"
+      },
+      "skippedTests": [
+        "SnapshotTests"
+      ]
+    }
+  ],
+  "version": 1
+}

@@ -1,0 +1,91 @@
+{
+  "configurations": [
+    {
+      "id": "C6C7D579-1E16-5846-B5FC-E160DF7087E3",
+      "name": "CloudSharedUI",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "codeCoverage": true,
+    "codeCoverageTargets": [
+      {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1392FCD6A93008BDE18",
+        "name": "numberConverter"
+      },
+      {
+        "containerPath": "container:ConversionEngine",
+        "identifier": "ConversionEngine",
+        "name": "ConversionEngine"
+      }
+    ],
+    "targetForVariableExpansion": {
+      "containerPath": "container:numberConverter.xcodeproj",
+      "identifier": "1873D1392FCD6A93008BDE18",
+      "name": "numberConverter"
+    },
+    "commandLineArgumentEntries": [
+      {
+        "argument": "-ui-tip-store",
+        "enabled": true
+      },
+      {
+        "argument": "available",
+        "enabled": true
+      }
+    ],
+    "testTimeoutsEnabled": true,
+    "defaultTestExecutionTimeAllowance": 600,
+    "maximumTestExecutionTimeAllowance": 3600
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1522FCD6A94008BDE18",
+        "name": "numberConverterUITests"
+      },
+      "parallelizable": false,
+      "skippedTests": [
+        "NumberConverterUITests/testEnglishEndToEnd()",
+        "NumberConverterUITests/testEnglishFunctionalEndToEnd()",
+        "NumberConverterUITests/testEnglishLargestTextEndToEnd()",
+        "NumberConverterUITests/testEnglishLargestTextFunctionalEndToEnd()",
+        "NumberConverterUITests/testEnglishNavigationSmoke()",
+        "NumberConverterUITests/testEnglishStoreScreenshots()",
+        "NumberConverterUITests/testFrenchEndToEnd()",
+        "NumberConverterUITests/testFrenchFunctionalEndToEnd()",
+        "NumberConverterUITests/testFrenchLargestTextEndToEnd()",
+        "NumberConverterUITests/testFrenchLargestTextFunctionalEndToEnd()",
+        "NumberConverterUITests/testFrenchNavigationSmoke()",
+        "NumberConverterUITests/testFrenchStoreScreenshots()",
+        "NumberConverterUITests/testGermanEndToEnd()",
+        "NumberConverterUITests/testGermanFunctionalEndToEnd()",
+        "NumberConverterUITests/testGermanLargestTextEndToEnd()",
+        "NumberConverterUITests/testGermanLargestTextFunctionalEndToEnd()",
+        "NumberConverterUITests/testGermanNavigationSmoke()",
+        "NumberConverterUITests/testGermanStoreScreenshots()",
+        "NumberConverterUITests/testPortugueseEndToEnd()",
+        "NumberConverterUITests/testPortugueseFunctionalEndToEnd()",
+        "NumberConverterUITests/testPortugueseLargestTextEndToEnd()",
+        "NumberConverterUITests/testPortugueseLargestTextFunctionalEndToEnd()",
+        "NumberConverterUITests/testPortugueseNavigationSmoke()",
+        "NumberConverterUITests/testPortugueseStoreScreenshots()",
+        "NumberConverterUITests/testRussianEndToEnd()",
+        "NumberConverterUITests/testRussianFunctionalEndToEnd()",
+        "NumberConverterUITests/testRussianLargestTextEndToEnd()",
+        "NumberConverterUITests/testRussianLargestTextFunctionalEndToEnd()",
+        "NumberConverterUITests/testRussianNavigationSmoke()",
+        "NumberConverterUITests/testRussianStoreScreenshots()",
+        "NumberConverterUITests/testSpanishEndToEnd()",
+        "NumberConverterUITests/testSpanishFunctionalEndToEnd()",
+        "NumberConverterUITests/testSpanishLargestTextEndToEnd()",
+        "NumberConverterUITests/testSpanishLargestTextFunctionalEndToEnd()",
+        "NumberConverterUITests/testSpanishNavigationSmoke()",
+        "NumberConverterUITests/testSpanishStoreScreenshots()"
+      ]
+    }
+  ],
+  "version": 1
+}

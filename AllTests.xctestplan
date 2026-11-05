@@ -1,0 +1,64 @@
+{
+  "configurations": [
+    {
+      "id": "AF55C6B3-9C46-49F7-9DD5-30B8A447836A",
+      "name": "All Tests",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "codeCoverage": true,
+    "codeCoverageTargets": [
+      {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1392FCD6A93008BDE18",
+        "name": "numberConverter"
+      },
+      {
+        "containerPath": "container:ConversionEngine",
+        "identifier": "ConversionEngine",
+        "name": "ConversionEngine"
+      }
+    ],
+    "targetForVariableExpansion": {
+      "containerPath": "container:numberConverter.xcodeproj",
+      "identifier": "1873D1392FCD6A93008BDE18",
+      "name": "numberConverter"
+    },
+    "commandLineArgumentEntries": [
+      {
+        "argument": "-ui-tip-store",
+        "enabled": true
+      },
+      {
+        "argument": "available",
+        "enabled": true
+      }
+    ]
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:ConversionEngine",
+        "identifier": "ConversionEngineTests",
+        "name": "ConversionEngineTests"
+      }
+    },
+    {
+      "parallelizable": false,
+      "target": {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1482FCD6A94008BDE18",
+        "name": "numberConverterTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1522FCD6A94008BDE18",
+        "name": "numberConverterUITests"
+      }
+    }
+  ],
+  "version": 1
+}

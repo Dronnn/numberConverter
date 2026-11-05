@@ -1,0 +1,59 @@
+{
+  "configurations": [
+    {
+      "id": "87CB0297-1E5D-50F0-9B6A-C1D6709B0E54",
+      "name": "CloudUI-fr",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "codeCoverage": true,
+    "codeCoverageTargets": [
+      {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1392FCD6A93008BDE18",
+        "name": "numberConverter"
+      },
+      {
+        "containerPath": "container:ConversionEngine",
+        "identifier": "ConversionEngine",
+        "name": "ConversionEngine"
+      }
+    ],
+    "targetForVariableExpansion": {
+      "containerPath": "container:numberConverter.xcodeproj",
+      "identifier": "1873D1392FCD6A93008BDE18",
+      "name": "numberConverter"
+    },
+    "commandLineArgumentEntries": [
+      {
+        "argument": "-ui-tip-store",
+        "enabled": true
+      },
+      {
+        "argument": "available",
+        "enabled": true
+      }
+    ],
+    "testTimeoutsEnabled": true,
+    "defaultTestExecutionTimeAllowance": 600,
+    "maximumTestExecutionTimeAllowance": 2700
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:numberConverter.xcodeproj",
+        "identifier": "1873D1522FCD6A94008BDE18",
+        "name": "numberConverterUITests"
+      },
+      "parallelizable": false,
+      "selectedTests": [
+        "NumberConverterUITests/testFrenchEndToEnd()",
+        "NumberConverterUITests/testFrenchFunctionalEndToEnd()",
+        "NumberConverterUITests/testFrenchNavigationSmoke()",
+        "NumberConverterUITests/testFrenchStoreScreenshots()"
+      ]
+    }
+  ],
+  "version": 1
+}

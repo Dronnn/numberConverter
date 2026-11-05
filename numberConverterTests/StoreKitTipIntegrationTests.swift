@@ -23,9 +23,10 @@ struct StoreKitTipIntegrationTests {
             let native = try await Product.products(for: TipProduct.allowedIDs)
             #expect(Set(native.map(\.id)) == Set(TipProduct.allowedIDs))
             #expect(products.map(\.id) == TipProduct.allowedIDs)
-            for product in products {
+            for (product, expectedPrice) in zip(products, ["2.99", "8.99", "19.99", "49.99", "99.99"]) {
                 let nativeProduct = try #require(native.first { $0.id == product.id })
                 #expect(nativeProduct.type == .consumable)
+                #expect(nativeProduct.price == NSDecimalNumber(string: expectedPrice).decimalValue)
                 #expect(product.displayPrice == nativeProduct.displayPrice)
                 #expect(!product.displayPrice.isEmpty)
             }
@@ -192,7 +193,8 @@ struct StoreKitTipIntegrationTests {
     }
 
     private func withSession(_ body: @MainActor (SKTestSession) async throws -> Void) async throws {
-        let url = try #require(Bundle.main.url(forResource: "TipJar", withExtension: "storekit"))
+        let bundle = Bundle(for: StoreKitTipTestBundle.self)
+        let url = try #require(bundle.url(forResource: "TipJar", withExtension: "storekit"))
         let session = try SKTestSession(contentsOf: url)
         session.resetToDefaultState()
         session.clearTransactions()
@@ -228,6 +230,8 @@ struct StoreKitTipIntegrationTests {
         return await condition()
     }
 }
+
+private final class StoreKitTipTestBundle: NSObject {}
 
 @MainActor
 private final class TipTransactionProbe {

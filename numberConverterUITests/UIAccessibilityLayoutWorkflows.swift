@@ -10,6 +10,16 @@ import XCTest
 
 @MainActor
 extension NumberConverterUITests {
+    func testLargestTextConverterEditsRemainReachableAfterDetails() throws {
+        capturesIncludeNativeAudit = false
+        defer {
+            capturesIncludeNativeAudit = true
+            app.terminate()
+        }
+        launch(.english, largeText: true)
+        try layoutConverter(.english)
+    }
+
     func exerciseAccessibilityLayout(_ language: UITestLanguage) throws {
         launch(language, largeText: true)
         capture(language, screen: "AX-converter-empty")

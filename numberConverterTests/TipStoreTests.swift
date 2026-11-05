@@ -12,8 +12,8 @@ import Testing
 
 @MainActor
 struct TipStoreTests {
-    private static let small = TipProduct(id: TipProduct.allowedIDs[0], displayName: "Small", displayPrice: "$3.00")
-    private static let medium = TipProduct(id: TipProduct.allowedIDs[1], displayName: "Medium", displayPrice: "$9.00")
+    private static let small = TipProduct(id: TipProduct.allowedIDs[0], displayName: "Small", displayPrice: "$2.99")
+    private static let medium = TipProduct(id: TipProduct.allowedIDs[1], displayName: "Medium", displayPrice: "$8.99")
 
     @Test
     func initialStateHasNoPurchasableFallbackPrices() {
@@ -287,6 +287,84 @@ struct TipStoreTests {
         #expect(!store.isPurchasing)
     }
 
+    @Test(arguments: [TipPurchaseResult.pending, .unverified, .success(transactionID: 60)])
+    func cancelledCatalogRefreshRetainsAvailablePricesAndPurchaseFeedback(_ result: TipPurchaseResult) async {
+        let service = MockTipService()
+        service.loadedProducts = [Self.small]
+        service.purchaseResult = result
+        let store = TipStore(service: service)
+        await store.loadProducts()
+        await store.purchase(Self.small)
+        let feedback = store.status
+
+        service.loadedProducts = [Self.medium]
+        service.suspendLoad = true
+        let refreshing = Task { await store.loadProducts() }
+        #expect(await eventually { service.loadCalls == 2 && store.isLoading })
+        refreshing.cancel()
+        service.resumeLoad()
+        await refreshing.value
+
+        #expect(store.products == [Self.small])
+        #expect(store.status == feedback)
+        #expect(!store.isLoading)
+
+        service.suspendLoad = false
+        await store.loadProducts()
+        #expect(store.products == [Self.medium])
+        #expect(store.status == feedback)
+    }
+
+    @Test
+    func catalogRemovalDoesNotDiscardAnAlreadyStartedVerifiedPurchase() async {
+        let service = MockTipService()
+        service.loadedProducts = [Self.small]
+        service.purchaseResult = .success(transactionID: 61)
+        service.suspendPurchase = true
+        let store = TipStore(service: service)
+        await store.loadProducts()
+        let purchasing = Task { await store.purchase(Self.small) }
+        #expect(await eventually { service.purchasedIDs == [Self.small.id] && store.isPurchasing })
+
+        service.loadedProducts = []
+        await store.loadProducts()
+        #expect(store.products.isEmpty)
+        #expect(store.isPurchasing)
+        await store.purchase(Self.small)
+        #expect(service.purchasedIDs == [Self.small.id])
+
+        service.resumePurchase()
+        await purchasing.value
+        #expect(store.status == .purchased)
+        #expect(!store.isPurchasing)
+
+        store.clearStatus()
+        await store.purchase(Self.small)
+        #expect(store.status == .unavailable)
+        #expect(service.purchasedIDs == [Self.small.id])
+    }
+
+    @Test
+    func replayingAnOlderVerifiedTipDoesNotReplaceANewPendingPurchase() async {
+        let service = MockTipService()
+        service.loadedProducts = [Self.small]
+        service.purchaseResult = .success(transactionID: 62)
+        let store = TipStore(service: service)
+        #expect(await eventually { service.observerStarted })
+        await store.loadProducts()
+        await store.purchase(Self.small)
+        store.clearStatus()
+
+        service.purchaseResult = .pending
+        await store.purchase(Self.small)
+        #expect(store.status == .pending)
+        await service.emit(62)
+        #expect(store.status == .pending)
+
+        await service.emit(63)
+        #expect(store.status == .purchased)
+    }
+
     @Test
     func storeLifetimeDoesNotRetainItsTransactionObserver() async {
         let service = MockTipService()
@@ -301,11 +379,15 @@ struct TipStoreTests {
     #if DEBUG
         @Test
         func debugCatalogRecoveryAndPurchasesNeverUseStoreKit() async throws {
-            let service = UITestTipService(mode: "retry")
+            let service = UITestTipService(mode: "retry", locale: Locale(identifier: "en_US"))
             #expect(try await service.loadProducts().isEmpty)
             let products = try await service.loadProducts()
             #expect(products.map(\.id) == TipProduct.allowedIDs)
             #expect(products.allSatisfy { !$0.displayPrice.isEmpty })
+            #expect(products.map(\.displayPrice) == ["$2.99", "$8.99", "$19.99", "$49.99", "$99.99"])
+            let regional = try await UITestTipService(mode: "regional-price").loadProducts()
+            let patron = try #require(regional.first { $0.id.hasSuffix(".tip.patron") })
+            #expect(patron.displayPrice == "Rp\u{00A0}1,999,000.00")
             #expect(try await service.purchase(productID: Self.small.id) == .cancelled)
             for (mode, expected) in [
                 ("pending", TipPurchaseResult.pending),

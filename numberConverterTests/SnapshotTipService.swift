@@ -20,11 +20,12 @@ struct SnapshotTipService: TipService {
         formatter.locale = Locale(identifier: locale.rawValue)
         formatter.numberStyle = .currency
         formatter.currencyCode = "USD"
-        return zip(TipProduct.allowedIDs, [3, 9, 19, 49, 99]).map { identifier, amount in
-            TipProduct(
+        return zip(TipProduct.allowedIDs, [299, 899, 1_999, 4_999, 9_999]).map { identifier, cents in
+            let amount = NSDecimalNumber(mantissa: UInt64(cents), exponent: -2, isNegative: false)
+            return TipProduct(
                 id: identifier,
                 displayName: identifier,
-                displayPrice: formatter.string(from: NSNumber(value: amount)) ?? ""
+                displayPrice: formatter.string(from: amount) ?? ""
             )
         }
     }

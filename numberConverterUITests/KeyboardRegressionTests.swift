@@ -10,17 +10,55 @@ import XCTest
 
 @MainActor
 extension NumberConverterUITests {
-    func testKeyboardDoneAfterInvalidRecovery() throws {
+    func testBaseEditorDoneDismissesKeyboardDirectly() throws {
         launch(.english)
         try selectTab(1)
         try replace("allSystems.sourceBase", with: "16")
-        dismissKeyboard()
         try expectValue("allSystems.sourceBase", "16")
+        try verifyDirectDoneDismissal(stage: "source-base-16")
+        try expectValue("allSystems.sourceBase", "16")
+        app.terminate()
+    }
+
+    func testTabletKeyboardReplacementAfterInvalidRecovery() throws {
+        launch(.english)
+        try selectTab(1)
+        try replace("allSystems.sourceBase", with: "16")
+        try expectValue("allSystems.sourceBase", "16")
+        try replace("allSystems.targetBase", with: "10")
+        try expectValue("allSystems.targetBase", "10")
         for number in ["FF", "G", "FF"] {
             try replace("allSystems.number", with: number)
-            try verifyDirectDoneDismissal(stage: number)
+            dismissKeyboard()
+            try expectValue("allSystems.number", number)
+            if number == "G" {
+                XCTAssertTrue(try require("allSystems.error").exists)
+            } else {
+                try expectText("allSystems.result", "255")
+            }
         }
-        try expectText("allSystems.result", "11111111")
+        app.terminate()
+    }
+
+    func testKeyboardDoneAfterInvalidRecovery() throws {
+        launch(.english)
+        try selectTab(1)
+        try expectValue("allSystems.sourceBase", "10")
+        try expectValue("allSystems.targetBase", "2")
+        for number in ["255", "G", "255"] {
+            try replace("allSystems.number", with: number)
+            // the test typing API can switch iPad to a hardware-keyboard accessory.
+            // a fresh touch requests the software keyboard again before the
+            // unchanged software-keyboard dismissal precondition is checked.
+            try require("allSystems.number").tap()
+            try verifyDirectDoneDismissal(stage: number)
+            try expectValue("allSystems.number", number)
+            if number == "G" {
+                XCTAssertTrue(try require("allSystems.error").exists)
+            } else {
+                try expectText("allSystems.result", "11111111")
+            }
+        }
         app.terminate()
     }
 
@@ -30,6 +68,10 @@ extension NumberConverterUITests {
         XCTAssertTrue(keyboard.exists, "Editing must expose a keyboard before Done")
         let before = "before keyboard: \(keyboard.debugDescription)"
         let done = try require("keyboard.done")
+        try reveal(done, identifier: "keyboard.done")
+        XCTAssertTrue(done.isHittable)
+        XCTAssertTrue(app.frame.contains(done.frame), "The actual native Done control must be inside the app viewport")
+        let action = "Done frame: \(done.frame); app frame: \(app.frame); keyboard frame: \(keyboard.frame); hittable: \(done.isHittable)"
         done.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         let dismissed = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "keyboards.count == 0"), object: app
@@ -37,7 +79,7 @@ extension NumberConverterUITests {
         let result = XCTWaiter.wait(for: [dismissed], timeout: 3)
         attachKeyboardState(name: "keyboard-after-Done-\(stage)")
         let after = app.keyboards.firstMatch.exists ? app.keyboards.firstMatch.debugDescription : "absent"
-        let report = XCTAttachment(string: "\(before)\nafter keyboard: \(after)")
+        let report = XCTAttachment(string: "\(action)\n\(before)\nafter keyboard: \(after)")
         report.name = "keyboard-Done-state-\(stage)"
         report.lifetime = .keepAlways
         add(report)

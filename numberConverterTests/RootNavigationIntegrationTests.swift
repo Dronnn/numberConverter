@@ -36,11 +36,15 @@ final class RootNavigationIntegrationTests: XCTestCase {
         defer { unmount(mounted) }
 
         for tab in AppTab.tabs {
+            await settleLayout(in: mounted.window)
             router.pendingTab = tab
             try await waitFor(diagnostics: {
-                "expected=\(tab.rawValue), selected=\(navigation.selectedTab.rawValue), pending=\(router.pendingTab?.rawValue ?? "nil")"
+                "expected=\(tab.rawValue), selected=\(navigation.selectedTab.rawValue), "
+                    + "pending=\(router.pendingTab?.rawValue ?? "nil"), sequence=\(router.requestSequence), "
+                    + self.hostDiagnostics(mounted)
             }) {
                 navigation.selectedTab == tab && router.pendingTab == nil
+                    && self.nativeTabIsSelected(tab, in: mounted.window)
             }
         }
     }
@@ -92,6 +96,7 @@ final class RootNavigationIntegrationTests: XCTestCase {
         defer { unmount(mounted) }
 
         for expectedSequence: UInt in 1 ... 5 {
+            await settleLayout(in: mounted.window)
             router.pendingTab = .calculator
             try await waitFor(diagnostics: {
                 "expected=calculator, selected=\(navigation.selectedTab.rawValue), pending=\(router.pendingTab?.rawValue ?? "nil"), sequence=\(router.requestSequence)"
@@ -105,6 +110,7 @@ final class RootNavigationIntegrationTests: XCTestCase {
     private struct MountedRoot {
         let window: UIWindow
         let previousKeyWindow: UIWindow?
+        let previousRootViewController: UIViewController?
         let defaultsSuite: String
     }
 
@@ -114,6 +120,11 @@ final class RootNavigationIntegrationTests: XCTestCase {
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
             hasAppeared = true
+        }
+
+        override func viewDidDisappear(_ animated: Bool) {
+            super.viewDidDisappear(animated)
+            hasAppeared = false
         }
     }
 
@@ -130,8 +141,10 @@ final class RootNavigationIntegrationTests: XCTestCase {
     }
 
     private func mount(navigation: AppNavigationState, router: QuickActionRouter) async throws -> MountedRoot {
-        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive })
         let previousKeyWindow = scene.windows.first(where: \.isKeyWindow)
+        let previousRootViewController = previousKeyWindow?.rootViewController
         let defaultsSuite = "root-navigation.tests.\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: defaultsSuite))
         defaults.removePersistentDomain(forName: defaultsSuite)
@@ -140,25 +153,68 @@ final class RootNavigationIntegrationTests: XCTestCase {
             .environment(navigation)
             .environment(router)
             .environment(AppSettings(defaults: defaults))
+            .environment(\.scenePhase, .active)
         let host = AppearanceTrackingHost(rootView: root)
         let window = UIWindow(windowScene: scene)
-        window.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
+        window.frame = scene.coordinateSpace.bounds
         window.rootViewController = host
         window.makeKeyAndVisible()
         host.view.layoutIfNeeded()
         try await waitFor(diagnostics: {
             "host appeared=\(host.hasAppeared), key window=\(window.isKeyWindow)"
         }) {
-            host.hasAppeared && window.isKeyWindow
+            host.hasAppeared && window.isKeyWindow && self.firstTabBarController(in: host) != nil
         }
-        return MountedRoot(window: window, previousKeyWindow: previousKeyWindow, defaultsSuite: defaultsSuite)
+        return MountedRoot(
+            window: window,
+            previousKeyWindow: previousKeyWindow,
+            previousRootViewController: previousRootViewController,
+            defaultsSuite: defaultsSuite
+        )
     }
 
     private func unmount(_ mounted: MountedRoot) {
+        mounted.window.endEditing(true)
         mounted.window.isHidden = true
         mounted.window.rootViewController = nil
         mounted.previousKeyWindow?.makeKeyAndVisible()
+        if let previousKeyWindow = mounted.previousKeyWindow {
+            XCTAssertTrue(previousKeyWindow.isKeyWindow)
+            XCTAssertIdentical(previousKeyWindow.rootViewController, mounted.previousRootViewController)
+        }
         UserDefaults().removePersistentDomain(forName: mounted.defaultsSuite)
+    }
+
+    private func firstTabBarController(in controller: UIViewController) -> UITabBarController? {
+        if let tabBar = controller as? UITabBarController {
+            return tabBar
+        }
+        return controller.children.lazy.compactMap { self.firstTabBarController(in: $0) }.first
+    }
+
+    private func nativeTabIsSelected(_ tab: AppTab, in window: UIWindow) -> Bool {
+        guard
+            let root = window.rootViewController,
+            let controller = firstTabBarController(in: root),
+            let expectedIndex = AppTab.tabs.firstIndex(of: tab) else { return false }
+        return controller.selectedIndex == expectedIndex
+    }
+
+    private func hostDiagnostics(_ mounted: MountedRoot) -> String {
+        let selectedIndex = mounted.window.rootViewController
+            .flatMap { self.firstTabBarController(in: $0)?.selectedIndex }
+        return "scene=\(String(describing: mounted.window.windowScene?.activationState)), "
+            + "key=\(mounted.window.isKeyWindow), attached=\(mounted.window.rootViewController?.view.window != nil), "
+            + "nativeTab=\(String(describing: selectedIndex)), appState=\(UIApplication.shared.applicationState.rawValue)"
+    }
+
+    private func settleLayout(in window: UIWindow) async {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.main.async {
+                window.layoutIfNeeded()
+                DispatchQueue.main.async { continuation.resume() }
+            }
+        }
     }
 
     private func waitFor(

@@ -71,10 +71,36 @@ extension NumberConverterUITests {
 
     private func collectNativeTabs(into seen: inout [String: String], expected: [String: String]) {
         let controls = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "app.tab."))
-        for control in controls.allElementsBoundByIndex {
+        let elements = controls.allElementsBoundByIndex
+        if elements.isEmpty, app.tabBars.firstMatch.exists {
+            let labels = app.tabBars.firstMatch.buttons.allElementsBoundByIndex.map(\.label)
+            XCTAssertEqual(labels.count, expected.count, "Expected exactly five native tab controls")
+            XCTAssertEqual(Set(labels), Set(expected.values), "Expected all five localized native tab labels")
+            for (identifier, label) in expected where labels.contains(label) {
+                seen[identifier] = label
+            }
+            return
+        }
+        for control in elements {
             XCTAssertEqual(control.label, expected[control.identifier], "Unexpected native tab or translation")
             seen[control.identifier] = control.label
         }
+    }
+
+    /// iOS occasionally omits TabContent identifiers on a cold, unpinned launch.
+    /// a fallback is allowed only inside an actual native tab bar exposing the
+    /// complete, uniquely labeled set of five localized controls.
+    func fallbackNativeTabControl(identifier: String) -> XCUIElement? {
+        guard
+            let index = Self.tabIdentifiers.firstIndex(where: { identifier == "app.tab.\($0)" }),
+            let language = try? currentLaunchLanguage()
+        else { return nil }
+        let tabBar = app.tabBars.firstMatch
+        guard tabBar.exists else { return nil }
+        let labels = tabBar.buttons.allElementsBoundByIndex.map(\.label)
+        guard labels.count == language.tabLabels.count, Set(labels) == Set(language.tabLabels) else { return nil }
+        let matches = tabBar.buttons.matching(NSPredicate(format: "label == %@", language.tabLabels[index]))
+        return matches.count == 1 ? matches.firstMatch : nil
     }
 
     private func currentLaunchLanguage() throws -> UITestLanguage {

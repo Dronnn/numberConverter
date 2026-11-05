@@ -87,6 +87,145 @@ struct QuickActionRoutingTests {
         #expect(router.pendingTab == nil)
     }
 
+    // MARK: - Scene lifecycle delivery
+
+    @Test
+    func sceneConfigurationInstallsQuickActionDelegateForApplicationWindows() {
+        let configuration = QuickActionSceneDelegate.configuration(for: .windowApplication)
+
+        #expect(configuration.role == .windowApplication)
+        #expect(
+            configuration.delegateClass.map(ObjectIdentifier.init) == ObjectIdentifier(QuickActionSceneDelegate.self)
+        )
+    }
+
+    @Test
+    func sceneConfigurationLeavesOtherSceneRolesUntouched() {
+        let configuration = QuickActionSceneDelegate.configuration(for: .windowExternalDisplayNonInteractive)
+
+        #expect(configuration.role == .windowExternalDisplayNonInteractive)
+        #expect(configuration.delegateClass == nil)
+    }
+
+    @Test
+    func coldSceneActivationRoutesEveryTabOnce() throws {
+        let windowScene = try connectedWindowScene()
+        let router = QuickActionRouter.shared
+        defer { router.pendingTab = nil }
+
+        for tab in AppTab.allCases {
+            let item = UIApplicationShortcutItem(type: tab.shortcutType, localizedTitle: tab.localizedShortcutTitle)
+            let delegate = QuickActionSceneDelegate(launchShortcutItem: item)
+            let sequence = router.requestSequence
+
+            delegate.sceneDidBecomeActive(windowScene)
+            #expect(router.pendingTab == tab)
+            #expect(router.requestSequence == sequence &+ 1)
+
+            router.pendingTab = nil
+            delegate.sceneDidBecomeActive(windowScene)
+            #expect(router.pendingTab == nil)
+            #expect(router.requestSequence == sequence &+ 1)
+        }
+    }
+
+    @Test
+    func coldSceneActivationWithoutShortcutLeavesPendingRequestUnchanged() throws {
+        let windowScene = try connectedWindowScene()
+        let router = QuickActionRouter.shared
+        defer { router.pendingTab = nil }
+        router.pendingTab = .quiz
+        let sequence = router.requestSequence
+
+        QuickActionSceneDelegate().sceneDidBecomeActive(windowScene)
+
+        #expect(router.pendingTab == .quiz)
+        #expect(router.requestSequence == sequence)
+    }
+
+    @Test
+    func coldSceneActivationRejectsUnknownShortcutWithoutReplay() throws {
+        let windowScene = try connectedWindowScene()
+        let item = UIApplicationShortcutItem(type: "com.mrmaier.NumberConverter.bogus", localizedTitle: "Bogus")
+        let delegate = QuickActionSceneDelegate(launchShortcutItem: item)
+        let router = QuickActionRouter.shared
+        defer { router.pendingTab = nil }
+        router.pendingTab = .quiz
+        let sequence = router.requestSequence
+
+        delegate.sceneDidBecomeActive(windowScene)
+        #expect(router.pendingTab == .quiz)
+        #expect(router.requestSequence == sequence)
+
+        router.pendingTab = nil
+        delegate.sceneDidBecomeActive(windowScene)
+        #expect(router.pendingTab == nil)
+        #expect(router.requestSequence == sequence)
+    }
+
+    @Test
+    func warmSceneEntryPointRoutesEveryTabAndCompletesOnce() throws {
+        let windowScene = try connectedWindowScene()
+        let delegate = QuickActionSceneDelegate()
+        let router = QuickActionRouter.shared
+        defer { router.pendingTab = nil }
+
+        for tab in AppTab.allCases {
+            let item = UIApplicationShortcutItem(type: tab.shortcutType, localizedTitle: tab.localizedShortcutTitle)
+            let sequence = router.requestSequence
+            var completions: [Bool] = []
+
+            delegate.windowScene(windowScene, performActionFor: item) { completions.append($0) }
+
+            #expect(router.pendingTab == tab)
+            #expect(router.requestSequence == sequence &+ 1)
+            #expect(completions == [true])
+        }
+    }
+
+    @Test
+    func warmSceneEntryPointRejectsUnknownShortcut() throws {
+        let windowScene = try connectedWindowScene()
+        let item = UIApplicationShortcutItem(type: "com.mrmaier.NumberConverter.bogus", localizedTitle: "Bogus")
+        let router = QuickActionRouter.shared
+        defer { router.pendingTab = nil }
+        router.pendingTab = .quiz
+        let sequence = router.requestSequence
+        var completions: [Bool] = []
+
+        QuickActionSceneDelegate().windowScene(windowScene, performActionFor: item) { completions.append($0) }
+
+        #expect(router.pendingTab == .quiz)
+        #expect(router.requestSequence == sequence)
+        #expect(completions == [false])
+    }
+
+    @Test
+    func warmSceneEntryPointRoutesRepeatedRequests() throws {
+        let windowScene = try connectedWindowScene()
+        let item = UIApplicationShortcutItem(
+            type: AppTab.calculator.shortcutType,
+            localizedTitle: AppTab.calculator.localizedShortcutTitle
+        )
+        let delegate = QuickActionSceneDelegate()
+        let router = QuickActionRouter.shared
+        defer { router.pendingTab = nil }
+        let sequence = router.requestSequence
+        var completions: [Bool] = []
+
+        for _ in 0 ..< 2 {
+            delegate.windowScene(windowScene, performActionFor: item) { completions.append($0) }
+        }
+
+        #expect(router.pendingTab == .calculator)
+        #expect(router.requestSequence == sequence &+ 2)
+        #expect(completions == [true, true])
+    }
+
+    private func connectedWindowScene() throws -> UIWindowScene {
+        try #require(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+    }
+
     // MARK: - AppDelegate warm launch (performActionFor)
 
     @Test

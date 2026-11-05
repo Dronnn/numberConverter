@@ -16,6 +16,15 @@ final class NumberConverterUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+        // full AX traversals measure about 25 minutes before native audits;
+        // the XCTest default is ten minutes. keep short-test defaults intact.
+        if name.contains("LargestText"), name.contains("EndToEnd") {
+            executionTimeAllowance = 3_600
+        } else if name.contains("EndToEnd") {
+            executionTimeAllowance = 2_700
+        } else if name.contains("testHelpTableRightColumnIsReachableInEveryLanguage") {
+            executionTimeAllowance = 1_800
+        }
     }
 
     override func setUp() async throws {
