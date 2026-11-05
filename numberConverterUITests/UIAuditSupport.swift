@@ -124,7 +124,6 @@ extension NumberConverterUITests {
             "calculator.resultBase"
         ]
         if
-            UIDevice.current.userInterfaceIdiom == .pad,
             baseFields.contains(identifier),
             !["command", "touch"].contains(ProcessInfo.processInfo.environment["UI_PAD_REPLACEMENT"] ?? "")
         {
@@ -133,6 +132,7 @@ extension NumberConverterUITests {
             try selectRenderedDigits(field, expected: XCTUnwrap(field.value as? String), name: identifier)
             XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 3))
             app.typeText(text)
+            try expectValue(identifier, text)
             return
         }
         try tapEditableInput(input, identifier: identifier)
@@ -158,8 +158,7 @@ extension NumberConverterUITests {
         }
         // select all through the public keyboard API, independent of the caret
         // position chosen by native tap or the localized edit-menu labels.
-        field.typeKey("a", modifierFlags: .command)
-        field.typeText(XCUIKeyboardKey.delete.rawValue + text)
+        try replaceFocusedInput(field, identifier: identifier, with: text)
     }
 
     func visibleViewport(in container: XCUIElement, tabBarAffectsViewport: Bool = true) -> CGRect {

@@ -40,28 +40,52 @@ struct StoreKitTipIntegrationTests {
             let probe = TipTransactionProbe()
             let observer = Task { await service.observeVerifiedTransactions { probe.identifiers.insert($0) } }
             defer { observer.cancel() }
+            phase("catalog.begin")
             let products = try await service.loadProducts()
+            phase("catalog.end")
             let product = try #require(products.first)
-            var identifiers: Set<UInt64> = []
-            for _ in 0 ..< 2 {
-                let result = try await service.purchase(productID: product.id)
-                guard case let .success(identifier) = result else {
-                    Issue.record("expected a verified local StoreKit purchase, received \(result)")
-                    return
-                }
-                #expect(identifiers.insert(identifier).inserted)
-                #expect(await eventuallyAsync {
-                    let unfinished = await unfinishedIdentifiers()
-                    return !unfinished.contains(identifier)
-                })
-            }
-            #expect(await eventuallyAsync {
-                let unfinished = await unfinishedIdentifiers()
-                return identifiers.isDisjoint(with: unfinished)
-            })
+            try await verifyRepeatedPurchases(service: service, product: product, probe: probe)
+            phase("observer.cancel")
             observer.cancel()
+            phase("observer.join.begin")
             await observer.value
+            phase("observer.join.end")
         }
+    }
+
+    private func verifyRepeatedPurchases(
+        service: StoreKitTipService,
+        product: TipProduct,
+        probe: TipTransactionProbe
+    ) async throws {
+        var identifiers: Set<UInt64> = []
+        for attempt in 0 ..< 2 {
+            phase("purchase.\(attempt).begin")
+            let result = try await service.purchase(productID: product.id)
+            phase("purchase.\(attempt).end result=\(result)")
+            guard case let .success(identifier) = result else {
+                Issue.record("expected a verified local StoreKit purchase, received \(result)")
+                return
+            }
+            #expect(identifiers.insert(identifier).inserted)
+            var unfinished: Set<UInt64> = []
+            let finished = await eventuallyAsync {
+                unfinished = await unfinishedIdentifiers()
+                return !unfinished.contains(identifier)
+            }
+            phase("finish.assert.begin id=\(identifier) finished=\(finished)")
+            #expect(
+                finished,
+                "transaction \(identifier) unfinished: \(unfinished.sorted()); observed: \(probe.identifiers.sorted())"
+            )
+            phase("finish.assert.end id=\(identifier)")
+        }
+        phase("all-finished.assert.begin")
+        #expect(await eventuallyAsync {
+            let unfinished = await unfinishedIdentifiers()
+            return identifiers.isDisjoint(with: unfinished)
+        })
+        phase("all-finished.assert.end")
     }
 
     @Test
@@ -195,27 +219,45 @@ struct StoreKitTipIntegrationTests {
     private func withSession(_ body: @MainActor (SKTestSession) async throws -> Void) async throws {
         let bundle = Bundle(for: StoreKitTipTestBundle.self)
         let url = try #require(bundle.url(forResource: "TipJar", withExtension: "storekit"))
+        phase("service.trace.enabled=\(ProcessInfo.processInfo.environment["STOREKIT_TEST_PHASES"] == "1")")
+        phase("session.init.begin")
         let session = try SKTestSession(contentsOf: url)
+        phase("session.init.end reset.begin")
         session.resetToDefaultState()
+        phase("session.reset.end clear.begin")
         session.clearTransactions()
+        phase("session.clear.end")
         session.disableDialogs = true
         do {
             try await body(session)
         } catch {
+            phase("session.error-cleanup.reset.begin")
             session.resetToDefaultState()
+            phase("session.error-cleanup.reset.end clear.begin")
             session.clearTransactions()
+            phase("session.error-cleanup.clear.end")
             throw error
         }
+        phase("session.cleanup.reset.begin")
         session.resetToDefaultState()
+        phase("session.cleanup.reset.end clear.begin")
         session.clearTransactions()
+        phase("session.cleanup.clear.end")
     }
 
     private func unfinishedIdentifiers() async -> Set<UInt64> {
+        phase("unfinished.iteration.begin")
         var identifiers: Set<UInt64> = []
         for await result in Transaction.unfinished {
             identifiers.insert(result.unsafePayloadValue.id)
+            phase("unfinished.yield id=\(result.unsafePayloadValue.id)")
         }
+        phase("unfinished.iteration.end ids=\(identifiers.sorted())")
         return identifiers
+    }
+
+    private func phase(_ message: String) {
+        FileHandle.standardError.write(Data("STOREKIT_PHASE \(message)\n".utf8))
     }
 
     private func eventuallyAsync(_ condition: @MainActor () async -> Bool) async -> Bool {

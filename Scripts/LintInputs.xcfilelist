@@ -87,6 +87,7 @@ $(SRCROOT)/numberConverterUITests/NativeCatalogTests.swift
 $(SRCROOT)/numberConverterUITests/NativeTabSupport.swift
 $(SRCROOT)/numberConverterUITests/NativeTextContrastTests.swift
 $(SRCROOT)/numberConverterUITests/NumericInputVisualTests.swift
+$(SRCROOT)/numberConverterUITests/QuizInputRegressionTests.swift
 $(SRCROOT)/numberConverterUITests/RenderedTextAssertions.swift
 $(SRCROOT)/numberConverterUITests/ScrollGestureSupport.swift
 $(SRCROOT)/numberConverterUITests/ScrollLayoutRegressionTests.swift

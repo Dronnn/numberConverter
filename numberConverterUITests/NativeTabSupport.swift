@@ -20,16 +20,17 @@ extension NumberConverterUITests {
         ))
         var seen: [String: String] = [:]
         for forward in [true, false, true] {
-            collectNativeTabs(into: &seen, expected: expected)
+            try collectNativeTabs(into: &seen, expected: expected)
             if seen == expected {
                 return
             }
+            captureNativeTabPageState("inventory-before-\(forward ? "next" : "previous")-page")
             let pager = nativeTabPager(forward: forward, language: language)
             if pager.exists, pager.isHittable {
                 pager.tap()
             }
         }
-        collectNativeTabs(into: &seen, expected: expected)
+        try collectNativeTabs(into: &seen, expected: expected)
         XCTAssertEqual(seen, expected, "Every one of the five localized native tabs must be reachable")
     }
 
@@ -40,6 +41,7 @@ extension NumberConverterUITests {
             if target.exists, target.isHittable {
                 return target
             }
+            captureNativeTabPageState("target-\(index)-before-\(forward ? "next" : "previous")-page")
             let pager = nativeTabPager(forward: forward, language: language)
             if pager.exists, pager.isHittable {
                 pager.tap()
@@ -53,8 +55,17 @@ extension NumberConverterUITests {
     }
 
     func testRussianLargestTextNativeTabPaging() throws {
-        launch(.russian, largeText: true)
-        try expectTabLabels(.russian)
+        // retain the original Russian regression and also exercise
+        // the Portuguese partial-ID failure through the same complete inventory.
+        for language in [UITestLanguage.russian, .portuguese] {
+            try exerciseLargestNativeTabPaging(language)
+        }
+    }
+
+    private func exerciseLargestNativeTabPaging(_ language: UITestLanguage) throws {
+        launch(language, largeText: true)
+        captureNativeTabPageState("\(language.rawValue)-initial-largest-text")
+        try expectTabLabels(language)
         let destinations = [
             "converter.input.10", "allSystems.number", "calculator.operandA", "quiz.sidebar", "support.explanation"
         ]
@@ -62,28 +73,40 @@ extension NumberConverterUITests {
             try selectTab(index)
             XCTAssertTrue(try require(identifier).exists)
             let screenshot = XCTAttachment(screenshot: app.screenshot())
-            screenshot.name = "ru-AX-native-tab-paging-\(index)"
+            screenshot.name = "\(language.rawValue)-AX-native-tab-paging-\(index)"
             screenshot.lifetime = .keepAlways
             add(screenshot)
         }
         app.terminate()
     }
 
-    private func collectNativeTabs(into seen: inout [String: String], expected: [String: String]) {
+    private func collectNativeTabs(into seen: inout [String: String], expected: [String: String]) throws {
         let controls = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "app.tab."))
         let elements = controls.allElementsBoundByIndex
-        if elements.isEmpty, app.tabBars.firstMatch.exists {
-            let labels = app.tabBars.firstMatch.buttons.allElementsBoundByIndex.map(\.label)
-            XCTAssertEqual(labels.count, expected.count, "Expected exactly five native tab controls")
-            XCTAssertEqual(Set(labels), Set(expected.values), "Expected all five localized native tab labels")
-            for (identifier, label) in expected where labels.contains(label) {
-                seen[identifier] = label
-            }
-            return
+        guard Set(elements.map(\.identifier)).count == elements.count else {
+            XCTFail("Native tab identifiers must be unique")
+            throw UIAuditError.missingElement("unique native tab identifiers")
         }
         for control in elements {
-            XCTAssertEqual(control.label, expected[control.identifier], "Unexpected native tab or translation")
+            guard expected[control.identifier] == control.label else {
+                XCTFail("Unexpected native tab or translation: \(control.identifier):\(control.label)")
+                throw UIAuditError.missingElement(control.identifier)
+            }
             seen[control.identifier] = control.label
+        }
+        if elements.count < expected.count, let bar = completeNativeTabBar(expectedLabels: Array(expected.values)) {
+            // some native controls retain IDs while others lose them. every
+            // recognized ID was checked before accepting the complete label set.
+            let report = XCTAttachment(string: """
+            Recognized native IDs: \(elements.map { "\($0.identifier):\($0.label)" }).
+            Complete native labels: \(bar.buttons.allElementsBoundByIndex.map(\.label)).
+            Verified expected five destinations: \(expected).
+            """)
+            report.name = "native-tabs-partial-IDs-complete-unique-label-proof"
+            report.lifetime = .keepAlways
+            add(report)
+            captureNativeTabPageState("partial-IDs-complete-labels")
+            seen.merge(expected) { _, verified in verified }
         }
     }
 
@@ -93,14 +116,44 @@ extension NumberConverterUITests {
     func fallbackNativeTabControl(identifier: String) -> XCUIElement? {
         guard
             let index = Self.tabIdentifiers.firstIndex(where: { identifier == "app.tab.\($0)" }),
-            let language = try? currentLaunchLanguage()
-        else { return nil }
-        let tabBar = app.tabBars.firstMatch
-        guard tabBar.exists else { return nil }
-        let labels = tabBar.buttons.allElementsBoundByIndex.map(\.label)
-        guard labels.count == language.tabLabels.count, Set(labels) == Set(language.tabLabels) else { return nil }
+            let language = try? currentLaunchLanguage(),
+            let tabBar = completeNativeTabBar(expectedLabels: language.tabLabels) else { return nil }
         let matches = tabBar.buttons.matching(NSPredicate(format: "label == %@", language.tabLabels[index]))
         return matches.count == 1 ? matches.firstMatch : nil
+    }
+
+    private func completeNativeTabBar(expectedLabels: [String]) -> XCUIElement? {
+        let bars = app.tabBars.allElementsBoundByIndex.filter { $0.exists && $0.frame.intersects(app.frame) }
+        guard bars.count == 1, let bar = bars.first else { return nil }
+        let labels = bar.buttons.allElementsBoundByIndex.map(\.label)
+        guard
+            labels.count == expectedLabels.count, Set(labels).count == expectedLabels.count,
+            Set(labels) == Set(expectedLabels)
+        else { return nil }
+        return bar
+    }
+
+    private func captureNativeTabPageState(_ stage: String) {
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "native-tabs-\(stage)-screen"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+        let buttons = app.buttons.allElementsBoundByIndex.filter(\.exists).map { button in
+            let hit = button.identifier == "keyboard.done"
+                ? "omitted-known-native-activation-point-issue"
+                : String(button.isHittable)
+            return "role=\(button.elementType.rawValue); ID=\(button.identifier); label=\(button.label); frame=\(button.frame); hittable=\(hit)"
+        }
+        let report = XCTAttachment(string: """
+        State=\(app.state.rawValue); app=\(app.frame).
+        All native buttons (including global pagers and any More control):
+        \(buttons.joined(separator: "\n"))
+        Complete native hierarchy:
+        \(app.debugDescription)
+        """)
+        report.name = "native-tabs-\(stage)-inventory"
+        report.lifetime = .keepAlways
+        add(report)
     }
 
     private func currentLaunchLanguage() throws -> UITestLanguage {

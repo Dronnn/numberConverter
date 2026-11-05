@@ -91,9 +91,49 @@ extension NumberConverterUITests {
             }
     }
 
+    func replaceFocusedInput(_ field: XCUIElement, identifier: String, with text: String) throws {
+        // keep the established responder while native selection is active.
+        let placeholder = field.placeholderValue ?? ""
+        app.typeKey("a", modifierFlags: .command)
+        app.typeText(XCUIKeyboardKey.delete.rawValue)
+        try expectEmptyFocusedInput(identifier, placeholder: placeholder)
+        if !text.isEmpty {
+            app.typeText(text)
+            try expectValue(identifier, text)
+        }
+    }
+
+    private func expectEmptyFocusedInput(_ identifier: String, placeholder: String) throws {
+        let application = app
+        let empty = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let matches = (application.textFields.matching(identifier: identifier).allElementsBoundByIndex
+                + application.textViews.matching(identifier: identifier).allElementsBoundByIndex)
+                .filter { $0.exists && $0.isEnabled }
+            guard matches.count == 1 else { return false }
+            let nativeValue = matches[0].value
+            guard nativeValue == nil || nativeValue is String else { return false }
+            let value = nativeValue as? String ?? ""
+            let currentPlaceholder = matches[0].placeholderValue ?? ""
+            return value.isEmpty || (!currentPlaceholder.isEmpty && value == currentPlaceholder)
+        }, object: app)
+        let result = XCTWaiter.wait(for: [empty], timeout: 3)
+        guard result == .completed else {
+            let report = XCTAttachment(string: "Captured pre-clear placeholder: \(placeholder)")
+            report.name = "\(identifier)-replacement-placeholder-before-focus-transition"
+            report.lifetime = .keepAlways
+            add(report)
+            attachInputFocusState(identifier, stage: "replacement-draft-not-empty")
+            XCTFail("The focused draft must be empty before typing its replacement: \(identifier)")
+            throw UIAuditError.missingElement(identifier)
+        }
+    }
+
     private func activeInputForm(_ identifier: String) throws -> XCUIElement {
         guard app.state == .runningForeground else {
             return try unsafeInput(identifier, reason: "App is not foreground while resolving the Form")
+        }
+        if identifier == "quiz.answer", let form = try identifiedQuizForm() {
+            return form
         }
         for query in [app.collectionViews, app.tables, app.scrollViews] {
             // retain an element from the unfiltered container query. a containing
@@ -128,6 +168,37 @@ extension NumberConverterUITests {
             }
         }
         return try unsafeInput(identifier, reason: "No active Form contains the typed editor")
+    }
+
+    private func identifiedQuizForm() throws -> XCUIElement? {
+        // the sole editor can be unrealized below a large question. the Form's
+        // own stable ID remains available without a child-containing predicate.
+        let activeFinish = app.descendants(matching: .any).matching(identifier: "quiz.finish")
+            .allElementsBoundByIndex.filter {
+                $0.exists && finiteInputFrame($0.frame) && app.frame.contains($0.frame)
+            }
+        guard activeFinish.count == 1 else { return nil }
+        for query in [app.collectionViews, app.tables, app.scrollViews] {
+            let forms = query.allElementsBoundByIndex.filter { form in
+                guard form.exists, form.identifier == "quiz.session" else { return false }
+                let frame = form.frame
+                return finiteInputFrame(frame) && frame.intersection(app.frame).height > 44
+            }
+            guard forms.count <= 1 else {
+                return try unsafeInput("quiz.answer", reason: "Multiple identified quiz Forms are visible")
+            }
+            if let form = forms.first {
+                let report = XCTAttachment(string: """
+                Unique page-owned quiz.session Form: \(inputFormIdentity(form, identifier: "quiz.answer")).
+                Active quiz.finish frame: \(activeFinish[0].frame); route: \(inputRouteIdentity()).
+                """)
+                report.name = "quiz-answer-identified-page-Form"
+                report.lifetime = .keepAlways
+                add(report)
+                return form
+            }
+        }
+        return nil
     }
 
     private func editableCandidates(in form: XCUIElement, identifier: String) -> [XCUIElement] {

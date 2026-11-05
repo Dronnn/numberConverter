@@ -6,6 +6,7 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import Foundation
 import StoreKit
 
 @MainActor
@@ -31,13 +32,18 @@ final class StoreKitTipService: TipService {
             throw TipServiceError.unavailable
         }
         do {
-            switch try await product.purchase() {
+            testPhase("purchase.product.begin product=\(productID)")
+            let result = try await product.purchase()
+            testPhase("purchase.product.end product=\(productID)")
+            switch result {
             case let .success(result):
                 guard
                     case let .verified(transaction) = result,
                     transaction.productID == productID, transaction.productType == .consumable,
                     transaction.revocationDate == nil else { return .unverified }
+                testPhase("purchase.finish.begin id=\(transaction.id)")
                 await transaction.finish()
+                testPhase("purchase.finish.end id=\(transaction.id)")
                 return .success(transactionID: transaction.id)
             case .pending:
                 return .pending
@@ -68,9 +74,20 @@ final class StoreKitTipService: TipService {
                 TipProduct.allowedIDs.contains(transaction.productID),
                 transaction.productType == .consumable else { continue }
             if transaction.revocationDate == nil {
+                testPhase("observer.callback.begin id=\(transaction.id)")
                 await onTransaction(transaction.id)
+                testPhase("observer.callback.end id=\(transaction.id)")
             }
+            testPhase("observer.finish.begin id=\(transaction.id)")
             await transaction.finish()
+            testPhase("observer.finish.end id=\(transaction.id)")
         }
+    }
+
+    private func testPhase(_ message: @autoclosure () -> String) {
+        #if DEBUG
+            guard ProcessInfo.processInfo.environment["STOREKIT_TEST_PHASES"] == "1" else { return }
+            FileHandle.standardError.write(Data("STOREKIT_SERVICE_PHASE \(message())\n".utf8))
+        #endif
     }
 }
