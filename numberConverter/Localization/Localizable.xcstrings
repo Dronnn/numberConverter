@@ -2092,7 +2092,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Итак, в нашей, всем привычной десятичной системе счисления, используется алфавит из десяти знаков (арабские цифры от 0 до 9). В двоичной системе счисления используется алфавит всего из двух знаков (0, 1). В восьмеричной системе используются цифры от 0 до 7. А в шестнадцатеричной системе цифры от 0 до 15, но арабских цифр не хватает, их всего десять. Поэтому к арабским цифрам добавляются заглавные латинские буквы от A до F."
+            "value": "Итак, в нашей всем привычной десятичной системе счисления используется алфавит из десяти знаков (арабские цифры от 0 до 9). В двоичной системе счисления используется алфавит всего из двух знаков (0, 1). В восьмеричной системе используются цифры от 0 до 7. А в шестнадцатеричной системе цифры от 0 до 15, но арабских цифр не хватает, их всего десять. Поэтому к арабским цифрам добавляются заглавные латинские буквы от A до F."
           }
         },
         "es": {
@@ -2294,7 +2294,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Вот и всё. Перепишем остатки в порядке обратном их получению: 23. Это есть искомое число. То есть, девятнадцать конфеток в восьмеричной системе запишется как 23, но количество конфет от этого не поменяется. Изменятся только цифры, используемые для записи."
+            "value": "Запишем последнее частное, а за ним остаток: 23. Девятнадцать в восьмеричной системе записывается как 23. Количество конфет не меняется: меняется только запись числа."
           }
         },
         "es": {
@@ -2694,7 +2694,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Есть ещё один способ записи, тут используется запись деления в столбик. Признаком конца при таком делении будет получение частного меньшего основания системы счисления. При переводе в двоичную систему это единица. Но именно с неё и будет начинаться наше искомое число."
+            "value": "Есть ещё один способ записи, тут используется запись деления в столбик. Признаком конца при таком делении будет получение частного, которое меньше основания системы счисления. При переводе в двоичную систему это единица. Но именно с неё и будет начинаться наше искомое число."
           }
         },
         "es": {
@@ -3776,7 +3776,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "        0 - 0 = 0\n        0 - 1 = занимаем из старшего разряда, и записываем в результат 1.\n        1 - 0 = 1\n        1 - 1 = 0"
+            "value": "        0 - 0 = 0\n        0 - 1: занимаем из старшего разряда и записываем в результат 1.\n        1 - 0 = 1\n        1 - 1 = 0"
           }
         },
         "es": {
@@ -4416,7 +4416,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Переведём двоичное число 10011 в восьмеричную систему. Мы должны разбить число на триады начиная с последней цифры. Если цифр для формирования триады не хватает, то просто добавляем в начало числа нужное количество нулей. Получим 010 и 011. Каждую триаду, по таблице, заменяем на соответствующую ей восьмеричную цифру. 010 по таблице заменится на 2, а 011 заменится на 3. Получаем 23."
+            "value": "Переведём двоичное число 10011 в восьмеричную систему. Мы должны разбить число на триады, начиная с последней цифры. Если цифр для формирования триады не хватает, то просто добавляем в начало числа нужное количество нулей. Получим 010 и 011. Каждую триаду по таблице заменяем на соответствующую ей восьмеричную цифру. 010 по таблице заменится на 2, а 011 заменится на 3. Получаем 23."
           }
         },
         "es": {
@@ -4656,7 +4656,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Преобразуем отрицательное число −5, в дополнительный код."
+            "value": "Преобразуем отрицательное число −5 в дополнительный код."
           }
         },
         "es": {
@@ -4696,7 +4696,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Возьмём число пять записанное в двоичной системе счисления: 101."
+            "value": "Возьмём число пять, записанное в двоичной системе счисления: 101."
           }
         },
         "es": {
@@ -4856,7 +4856,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Мы получили число -5 записанное в дополнительном коде."
+            "value": "Мы получили число -5, записанное в дополнительном коде."
           }
         },
         "es": {
@@ -7297,7 +7297,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ваш ответ НЕ верный"
+            "value": "Ваш ответ неверный"
           }
         },
         "es": {
@@ -9259,7 +9259,7 @@
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Puedes restablecer los contadores de los tests en Estadísticas y cambiar la preferencia de complemento a dos en el conversor. El resto de los datos introducidos permanece en memoria mientras la app mantiene ese estado de pantalla. Eliminar la app borra sus datos locales del dispositivo; la descarga sin borrar datos y las copias de seguridad pueden conservarlos o restaurarlos según tus ajustes de Apple. Restablecer o eliminar la app no borra los registros de compras de Apple ni los mensajes ya enviados. Apple y tu proveedor de correo ofrecen sus propios controles para esos registros."
+            "value": "Puedes restablecer los contadores de los tests en Estadísticas y cambiar la preferencia de complemento a dos en el conversor. El resto de los datos introducidos permanece en memoria mientras la app mantiene ese estado de pantalla. Eliminar la app borra sus datos locales del dispositivo; la desinstalación conservando los datos y las copias de seguridad pueden conservarlos o restaurarlos según tus ajustes de Apple. Restablecer o eliminar la app no borra los registros de compras de Apple ni los mensajes ya enviados. Apple y tu proveedor de correo ofrecen sus propios controles para esos registros."
           }
         },
         "de": {

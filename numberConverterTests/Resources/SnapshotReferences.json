@@ -1256,7 +1256,7 @@
         },
         "test_helpPage2.help-page2-ru-dark-ipad.png": {
           "filename": "test_helpPage2.help-page2-ru-dark-ipad.png",
-          "sha256": "a6823600637671abcf832ec14a01945918212276791844e145208c2829e17a48"
+          "sha256": "bc520d3ee1345288c1552ba2e76b6a57e3ca5097f7b75c7481a5aa8e92016507"
         },
         "test_helpPage2.help-page2-ru-dark-iphone.png": {
           "filename": "test_helpPage2.help-page2-ru-dark-iphone.png",
@@ -1272,7 +1272,7 @@
         },
         "test_helpPage2.help-page2-ru-light-ipad.png": {
           "filename": "test_helpPage2.help-page2-ru-light-ipad.png",
-          "sha256": "eb7a57bc99005980a51d70d23e51c89ff9bc1946b9cfc6712a417468e702d36a"
+          "sha256": "7082995e96060bc0e61da4c26cfd2839b1de58824d761e0daa8fbb1040c98b9e"
         },
         "test_helpPage2.help-page2-ru-light-iphone.png": {
           "filename": "test_helpPage2.help-page2-ru-light-iphone.png",
@@ -2216,11 +2216,11 @@
         },
         "test_helpPages.help-page-6-ru-dark-ipad.png": {
           "filename": "test_helpPages.help-page-6-ru-dark-ipad.png",
-          "sha256": "82d48e2a58ab9ad4b43e494cfc2300dc71ae573413f537ca05dfd5cfe5aa08f4"
+          "sha256": "3520bb1a74807d13132cfa42378fc309d182d2b0d2ce4fc85583a3406dfcb1a0"
         },
         "test_helpPages.help-page-6-ru-dark-iphone.png": {
           "filename": "test_helpPages.help-page-6-ru-dark-iphone.png",
-          "sha256": "29b943574bdb01b4e4b650045e59837f7672753185aeecd9fa2da00e5608f82b"
+          "sha256": "ac87fa811e84d89bbfeee4c95c9f0b15dba90e20dd563dec14fd6560f923c120"
         },
         "test_helpPages.help-page-6-ru-dark-landscape.png": {
           "filename": "test_helpPages.help-page-6-ru-dark-landscape.png",
@@ -2232,11 +2232,11 @@
         },
         "test_helpPages.help-page-6-ru-light-ipad.png": {
           "filename": "test_helpPages.help-page-6-ru-light-ipad.png",
-          "sha256": "2cead482d9c4aea3f6ade427abe7c53b3ea10a6e9bc45c89d4e424fe86ace6bc"
+          "sha256": "a011470903ce2e1f9c1cfd73a8adf873d0fcb53d3c6ce8ba7932680bfc034797"
         },
         "test_helpPages.help-page-6-ru-light-iphone.png": {
           "filename": "test_helpPages.help-page-6-ru-light-iphone.png",
-          "sha256": "8635b9a85e7c3fb14c7232ae25b79c5f91f9b30f55f1e007b7ad6304071fb722"
+          "sha256": "56d0151c3b8c0ed54176beb993a72bf407358a8bb5432a38cd9bae356445738f"
         },
         "test_helpPages.help-page-6-ru-light-landscape.png": {
           "filename": "test_helpPages.help-page-6-ru-light-landscape.png",
@@ -5709,7 +5709,7 @@
         },
         "test_helpPage2.help-page2-ru-dark-ipad.png": {
           "filename": "test_helpPage2.help-page2-ru-dark-ipad.png",
-          "sha256": "a6823600637671abcf832ec14a01945918212276791844e145208c2829e17a48"
+          "sha256": "bc520d3ee1345288c1552ba2e76b6a57e3ca5097f7b75c7481a5aa8e92016507"
         },
         "test_helpPage2.help-page2-ru-dark-iphone.png": {
           "filename": "test_helpPage2.help-page2-ru-dark-iphone.png",
@@ -5725,7 +5725,7 @@
         },
         "test_helpPage2.help-page2-ru-light-ipad.png": {
           "filename": "test_helpPage2.help-page2-ru-light-ipad.png",
-          "sha256": "eb7a57bc99005980a51d70d23e51c89ff9bc1946b9cfc6712a417468e702d36a"
+          "sha256": "7082995e96060bc0e61da4c26cfd2839b1de58824d761e0daa8fbb1040c98b9e"
         },
         "test_helpPage2.help-page2-ru-light-iphone.png": {
           "filename": "test_helpPage2.help-page2-ru-light-iphone.png",
@@ -6669,11 +6669,11 @@
         },
         "test_helpPages.help-page-6-ru-dark-ipad.png": {
           "filename": "test_helpPages.help-page-6-ru-dark-ipad.png",
-          "sha256": "82d48e2a58ab9ad4b43e494cfc2300dc71ae573413f537ca05dfd5cfe5aa08f4"
+          "sha256": "3520bb1a74807d13132cfa42378fc309d182d2b0d2ce4fc85583a3406dfcb1a0"
         },
         "test_helpPages.help-page-6-ru-dark-iphone.png": {
           "filename": "test_helpPages.help-page-6-ru-dark-iphone.png",
-          "sha256": "29b943574bdb01b4e4b650045e59837f7672753185aeecd9fa2da00e5608f82b"
+          "sha256": "ac87fa811e84d89bbfeee4c95c9f0b15dba90e20dd563dec14fd6560f923c120"
         },
         "test_helpPages.help-page-6-ru-dark-landscape.png": {
           "filename": "test_helpPages.help-page-6-ru-dark-landscape.png",
@@ -6685,11 +6685,11 @@
         },
         "test_helpPages.help-page-6-ru-light-ipad.png": {
           "filename": "test_helpPages.help-page-6-ru-light-ipad.png",
-          "sha256": "2cead482d9c4aea3f6ade427abe7c53b3ea10a6e9bc45c89d4e424fe86ace6bc"
+          "sha256": "a011470903ce2e1f9c1cfd73a8adf873d0fcb53d3c6ce8ba7932680bfc034797"
         },
         "test_helpPages.help-page-6-ru-light-iphone.png": {
           "filename": "test_helpPages.help-page-6-ru-light-iphone.png",
-          "sha256": "8635b9a85e7c3fb14c7232ae25b79c5f91f9b30f55f1e007b7ad6304071fb722"
+          "sha256": "56d0151c3b8c0ed54176beb993a72bf407358a8bb5432a38cd9bae356445738f"
         },
         "test_helpPages.help-page-6-ru-light-landscape.png": {
           "filename": "test_helpPages.help-page-6-ru-light-landscape.png",
