@@ -32,8 +32,8 @@ final class SnapshotReferenceTests: XCTestCase {
         let directory = try temporaryDirectory()
         let source = directory.appendingPathComponent("SnapshotTests.swift")
         try Data("// snapshot source fixture".utf8).write(to: source)
-        let local = snapshotReferenceLocation(sourceFile: source.path)
-        let bundled = snapshotReferenceLocation(sourceFile: source.path, forcingBundled: true)
+        let local = snapshotReferenceLocation(sourceFile: source.path, usingSourceFixtures: true)
+        let bundled = snapshotReferenceLocation(sourceFile: source.path)
         XCTAssertEqual(local.directory.path, directory.appendingPathComponent("__Snapshots__/SnapshotTests").path)
         XCTAssertNotEqual(local.directory, bundled.directory)
         try FileManager.default.createDirectory(at: local.directory, withIntermediateDirectories: true)
@@ -63,6 +63,46 @@ final class SnapshotReferenceTests: XCTestCase {
             )
             XCTAssertEqual(localReference.snapshotName, bundledReference.snapshotName)
             XCTAssertEqual(localReference.reviewState, bundledReference.reviewState)
+        }
+
+        try assertPrivateSourceMutationIsIsolated(source: source, local: local, bundled: bundled, filename: filename)
+    }
+
+    private func assertPrivateSourceMutationIsIsolated(
+        source: URL,
+        local: SnapshotReferenceLocation,
+        bundled: SnapshotReferenceLocation,
+        filename: String
+    ) throws {
+        let localManifest = try SnapshotReferenceManifest(contentsOf: local.manifestURL)
+        let bundledManifest = try SnapshotReferenceManifest(contentsOf: bundled.manifestURL)
+        let referenceFilenames = Set(bundledManifest.runtimes.values.compactMap { $0.references[filename]?.filename })
+        // editing a private source fixture in this same test definition must
+        // not change the references used by the default automated comparison.
+        var bundledBytes: [String: Data] = [:]
+        for referenceFilename in referenceFilenames {
+            bundledBytes[referenceFilename] = try Data(contentsOf: bundled.directory
+                .appendingPathComponent(referenceFilename))
+            try Data("modified private fixture".utf8).write(to: local.directory
+                .appendingPathComponent(referenceFilename))
+        }
+        try Data("not a valid manifest".utf8).write(to: local.manifestURL)
+        XCTAssertThrowsError(try SnapshotReferenceManifest(contentsOf: local.manifestURL))
+        XCTAssertThrowsError(try localManifest.resolve(
+            logicalFilename: filename, runtime: "27.0", directory: local.directory
+        ))
+        let afterMutation = snapshotReferenceLocation(sourceFile: source.path)
+        XCTAssertEqual(afterMutation.directory, bundled.directory)
+        XCTAssertEqual(afterMutation.manifestURL, bundled.manifestURL)
+        let acceptance = try SnapshotReferenceManifest(contentsOf: afterMutation.manifestURL)
+        XCTAssertEqual(acceptance.sha256, bundledManifest.sha256)
+        for runtime in acceptance.runtimes.keys {
+            let reference = try acceptance.resolve(
+                logicalFilename: filename, runtime: runtime, directory: afterMutation.directory
+            )
+            XCTAssertTrue(reference.reviewState.permitsAcceptance)
+            let expectedBytes = try XCTUnwrap(bundledBytes[reference.fileURL.lastPathComponent])
+            XCTAssertEqual(try Data(contentsOf: reference.fileURL), expectedBytes)
         }
     }
 

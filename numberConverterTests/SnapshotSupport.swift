@@ -146,7 +146,10 @@ struct SnapshotWindowRestoration {
     private let rootViewController: UIViewController?
 
     init?() {
-        guard let window = UIApplication.shared.windows.first(where: \.isKeyWindow) else { return nil }
+        let windows = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+        guard let window = windows.first(where: \.isKeyWindow) else { return nil }
         self.window = window
         frame = window.frame
         rootViewController = window.rootViewController
@@ -243,11 +246,16 @@ private func resolvedSnapshotReference(
     testName: String,
     line: UInt
 ) throws -> SnapshotReference {
+    let usingSourceFixtures = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_MODE"] == "source"
     let location = snapshotReferenceLocation(
         sourceFile: "\(file)",
-        forcingBundled: ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_MODE"] == "bundled"
+        usingSourceFixtures: usingSourceFixtures
     )
-    let manifest = try SnapshotReferenceCatalog.manifest(at: location.manifestURL)
+    let manifest = if usingSourceFixtures {
+        try SnapshotReferenceManifest(contentsOf: location.manifestURL)
+    } else {
+        try SnapshotReferenceCatalog.manifest(at: location.manifestURL)
+    }
     let runtime = UIDevice.current.systemVersion
     let reference = try manifest.resolve(
         logicalFilename: SnapshotReferenceManifest.logicalFilename(testName: testName, name: name),
@@ -270,10 +278,11 @@ struct SnapshotReferenceLocation {
     let manifestURL: URL
 }
 
-/// source and cloud bundles use the same explicit runtime and hash policy; neither records.
+/// automated comparisons use immutable bundled fixtures, independent of a live checkout.
+/// source fixtures require an explicit opt-in and retain the same strict policy.
 @MainActor
-func snapshotReferenceLocation(sourceFile: String, forcingBundled: Bool = false) -> SnapshotReferenceLocation {
-    if !forcingBundled, FileManager.default.fileExists(atPath: sourceFile) {
+func snapshotReferenceLocation(sourceFile: String, usingSourceFixtures: Bool = false) -> SnapshotReferenceLocation {
+    if usingSourceFixtures {
         let sourceURL = URL(fileURLWithPath: sourceFile)
         let parent = sourceURL.deletingLastPathComponent()
         return SnapshotReferenceLocation(
