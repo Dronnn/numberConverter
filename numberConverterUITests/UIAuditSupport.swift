@@ -152,7 +152,7 @@ extension NumberConverterUITests {
                 app.typeText(text)
             } else {
                 field.tap(withNumberOfTaps: 3, numberOfTouches: 1)
-                field.typeText(text)
+                app.typeText(text)
             }
             return
         }
@@ -321,6 +321,20 @@ extension NumberConverterUITests {
             return
         }
         app.navigationBars.buttons.element(boundBy: 0).tap()
+    }
+
+    func backToConverter(_ language: UITestLanguage) {
+        back()
+        let destination = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            let titles = self.app.navigationBars.allElementsBoundByIndex
+                .filter { $0.exists && $0.frame.intersects(self.app.frame) }.map(\.identifier)
+            return titles == [language.converterTitle]
+        }, object: app)
+        XCTAssertEqual(
+            XCTWaiter.wait(for: [destination], timeout: 5),
+            .completed,
+            "The actual Converter navigation destination must finish before further input"
+        )
     }
 
     func backToList(_ sidebarIdentifier: String) {

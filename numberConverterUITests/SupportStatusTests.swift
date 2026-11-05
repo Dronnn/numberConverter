@@ -57,20 +57,34 @@ extension NumberConverterUITests {
         defer { app.terminate() }
         launch(.english)
         try useUnsignedBinaryForStatusTests()
-        try replace("converter.input.10", with: "255")
+        let supported = String(repeating: "9", count: 38)
+        // independent integer oracle: Python bin(10**38 - 1) / hex(10**38 - 1).
+        let supportedBinary =
+            "1001011001110110100110010101000010110101000011011000100011110100"
+                + "000100110001010001000100011111111111111111111111111111111111111"
+        let supportedHex = "4B3B4CA85A86C47A098A223FFFFFFFFF"
+        try replace("converter.input.10", with: supported)
         dismissKeyboard()
-        try expectValue("converter.input.16", "FF")
+        try expectValue("converter.input.10", supported)
+        try expectValue("converter.input.2", supportedBinary)
+        try expectValue("converter.input.16", supportedHex)
 
+        let input = try visibleEditableInput("converter.input.10")
+        try tapEditableInput(input, identifier: "converter.input.10")
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 3))
+        // every insertion point produces the same all-nine draft. from the next
+        // digit onward, each intermediate value exceeds the supported range.
+        input.element.typeText(String(repeating: "9", count: 162))
         let outOfRange = String(repeating: "9", count: 200)
-        try replace("converter.input.10", with: outOfRange)
         dismissKeyboard()
         try expectValue("converter.input.10", outOfRange)
         let error = element("converter.error.10")
         try reveal(error, container: app.collectionViews.firstMatch, identifier: "converter.error.10")
         XCTAssertEqual(error.label, "Number exceeds the supported range or precision")
+        XCTAssertLessThanOrEqual(try require("converter.input.10").frame.maxY, error.frame.minY)
         XCTAssertFalse(try require("converter.detail.10").isEnabled)
-        try expectValue("converter.input.2", "11111111")
-        try expectValue("converter.input.16", "FF")
+        try expectValue("converter.input.2", supportedBinary)
+        try expectValue("converter.input.16", supportedHex)
         let invalidScreen = XCTAttachment(screenshot: app.screenshot())
         invalidScreen.name = "converter-out-of-range-preserves-draft-and-valid-outputs"
         invalidScreen.lifetime = .keepAlways
@@ -82,9 +96,7 @@ extension NumberConverterUITests {
         try expectValue("converter.input.2", "1010")
         try expectValue("converter.input.8", "12")
         try expectValue("converter.input.16", "A")
-        let errorCleared = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "exists == false"), object: error
-        )
+        let errorCleared = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: error)
         XCTAssertEqual(XCTWaiter.wait(for: [errorCleared], timeout: 5), .completed)
         XCTAssertTrue(try require("converter.detail.10").isEnabled)
     }

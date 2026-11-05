@@ -32,7 +32,13 @@ extension NumberConverterUITests {
                 guard let field = candidates.first else {
                     // a Form does not instantiate every offscreen row. resolve its
                     // unique active container before scrolling to the real editor.
-                    try scrollInputViewport(viewport, appFrame: appFrame, backward: searchBackward, form: form)
+                    try scrollInputViewport(
+                        viewport,
+                        appFrame: appFrame,
+                        backward: searchBackward,
+                        form: form,
+                        identifier: identifier
+                    )
                     continue
                 }
                 let frame = field.frame
@@ -45,13 +51,23 @@ extension NumberConverterUITests {
                 {
                     return EditableInputSnapshot(element: field, frame: frame, appFrame: appFrame, viewport: viewport)
                 }
-                if ProcessInfo.processInfo.environment["UI_FOCUS_DIAGNOSTICS"] == "1" {
-                    attachInputFocusState(identifier, stage: "before-scoped-scroll")
-                }
-                try scrollInputViewport(viewport, appFrame: appFrame, backward: searchBackward, form: form)
+                attachInputScrollDiagnostics(identifier)
+                try scrollInputViewport(
+                    viewport,
+                    appFrame: appFrame,
+                    backward: searchBackward,
+                    form: form,
+                    identifier: identifier
+                )
             }
         }
         return try unsafeInput(identifier, reason: "Editor did not become safely visible after scoped Form scrolling")
+    }
+
+    private func attachInputScrollDiagnostics(_ identifier: String) {
+        if ProcessInfo.processInfo.environment["UI_FOCUS_DIAGNOSTICS"] == "1" {
+            attachInputFocusState(identifier, stage: "before-scoped-scroll")
+        }
     }
 
     func tapEditableInput(_ input: EditableInputSnapshot, identifier: String) throws {
@@ -80,8 +96,13 @@ extension NumberConverterUITests {
             return try unsafeInput(identifier, reason: "App is not foreground while resolving the Form")
         }
         for query in [app.collectionViews, app.tables, app.scrollViews] {
-            let forms = query.containing(.any, identifier: identifier).allElementsBoundByIndex.filter { form in
-                guard form.exists, form.frame.intersects(app.frame) else { return false }
+            // retain an element from the unfiltered container query. a containing
+            // predicate would stop matching when its lazy child scrolls offscreen.
+            let forms = query.allElementsBoundByIndex.filter { form in
+                guard
+                    form.exists, form.frame.intersects(app.frame),
+                    form.descendants(matching: .any).matching(identifier: identifier).firstMatch.exists
+                else { return false }
                 return form
                     .isHittable || (form.textFields.allElementsBoundByIndex + form.textViews.allElementsBoundByIndex)
                     .contains { $0.exists && $0.isHittable }
@@ -154,8 +175,13 @@ extension NumberConverterUITests {
         _ viewport: CGRect,
         appFrame: CGRect,
         backward: Bool,
-        form: XCUIElement
+        form: XCUIElement,
+        identifier: String
     ) throws {
+        let route = inputRouteIdentity()
+        let originalFrame = form.frame
+        let role = form.elementType
+        let containerID = form.identifier
         let path = try safeContentDragPath(
             viewport,
             delta: viewport.height * (backward ? -0.5 : 0.5),
@@ -172,7 +198,47 @@ extension NumberConverterUITests {
         start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
         XCTAssertEqual(app.state, .runningForeground)
         XCTAssertEqual(app.frame, appFrame)
-        XCTAssertTrue(form.exists)
+        let afterFrame = form.exists ? form.frame : CGRect.null
+        let report = XCTAttachment(string: """
+        After pan: \(form.exists ? inputFormIdentity(form, identifier: identifier) : "absent")
+        Guard before frame: \(inputFrameValues(originalFrame)); after: \(inputFrameValues(afterFrame)).
+        Guard role: \(role.rawValue); ID: \(containerID).
+        Guard route before: \(route); after: \(inputRouteIdentity()).
+        """)
+        report.name = "\(identifier)-unfiltered-Form-pan-identity"
+        report.lifetime = .keepAlways
+        add(report)
+        guard
+            form.exists, form.elementType == role, form.identifier == containerID,
+            sameInputFormFrame(afterFrame, originalFrame), inputRouteIdentity() == route
+        else {
+            return try unsafeInputAction(
+                identifier,
+                reason: "The stable Form identity, frame or current route changed after a pan"
+            )
+        }
+    }
+
+    private func inputFrameValues(_ frame: CGRect) -> [Double] {
+        [frame.minX, frame.minY, frame.width, frame.height].map(Double.init)
+    }
+
+    private func sameInputFormFrame(_ lhs: CGRect, _ rhs: CGRect) -> Bool {
+        guard finiteInputFrame(lhs), finiteInputFrame(rhs) else { return false }
+        // native geometry can round either side of the same value while scrolling:
+        // 873.9999999999999 and 874.0000000000001 are two representation steps apart.
+        return zip(inputFrameValues(lhs), inputFrameValues(rhs)).allSatisfy { old, new in
+            old == new || abs(old - new) <= 2 * max(old.ulp, new.ulp)
+        }
+    }
+
+    private func inputFormIdentity(_ form: XCUIElement, identifier: String) -> String {
+        "role=\(form.elementType.rawValue); id=\(form.identifier); frame=\(form.frame); editor currently realized=\(form.descendants(matching: .any).matching(identifier: identifier).firstMatch.exists)"
+    }
+
+    private func inputRouteIdentity() -> [String] {
+        app.navigationBars.allElementsBoundByIndex.filter { $0.exists && $0.frame.intersects(app.frame) }
+            .map(\.identifier).sorted()
     }
 
     private func finiteInputFrame(_ frame: CGRect) -> Bool {

@@ -63,7 +63,7 @@ extension NumberConverterUITests {
         XCTAssertTrue(app.staticTexts["FF"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["11111111"].exists)
         capture(language, screen: "main-systems")
-        back()
+        backToConverter(language)
         try exerciseInvalidDetails(language)
 
         try replace("converter.input.10", with: "-5")
@@ -82,7 +82,7 @@ extension NumberConverterUITests {
         try reveal(element("base.value.36"), identifier: "base.value.36")
         try expectText("base.value.36", "73")
         capture(language, screen: "all-bases-detail-bottom")
-        back()
+        backToConverter(language)
     }
 
     private func exerciseInvalidDetails(_ language: UITestLanguage) throws {

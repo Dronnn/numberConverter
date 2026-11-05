@@ -74,6 +74,8 @@ struct SupportView: View {
             }
             if store.isPurchasing {
                 ProgressView("support.purchasing")
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
                     .accessibilityIdentifier("support.purchasing")
             }
         }

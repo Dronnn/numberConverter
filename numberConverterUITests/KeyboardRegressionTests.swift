@@ -6,6 +6,8 @@
 //  Copyright © 2026 Andreas Maier. All rights reserved.
 //
 
+import UIKit
+import Vision
 import XCTest
 
 @MainActor
@@ -63,26 +65,81 @@ extension NumberConverterUITests {
     }
 
     func tapVisibleKeyboardDone() -> Bool {
-        XCTAssertEqual(app.state, .runningForeground)
+        guard app.state == .runningForeground else {
+            XCTFail("App must be foreground before the observed Done tap")
+            return false
+        }
         attachKeyboardDoneInventory()
         let query = app.buttons.matching(identifier: "keyboard.done")
         _ = query.firstMatch.waitForExistence(timeout: 1)
         let appFrame = app.frame
         let visible = query.allElementsBoundByIndex.compactMap { button -> (XCUIElement, CGRect)? in
-            guard button.exists, button.isHittable else { return nil }
+            guard button.exists, button.isEnabled else { return nil }
             let frame = button.frame
-            guard !frame.isEmpty, appFrame.contains(frame) else { return nil }
+            guard
+                [frame.minX, frame.minY, frame.width, frame.height].allSatisfy(\.isFinite), !frame.isEmpty,
+                appFrame.contains(frame) else { return nil }
             return (button, frame)
         }
-        XCTAssertLessThanOrEqual(visible.count, 1, "Exactly one visible keyboard Done control may be targeted")
-        guard let (_, frame) = visible.first else { return false }
+        guard visible.count <= 1, app.keyboards.firstMatch.exists else {
+            XCTFail("Done requires a unique visible exact-ID Button and a current keyboard context")
+            return false
+        }
+        guard let (button, frame) = visible.first else { return false }
+        do {
+            try proveKeyboardDonePixels(label: button.label, frame: frame, appFrame: appFrame)
+        } catch {
+            XCTFail("Cannot prove actual keyboard Done pixels: \(error)")
+            return false
+        }
+        guard button.frame == frame else {
+            XCTFail("The observed native Done frame changed before its center tap")
+            return false
+        }
         XCTContext.runActivity(named: "Tap unique visible keyboard.done at observed frame \(frame)") { _ in
-            app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(
-                dx: frame.midX - appFrame.minX,
-                dy: frame.midY - appFrame.minY
-            )).tap()
+            button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         }
         return true
+    }
+
+    private func proveKeyboardDonePixels(label: String, frame: CGRect, appFrame: CGRect) throws {
+        guard !label.isEmpty else { throw UIAuditError.missingElement("keyboard.done label") }
+        let screen = app.screenshot()
+        let fullImage = try XCTUnwrap(UIImage(data: screen.pngRepresentation)?.cgImage)
+        let scaleX = CGFloat(fullImage.width) / appFrame.width
+        let scaleY = CGFloat(fullImage.height) / appFrame.height
+        guard abs(scaleX - scaleY) <= 0.01 else {
+            throw UIAuditError.missingElement("keyboard.done screenshot coordinate scale")
+        }
+        let region = CGRect(
+            x: (frame.minX - appFrame.minX) * scaleX,
+            y: (frame.minY - appFrame.minY) * scaleY,
+            width: frame.width * scaleX,
+            height: frame.height * scaleY
+        ).integral
+        let crop = try XCTUnwrap(fullImage.cropping(to: region))
+        let image = XCTAttachment(image: UIImage(cgImage: crop))
+        image.name = "keyboard-Done-observed-frame-native-pixels"
+        image.lifetime = .keepAlways
+        add(image)
+        let full = XCTAttachment(screenshot: screen)
+        full.name = "keyboard-Done-before-observed-frame-tap"
+        full.lifetime = .keepAlways
+        add(full)
+        let recognized = try recognizeKeyboardDone(in: crop)
+        guard recognized.contains(where: { $0.caseInsensitiveCompare(label) == .orderedSame }) else {
+            XCTFail("Complete visible Done OCR must match \(label); actual \(recognized)")
+            throw UIAuditError.missingElement("keyboard.done visible native text")
+        }
+    }
+
+    private func recognizeKeyboardDone(in crop: CGImage) throws -> [String] {
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .accurate
+        request.usesLanguageCorrection = false
+        request.automaticallyDetectsLanguage = true
+        try VNImageRequestHandler(cgImage: crop).perform([request])
+        return (request.results ?? []).compactMap { $0.topCandidates(1).first?.string }
     }
 
     private func verifyDirectDoneDismissal(stage: String) throws {
@@ -92,11 +149,12 @@ extension NumberConverterUITests {
         XCTAssertTrue(keyboard.exists, "Editing must expose a keyboard before Done")
         let before = "before keyboard: \(keyboard.debugDescription)"
         let done = try require("keyboard.done")
-        try reveal(done, identifier: "keyboard.done")
-        XCTAssertTrue(done.isHittable)
         XCTAssertTrue(app.frame.contains(done.frame), "The actual native Done control must be inside the app viewport")
-        let action = "Done frame: \(done.frame); app frame: \(app.frame); keyboard frame: \(keyboard.frame); hittable: \(done.isHittable)"
-        done.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        let action = "Done frame: \(done.frame); app frame: \(app.frame); keyboard frame: \(keyboard.frame)"
+        XCTAssertTrue(
+            tapVisibleKeyboardDone(),
+            "Direct Done must use the unique actual visible control without a scroll fallback"
+        )
         let dismissed = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "keyboards.count == 0"), object: app
         )
@@ -114,7 +172,7 @@ extension NumberConverterUITests {
         let matches = app.descendants(matching: .any).matching(identifier: "keyboard.done")
             .allElementsBoundByIndex
         let lines = matches.map { element in
-            "role=\(element.elementType.rawValue); id=\(element.identifier); label=\(element.label); frame=\(element.frame); exists=\(element.exists); hittable=\(element.isHittable); enabled=\(element.isEnabled)"
+            "role=\(element.elementType.rawValue); id=\(element.identifier); label=\(element.label); frame=\(element.frame); exists=\(element.exists); activation-point lookup intentionally omitted after native invalid-point exception; enabled=\(element.isEnabled)"
         }
         let report =
             XCTAttachment(

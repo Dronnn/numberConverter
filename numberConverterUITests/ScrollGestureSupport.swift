@@ -27,10 +27,33 @@ extension NumberConverterUITests {
             throw UIAuditError.missingElement("content drag viewport")
         }
         let startY = interior.minY + interior.height * (delta > 0 ? 0.75 : 0.25)
-        let endY = startY + (delta > 0 ? -distance : distance)
         let controls = interactiveDragFrames(container)
+        if let path = sweptDragPath(interior, startY: startY, delta: delta, distance: distance, controls: controls) {
+            return path
+        }
+        if let path = endpointDragPath(interior, startY: startY, delta: delta, distance: distance, controls: controls) {
+            attachDragPath(
+                "content-pan-observed-safe-endpoints",
+                "\(path); viewport: \(viewport); controls: \(controls)"
+            )
+            return path
+        }
+        attachDragPath(
+            "content-pan-no-safe-endpoints",
+            "viewport: \(viewport); distance: \(distance); controls: \(controls)"
+        )
+        XCTFail("No measured content drag path avoids interactive controls and screen edges")
+        throw UIAuditError.missingElement("content drag path")
+    }
+
+    private func sweptDragPath(
+        _ interior: CGRect, startY: CGFloat, delta: CGFloat, distance: CGFloat, controls: [CGRect]
+    ) -> (start: CGPoint, end: CGPoint)? {
+        let endY = startY + (delta > 0 ? -distance : distance)
         let band = CGRect(x: interior.minX, y: min(startY, endY), width: interior.width, height: distance)
-        let xs = freeDragColumns(interior, sweptBand: band, controls: controls)
+        let xs = freeDragColumns(interior, controls: controls.filter {
+            $0.intersects(band.insetBy(dx: 0, dy: -8))
+        })
         for x in xs {
             let start = CGPoint(x: x, y: startY)
             let end = CGPoint(x: x, y: endY)
@@ -39,8 +62,64 @@ extension NumberConverterUITests {
                 return (start, end)
             }
         }
-        XCTFail("No measured content drag path avoids interactive controls and screen edges")
-        throw UIAuditError.missingElement("content drag path")
+        return nil
+    }
+
+    private func endpointDragPath(
+        _ interior: CGRect, startY: CGFloat, delta: CGFloat, distance: CGFloat, controls: [CGRect]
+    ) -> (start: CGPoint, end: CGPoint)? {
+        // a recognized Form pan may cross a control after starting in content.
+        // keep both endpoints outside controls so release cannot activate a Link.
+        for (candidateY, endY) in dragEndpointPairs(
+            interior, startY: startY, delta: delta, distance: distance, controls: controls
+        ) {
+            let endpointBands = [candidateY, endY].map {
+                CGRect(x: interior.minX, y: $0 - 9, width: interior.width, height: 18)
+            }
+            let endpointControls = controls.filter { frame in
+                endpointBands.contains { $0.intersects(frame) }
+            }
+            for x in freeDragColumns(interior, controls: endpointControls) {
+                let start = CGPoint(x: x, y: candidateY)
+                let end = CGPoint(x: x, y: endY)
+                guard
+                    interior.contains(start), interior.contains(end),
+                    !controls.contains(where: { frame in
+                        let blocked = frame.insetBy(dx: -9, dy: -9)
+                        return blocked.contains(start) || blocked.contains(end)
+                    })
+                else { continue }
+                return (start, end)
+            }
+        }
+        return nil
+    }
+
+    private func dragEndpointPairs(
+        _ interior: CGRect, startY: CGFloat, delta: CGFloat, distance: CGFloat, controls: [CGRect]
+    ) -> [(CGFloat, CGFloat)] {
+        let boundaries = controls.flatMap { [$0.minY - 10, $0.maxY + 10] }
+        let ys = Array(Set([interior.minY + 1, interior.maxY - 1, startY] + boundaries))
+            .filter { $0.isFinite && $0 > interior.minY && $0 < interior.maxY }.sorted()
+        return ys.flatMap { first in
+            ys.compactMap { last -> (CGFloat, CGFloat)? in
+                let movement = delta > 0 ? first - last : last - first
+                return movement >= 44 && movement <= distance ? (first, last) : nil
+            }
+        }.sorted { lhs, rhs in
+            let leftDistance = abs(lhs.1 - lhs.0)
+            let rightDistance = abs(rhs.1 - rhs.0)
+            return leftDistance == rightDistance
+                ? abs(lhs.0 - startY) < abs(rhs.0 - startY)
+                : leftDistance > rightDistance
+        }
+    }
+
+    private func attachDragPath(_ name: String, _ description: String) {
+        let report = XCTAttachment(string: description)
+        report.name = name
+        report.lifetime = .keepAlways
+        add(report)
     }
 
     private func interactiveDragFrames(_ container: XCUIElement) -> [CGRect] {
@@ -59,9 +138,9 @@ extension NumberConverterUITests {
         return (local + overlays).map(\.frame).filter { !$0.isEmpty }
     }
 
-    private func freeDragColumns(_ interior: CGRect, sweptBand: CGRect, controls: [CGRect]) -> [CGFloat] {
+    private func freeDragColumns(_ interior: CGRect, controls: [CGRect]) -> [CGFloat] {
         var intervals = [(interior.minX, interior.maxX)]
-        for frame in controls where frame.intersects(sweptBand.insetBy(dx: 0, dy: -8)) {
+        for frame in controls {
             let blocked = frame.insetBy(dx: -9, dy: -9)
             intervals = intervals.flatMap { left, right -> [(CGFloat, CGFloat)] in
                 guard blocked.maxX > left, blocked.minX < right else { return [(left, right)] }

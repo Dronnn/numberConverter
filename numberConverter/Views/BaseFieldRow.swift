@@ -64,6 +64,8 @@ extension BaseField {
 /// a single row of the main-systems section: a fixed label, an editable value,
 /// and a trailing detail button that pushes the per-field breakdown.
 struct BaseFieldRow: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     let field: BaseField
     @Binding var text: String
     let error: ConversionError?
@@ -74,8 +76,19 @@ struct BaseFieldRow: View {
     }
 
     var body: some View {
+        if #available(iOS 26.0, *) {
+            content.listRowInsets(.vertical, dynamicTypeSize.isAccessibilitySize ? nil : 4)
+        } else {
+            content
+        }
+    }
+
+    private var content: some View {
         VStack(alignment: .leading, spacing: 8) {
-            LabeledContent {
+            contentLayout {
+                Text(verbatim: field.labelText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .layoutPriority(1)
                 HStack {
                     TextField(text: $text, axis: .vertical) {
                         Text(verbatim: field.placeholder)
@@ -87,14 +100,14 @@ struct BaseFieldRow: View {
                     .keyboardType(field.keyboardType)
                     .textInputAutocapitalization(field.autocapitalization)
                     .autocorrectionDisabled()
+                    .accessibilityLabel(Text(verbatim: field.labelText))
                     .accessibilityIdentifier("converter.input.\(field.base)")
+                    .frame(minWidth: 44, maxWidth: .infinity)
 
                     DetailButton(destination: field.detailTitle, action: onDetail)
                         .accessibilityIdentifier("converter.detail.\(field.base)")
                         .disabled(isInvalid)
                 }
-            } label: {
-                Text(verbatim: field.labelText)
             }
             if let error {
                 validationMessage(error)
@@ -103,6 +116,14 @@ struct BaseFieldRow: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityIdentifier("converter.error.\(field.base)")
             }
+        }
+    }
+
+    private var contentLayout: AnyLayout {
+        if dynamicTypeSize.isAccessibilitySize {
+            AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+        } else {
+            AnyLayout(HStackLayout(alignment: .center, spacing: 12))
         }
     }
 
@@ -120,10 +141,20 @@ struct BaseFieldRow: View {
 /// the all-bases shortcut row: a decimal input plus a detail button that pushes
 /// the full 2...36 breakdown.
 struct DecimalRangeRow: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     @Binding var text: String
     let onDetail: () -> Void
 
     var body: some View {
+        if #available(iOS 26.0, *) {
+            content.listRowInsets(.vertical, dynamicTypeSize.isAccessibilitySize ? nil : 4)
+        } else {
+            content
+        }
+    }
+
+    private var content: some View {
         LabeledContent {
             HStack {
                 TextField(text: $text, axis: .vertical) {

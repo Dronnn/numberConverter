@@ -63,7 +63,7 @@ extension NumberConverterUITests {
             container: app.collectionViews.firstMatch,
             through: app.staticTexts[hexadecimal]
         )
-        back()
+        backToConverter(language)
         try replace("converter.all.input", with: String(number))
         dismissKeyboard()
         try tap("converter.all.detail")
@@ -73,7 +73,7 @@ extension NumberConverterUITests {
             container: app.collectionViews.firstMatch,
             through: app.staticTexts[base36]
         )
-        back()
+        backToConverter(language)
         try replace("converter.input.2", with: "2")
         dismissKeyboard()
         try expectValue("converter.input.2", "2")
