@@ -64,7 +64,14 @@ import Testing
 
     @Test func finalNativePrecisionAndUnderflowStillFailAfterReduction() {
         let overflowCoefficient = "340282366920938463463374607431768211456"
+        // (10^1400+1)/10^128 is outside native magnitude. Its base-30
+        // numerator contains 3^128, but that cancellation must not delay rejection.
+        let hugeForeignCancellation = fractionalOracle(
+            coefficient: "1" + String(repeating: "0", count: 1399) + "1", scale: 128, base: 30
+        )
+        #expect(hugeForeignCancellation.utf8.count <= ConversionEngine.maxInputLength)
         let inputs = [
+            (30, hugeForeignCancellation),
             (30, fractionalOracle(coefficient: overflowCoefficient, scale: 128, base: 30)),
             (10, fractionalOracle(coefficient: "1", scale: 129, base: 10)),
             (20, fractionalOracle(coefficient: "1", scale: 129, base: 20)),
@@ -106,7 +113,9 @@ import Testing
             multiply(&digits, by: base / 10, adding: 0, base: base)
         }
         let text = digits.reversed().map { String($0, radix: 36, uppercase: true) }.joined()
-        return "0." + String(repeating: "0", count: scale - text.count) + text
+        let padded = String(repeating: "0", count: max(0, scale - text.count + 1)) + text
+        let point = padded.index(padded.endIndex, offsetBy: -scale)
+        return String(padded[..<point]) + "." + String(padded[point...])
     }
 
     private func multiply(_ digits: inout [Int], by factor: Int, adding: Int, base: Int) {

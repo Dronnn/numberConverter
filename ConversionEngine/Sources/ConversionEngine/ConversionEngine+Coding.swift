@@ -27,6 +27,9 @@ extension ConversionEngine {
         // fits exactly: a binary representation of 10^100 passes through 5^100
         // before its trailing zero bits. validate the complete coefficient only.
         let coefficientText = renderPositional(String(integerPart + fractionPart), fromBase: fromBase, toBase: 10)
+        // native magnitude is below 10^166 and radix^places is below 100^places.
+        // reject proven overflow before expensive foreign-prime cancellation.
+        guard coefficientText.count <= 166 + 2 * fractionPart.count else { throw .numberOutOfRange }
         if fractionPart.isEmpty {
             let value = try exactDecimal(coefficientText)
             return negative ? -value : value
